@@ -1,9 +1,11 @@
-package com.zetcode.sprite;
+package nl.pancompany.sprite;
 
-import com.zetcode.Commons;
+import nl.pancompany.Commons;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import java.awt.event.KeyEvent;
+
+import static nl.pancompany.Commons.PLAYER_BORDER;
 
 public class Player extends Sprite {
 
@@ -16,10 +18,11 @@ public class Player extends Sprite {
 
     private void initPlayer() {
 
-        var playerImg = "src/images/player.png";
-        var ii = new ImageIcon(playerImg);
+        var playerImg = "/images/player.png";
 
-        width = ii.getImage().getWidth(null);
+        var ii = new ImageIcon(getClass().getResource(playerImg));
+
+        width = ii.getImage().getWidth(null); // = 15, just like declared in Commons
         setImage(ii.getImage());
 
         int START_X = 270;
@@ -33,14 +36,14 @@ public class Player extends Sprite {
 
         x += dx;
 
-        if (x <= 2) {
+        if (x <= PLAYER_BORDER) {
 
-            x = 2;
+            x = PLAYER_BORDER;
         }
 
-        if (x >= Commons.BOARD_WIDTH - 2 * width) {
+        if (x >= Commons.BOARD_WIDTH - (width + PLAYER_BORDER)) { // might be replaced by constant
 
-            x = Commons.BOARD_WIDTH - 2 * width;
+            x = Commons.BOARD_WIDTH - (width + PLAYER_BORDER);
         }
     }
 

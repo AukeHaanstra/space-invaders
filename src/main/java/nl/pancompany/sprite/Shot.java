@@ -1,4 +1,4 @@
-package com.zetcode.sprite;
+package nl.pancompany.sprite;
 
 import javax.swing.ImageIcon;
 
@@ -14,8 +14,8 @@ public class Shot extends Sprite {
 
     private void initShot(int x, int y) {
 
-        var shotImg = "src/images/shot.png";
-        var ii = new ImageIcon(shotImg);
+        var shotImg = "/images/shot.png";
+        var ii = new ImageIcon(getClass().getResource(shotImg));
         setImage(ii.getImage());
 
         int H_SPACE = 6;

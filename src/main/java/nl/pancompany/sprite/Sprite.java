@@ -1,4 +1,4 @@
-package com.zetcode.sprite;
+package nl.pancompany.sprite;
 
 import java.awt.Image;
 

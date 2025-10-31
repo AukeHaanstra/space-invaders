@@ -1,7 +1,7 @@
-package com.zetcode;
+package nl.pancompany;
 
-import java.awt.EventQueue;
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
 
 public class SpaceInvaders extends JFrame  {
 
@@ -11,11 +11,10 @@ public class SpaceInvaders extends JFrame  {
     }
 
     private void initUI() {
-
-        add(new Board());
-
         setTitle("Space Invaders");
-        setSize(Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
+        setLayout(new BorderLayout());
+        setContentPane(new Board());
+        pack();
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);

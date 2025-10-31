@@ -1,11 +1,14 @@
-package com.zetcode;
+package nl.pancompany;
 
 public interface Commons {
 
     int BOARD_WIDTH = 358;
     int BOARD_HEIGHT = 350;
-    int BORDER_RIGHT = 30;
-    int BORDER_LEFT = 5;
+
+    int ALIEN_BORDER_RIGHT = 17; // 12 px alien + 5 px border
+    int ALIEN_BORDER_LEFT = 5;
+
+    int PLAYER_BORDER = 5;
 
     int GROUND = 290;
     int BOMB_HEIGHT = 5;

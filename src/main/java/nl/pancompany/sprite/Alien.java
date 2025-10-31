@@ -1,4 +1,4 @@
-package com.zetcode.sprite;
+package nl.pancompany.sprite;
 
 import javax.swing.ImageIcon;
 
@@ -18,8 +18,8 @@ public class Alien extends Sprite {
 
         bomb = new Bomb(x, y);
 
-        var alienImg = "src/images/alien.png";
-        var ii = new ImageIcon(alienImg);
+        var alienImg = "/images/alien.png";
+        var ii = new ImageIcon(getClass().getResource(alienImg));
 
         setImage(ii.getImage());
     }
@@ -50,8 +50,8 @@ public class Alien extends Sprite {
             this.x = x;
             this.y = y;
 
-            var bombImg = "src/images/bomb.png";
-            var ii = new ImageIcon(bombImg);
+            var bombImg = "/images/bomb.png";
+            var ii = new ImageIcon(getClass().getResource(bombImg));
             setImage(ii.getImage());
         }
 

@@ -1,8 +1,8 @@
-package com.zetcode;
+package nl.pancompany;
 
-import com.zetcode.sprite.Alien;
-import com.zetcode.sprite.Player;
-import com.zetcode.sprite.Shot;
+import nl.pancompany.sprite.Alien;
+import nl.pancompany.sprite.Player;
+import nl.pancompany.sprite.Shot;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -32,7 +32,7 @@ public class Board extends JPanel {
     private int deaths = 0;
 
     private boolean inGame = true;
-    private String explImg = "src/images/explosion.png";
+    private String explImg = "/images/explosion.png";
     private String message = "Game Over";
 
     private Timer timer;
@@ -57,6 +57,10 @@ public class Board extends JPanel {
         gameInit();
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
+    }
 
     private void gameInit() {
 
@@ -137,6 +141,8 @@ public class Board extends JPanel {
 
         g.setColor(Color.black);
         g.fillRect(0, 0, d.width, d.height);
+//        g.setColor(new Color(100, 0, 0)); // draw border
+//        g.drawRect(1, 1, Commons.BOARD_WIDTH-1, Commons.BOARD_HEIGHT-1);
         g.setColor(Color.green);
 
         if (inGame) {
@@ -209,7 +215,7 @@ public class Board extends JPanel {
                             && shotY >= (alienY)
                             && shotY <= (alienY + Commons.ALIEN_HEIGHT)) {
 
-                        var ii = new ImageIcon(explImg);
+                        var ii = new ImageIcon(getClass().getResource(explImg));
                         alien.setImage(ii.getImage());
                         alien.setDying(true);
                         deaths++;
@@ -234,7 +240,7 @@ public class Board extends JPanel {
 
             int x = alien.getX();
 
-            if (x >= Commons.BOARD_WIDTH - Commons.BORDER_RIGHT && direction != -1) {
+            if (x >= Commons.BOARD_WIDTH - Commons.ALIEN_BORDER_RIGHT && direction != -1) {
 
                 direction = -1;
 
@@ -247,7 +253,7 @@ public class Board extends JPanel {
                 }
             }
 
-            if (x <= Commons.BORDER_LEFT && direction != 1) {
+            if (x <= Commons.ALIEN_BORDER_LEFT && direction != 1) {
 
                 direction = 1;
 
@@ -307,7 +313,7 @@ public class Board extends JPanel {
                         && bombY >= (playerY)
                         && bombY <= (playerY + Commons.PLAYER_HEIGHT)) {
 
-                    var ii = new ImageIcon(explImg);
+                    var ii = new ImageIcon(getClass().getResource(explImg));
                     player.setImage(ii.getImage());
                     player.setDying(true);
                     bomb.setDestroyed(true);
