@@ -17,7 +17,7 @@ public class TurnPlayerCommandHandler {
 
     private final EventStore eventStore;
 
-    public void handle(TurnPlayer turnPlayer) {
+    public void decide(TurnPlayer turnPlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
                 Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class)));
         stateManager.getState().orElseThrow(() -> new IllegalStateException("Player turned before being created."));

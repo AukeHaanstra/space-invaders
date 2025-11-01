@@ -3,7 +3,8 @@ package nl.pancompany.spaceinvaders;
 import lombok.Getter;
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
-import nl.pancompany.spaceinvaders.game.create.PrepareGameCommandHandler;
+import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
+import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
 import nl.pancompany.spaceinvaders.player.creator.PlayerCreator;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayerCommandHandler;
 
@@ -33,11 +34,13 @@ public class SpaceInvaders extends JFrame  {
         EventBus eventBus = eventStore.getEventBus();
 
         // Command handlers
-        PrepareGameCommandHandler prepareGameCommandHandler = new PrepareGameCommandHandler(eventStore);
+        CreateGameCommandHandler createGameCommandHandler = new CreateGameCommandHandler(eventStore);
         TurnPlayerCommandHandler turnPlayerCommandHandler = new TurnPlayerCommandHandler(eventStore);
+        InitiateGameCycleCommandHandler initiateGameCycleCommandHandler = new InitiateGameCycleCommandHandler(eventStore);
         commandApi = CommandApi.builder()
-                .prepareGameCommandHandler(prepareGameCommandHandler)
+                .createGameCommandHandler(createGameCommandHandler)
                 .turnPlayerCommandHandler(turnPlayerCommandHandler)
+                .initiateGameCycleCommandHandler(initiateGameCycleCommandHandler)
                 .build();
 
         // Query handlers

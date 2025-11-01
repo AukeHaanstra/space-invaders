@@ -12,11 +12,11 @@ import nl.pancompany.spaceinvaders.events.GameCreated;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class PrepareGameCommandHandler {
+public class CreateGameCommandHandler {
 
     private final EventStore eventStore;
 
-    public void handle(CreateGame createGame) {
+    public void decide(CreateGame createGame) {
         StateManager<GameState> stateManager = eventStore.loadState(GameState.class,
                 Query.of(EntityTags.GAME, Type.of(GameCreated.class)));
         Optional<GameState> gameState = stateManager.getState();

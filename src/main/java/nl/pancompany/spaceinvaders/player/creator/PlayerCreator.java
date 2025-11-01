@@ -21,11 +21,11 @@ public class PlayerCreator {
     private final EventStore eventStore;
 
     @EventHandler
-    private void handle(GameCreated gameCreated) {
-        handle(new RegisterPlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED));
+    private void react(GameCreated gameCreated) {
+        decide(new RegisterPlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED));
     }
 
-    private void handle(RegisterPlayerCreated registerPlayerCreated) {
+    private void decide(RegisterPlayerCreated registerPlayerCreated) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
                 Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class)));
         Optional<PlayerState> playerState = stateManager.getState();

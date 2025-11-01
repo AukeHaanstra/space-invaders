@@ -1,20 +1,14 @@
 package nl.pancompany.spaceinvaders;
 
-import nl.pancompany.spaceinvaders.events.SpriteTurned;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
+import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Player;
 import nl.pancompany.spaceinvaders.sprite.Shot;
 
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -126,6 +120,7 @@ public class Board extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            commandApi.publish(new InitiateGameCycle()); // translation
             doGameCycle();
         }
 
