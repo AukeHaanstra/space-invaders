@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders.game.prepare;
+package nl.pancompany.spaceinvaders.game.create;
 
 import lombok.RequiredArgsConstructor;
 import nl.pancompany.eventstore.EventStore;
@@ -20,9 +20,10 @@ public class PrepareGameCommandHandler {
         StateManager<GameState> stateManager = eventStore.loadState(GameState.class,
                 Query.of(EntityTags.GAME, Type.of(GameCreated.class)));
         Optional<GameState> gameState = stateManager.getState();
-        if (gameState.isEmpty()) { // never start game anew
-            stateManager.apply(new GameCreated(), EntityTags.GAME);
+        if (gameState.isPresent()) {
+            throw new IllegalStateException("Game cannot be created twice.");
         }
+        stateManager.apply(new GameCreated(), EntityTags.GAME);
     }
 
     private static class GameState {

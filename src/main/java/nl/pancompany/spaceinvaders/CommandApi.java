@@ -1,8 +1,8 @@
 package nl.pancompany.spaceinvaders;
 
 import lombok.Builder;
-import nl.pancompany.spaceinvaders.game.prepare.CreateGame;
-import nl.pancompany.spaceinvaders.game.prepare.PrepareGameCommandHandler;
+import nl.pancompany.spaceinvaders.game.create.CreateGame;
+import nl.pancompany.spaceinvaders.game.create.PrepareGameCommandHandler;
 
 @Builder
 public class CommandApi {

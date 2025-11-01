@@ -1,6 +1,6 @@
 package nl.pancompany.spaceinvaders;
 
-import nl.pancompany.spaceinvaders.game.prepare.CreateGame;
+import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Player;
 import nl.pancompany.spaceinvaders.sprite.Shot;
@@ -62,8 +62,8 @@ public class Board extends JPanel {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 6; j++) {
 
-                var alien = new Alien(Constants.ALIEN_INIT_X + 18 * j,
-                        Constants.ALIEN_INIT_Y + 18 * i);
+                var alien = new Alien(Constants.ALIEN_START_X + 18 * j,
+                        Constants.ALIEN_START_Y + 18 * i);
                 aliens.add(alien);
             }
         }
