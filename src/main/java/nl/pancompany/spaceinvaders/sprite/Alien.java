@@ -1,10 +1,10 @@
-package nl.pancompany.sprite;
+package nl.pancompany.spaceinvaders.sprite;
 
 import javax.swing.ImageIcon;
 
 public class Alien extends Sprite {
 
-    private Bomb bomb;
+    private Bomb bomb; // One bomb per alien
 
     public Alien(int x, int y) {
 

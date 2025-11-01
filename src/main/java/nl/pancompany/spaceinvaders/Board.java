@@ -1,8 +1,8 @@
-package nl.pancompany;
+package nl.pancompany.spaceinvaders;
 
-import nl.pancompany.sprite.Alien;
-import nl.pancompany.sprite.Player;
-import nl.pancompany.sprite.Shot;
+import nl.pancompany.spaceinvaders.sprite.Alien;
+import nl.pancompany.spaceinvaders.sprite.Player;
+import nl.pancompany.spaceinvaders.sprite.Shot;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -23,43 +23,32 @@ import java.util.Random;
 
 public class Board extends JPanel {
 
-    private Dimension d;
+    private final Dimension dimensions = new Dimension(Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
     private List<Alien> aliens;
     private Player player;
-    private Shot shot;
+    private Shot shot; // single shot from the player
     
     private int direction = -1;
     private int deaths = 0;
 
     private boolean inGame = true;
-    private String explImg = "/images/explosion.png";
+    private final String explImg = "/images/explosion.png";
     private String message = "Game Over";
 
     private Timer timer;
 
-
     public Board() {
-
-        initBoard();
-        gameInit();
+        initBoard(); // 5
     }
 
     private void initBoard() {
-
-        addKeyListener(new TAdapter());
         setFocusable(true);
-        d = new Dimension(Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
         setBackground(Color.black);
 
-        timer = new Timer(Commons.DELAY, new GameCycle());
+        gameInit(); // 6 initialize domain entities (sprites) as Board fields -> on BoardReady event
+        addKeyListener(new TAdapter()); // 7 start listening to keystrokes: modify entities accordingly -> translation
+        timer = new Timer(Commons.DELAY, new GameCycle()); // 8 start scheduled update-repaint gamecycles (9-12: update entities & repaint UI) -> can also emit events
         timer.start();
-
-        gameInit();
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
     }
 
     private void gameInit() {
@@ -79,111 +68,56 @@ public class Board extends JPanel {
         shot = new Shot();
     }
 
-    private void drawAliens(Graphics g) {
+    private class TAdapter extends KeyAdapter {
 
-        for (Alien alien : aliens) {
+        @Override
+        public void keyReleased(KeyEvent e) {
 
-            if (alien.isVisible()) {
+            player.keyReleased(e); // delegate left & right key released events to player entity
+        }
 
-                g.drawImage(alien.getImage(), alien.getX(), alien.getY(), this);
-            }
+        @Override
+        public void keyPressed(KeyEvent e) {
 
-            if (alien.isDying()) {
+            player.keyPressed(e); // delegate left & right keystrokes to player entity
 
-                alien.die();
+            int x = player.getX();
+            int y = player.getY();
+
+            int key = e.getKeyCode();
+
+            if (key == KeyEvent.VK_SPACE) {
+
+                if (inGame) {
+
+                    if (!shot.isVisible()) { // create a new shot when space pressed and previous shot is not visible anymore
+
+                        shot = new Shot(x, y);
+                    }
+                }
             }
         }
     }
 
-    private void drawPlayer(Graphics g) {
+    private class GameCycle implements ActionListener {
 
-        if (player.isVisible()) {
-
-            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            doGameCycle();
         }
 
-        if (player.isDying()) {
-
-            player.die();
-            inGame = false;
-        }
-    }
-
-    private void drawShot(Graphics g) {
-
-        if (shot.isVisible()) {
-
-            g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
-        }
-    }
-
-    private void drawBombing(Graphics g) {
-
-        for (Alien a : aliens) {
-
-            Alien.Bomb b = a.getBomb();
-
-            if (!b.isDestroyed()) {
-
-                g.drawImage(b.getImage(), b.getX(), b.getY(), this);
-            }
+        private void doGameCycle() {
+            update(); // 9 update domain entities according to business (game) rules -> state changes, can be split per entity, on each cycle event; business rules in update()
+            repaint(); // 10 results in paintComponent() being called -> automation: react to above state changes in @EventHandling UI components in each slice
+            // emit Commands for new desired state changes
         }
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) { // 11
         super.paintComponent(g);
 
-        doDrawing(g);
-    }
-
-    private void doDrawing(Graphics g) {
-
-        g.setColor(Color.black);
-        g.fillRect(0, 0, d.width, d.height);
-//        g.setColor(new Color(100, 0, 0)); // draw border
-//        g.drawRect(1, 1, Commons.BOARD_WIDTH-1, Commons.BOARD_HEIGHT-1);
-        g.setColor(Color.green);
-
-        if (inGame) {
-
-            g.drawLine(0, Commons.GROUND,
-                    Commons.BOARD_WIDTH, Commons.GROUND);
-
-            drawAliens(g);
-            drawPlayer(g);
-            drawShot(g);
-            drawBombing(g);
-
-        } else {
-
-            if (timer.isRunning()) {
-                timer.stop();
-            }
-
-            gameOver(g);
-        }
-
-        Toolkit.getDefaultToolkit().sync();
-    }
-
-    private void gameOver(Graphics g) {
-
-        g.setColor(Color.black);
-        g.fillRect(0, 0, Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
-
-        g.setColor(new Color(0, 32, 48));
-        g.fillRect(50, Commons.BOARD_WIDTH / 2 - 30, Commons.BOARD_WIDTH - 100, 50);
-        g.setColor(Color.white);
-        g.drawRect(50, Commons.BOARD_WIDTH / 2 - 30, Commons.BOARD_WIDTH - 100, 50);
-
-        var small = new Font("Helvetica", Font.BOLD, 14);
-        var fontMetrics = this.getFontMetrics(small);
-
-        g.setColor(Color.white);
-        g.setFont(small);
-        g.drawString(message, (Commons.BOARD_WIDTH - fontMetrics.stringWidth(message)) / 2,
-                Commons.BOARD_WIDTH / 2);
+        doDrawing(g); // 12 draws entities, finishes some multi-step state transitions (e.g., dying - becoming invisible)
     }
 
     private void update() {
@@ -282,7 +216,7 @@ public class Board extends JPanel {
                     message = "Invasion!";
                 }
 
-                alien.act(direction);
+                alien.act(direction);  // alien moves by |<direction>| = 1 pixel per gamecycle; player moves by 2 pixels per gamecycle
             }
         }
 
@@ -332,49 +266,109 @@ public class Board extends JPanel {
         }
     }
 
-    private void doGameCycle() {
+    private void doDrawing(Graphics g) {
 
-        update();
-        repaint();
+        g.setColor(Color.black);
+        g.fillRect(0, 0, dimensions.width, dimensions.height);
+//        g.setColor(new Color(100, 0, 0)); // draw border for debugging purposes
+//        g.drawRect(1, 1, Commons.BOARD_WIDTH-1, Commons.BOARD_HEIGHT-1);
+        g.setColor(Color.green);
+
+        if (inGame) { // check whether player is still alive or game over
+
+            g.drawLine(0, Commons.GROUND,
+                    Commons.BOARD_WIDTH, Commons.GROUND);
+
+            drawAliens(g);
+            drawPlayer(g);
+            drawShot(g);
+            drawBombing(g);
+
+        } else {
+
+            if (timer.isRunning()) {
+                timer.stop();
+            }
+
+            gameOver(g);
+        }
+
+        Toolkit.getDefaultToolkit().sync();
     }
 
-    private class GameCycle implements ActionListener {
+    private void drawAliens(Graphics g) {
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
+        for (Alien alien : aliens) {
 
-            doGameCycle();
-        }
-    }
+            if (alien.isVisible()) {
 
-    private class TAdapter extends KeyAdapter {
+                g.drawImage(alien.getImage(), alien.getX(), alien.getY(), this);
+            }
 
-        @Override
-        public void keyReleased(KeyEvent e) {
+            if (alien.isDying()) {
 
-            player.keyReleased(e);
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-            player.keyPressed(e);
-
-            int x = player.getX();
-            int y = player.getY();
-
-            int key = e.getKeyCode();
-
-            if (key == KeyEvent.VK_SPACE) {
-
-                if (inGame) {
-
-                    if (!shot.isVisible()) {
-
-                        shot = new Shot(x, y);
-                    }
-                }
+                alien.die();
             }
         }
     }
+
+    private void drawPlayer(Graphics g) {
+
+        if (player.isVisible()) {
+
+            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+        }
+
+        if (player.isDying()) {
+
+            player.die();
+            inGame = false;
+        }
+    }
+
+    private void drawShot(Graphics g) {
+
+        if (shot.isVisible()) {
+
+            g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
+        }
+    }
+
+    private void drawBombing(Graphics g) {
+
+        for (Alien a : aliens) {
+
+            Alien.Bomb b = a.getBomb();
+
+            if (!b.isDestroyed()) {
+
+                g.drawImage(b.getImage(), b.getX(), b.getY(), this);
+            }
+        }
+    }
+
+    private void gameOver(Graphics g) {
+
+        g.setColor(Color.black);
+        g.fillRect(0, 0, Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
+
+        g.setColor(new Color(0, 32, 48));
+        g.fillRect(50, Commons.BOARD_WIDTH / 2 - 30, Commons.BOARD_WIDTH - 100, 50);
+        g.setColor(Color.white);
+        g.drawRect(50, Commons.BOARD_WIDTH / 2 - 30, Commons.BOARD_WIDTH - 100, 50);
+
+        var small = new Font("Helvetica", Font.BOLD, 14);
+        var fontMetrics = this.getFontMetrics(small);
+
+        g.setColor(Color.white);
+        g.setFont(small);
+        g.drawString(message, (Commons.BOARD_WIDTH - fontMetrics.stringWidth(message)) / 2,
+                Commons.BOARD_WIDTH / 2);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return dimensions;
+    }
+
 }

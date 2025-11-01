@@ -1,11 +1,11 @@
-package nl.pancompany.sprite;
+package nl.pancompany.spaceinvaders.sprite;
 
-import nl.pancompany.Commons;
+import nl.pancompany.spaceinvaders.Commons;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
-import static nl.pancompany.Commons.PLAYER_BORDER;
+import static nl.pancompany.spaceinvaders.Commons.PLAYER_BORDER;
 
 public class Player extends Sprite {
 
@@ -53,7 +53,7 @@ public class Player extends Sprite {
 
         if (key == KeyEvent.VK_LEFT) {
 
-            dx = -2;
+            dx = -2; // alien moves by |<direction>| = 1 pixel per gamecycle; player moves by 2 pixels per gamecycle
         }
 
         if (key == KeyEvent.VK_RIGHT) {

@@ -1,4 +1,4 @@
-package nl.pancompany.sprite;
+package nl.pancompany.spaceinvaders.sprite;
 
 import java.awt.Image;
 

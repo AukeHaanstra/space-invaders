@@ -1,4 +1,4 @@
-package nl.pancompany;
+package nl.pancompany.spaceinvaders;
 
 public interface Commons {
 
