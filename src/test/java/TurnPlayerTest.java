@@ -12,6 +12,7 @@ import nl.pancompany.spaceinvaders.events.PlayerTurned;
 import nl.pancompany.spaceinvaders.events.SpriteTurned;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ public class TurnPlayerTest {
     }
 
     @Test
-    void givenGameAndPlayerCreated_whenTurnPlayer_thenPlayerTurned() {
+    void givenPlayerCreated_whenTurnPlayer_thenPlayerTurned() {
         PlayerCreated playerCreated = new PlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED);
         eventStore.append(Event.of(EntityTags.PLAYER), Event.of(playerCreated, EntityTags.PLAYER));
 
@@ -44,5 +45,10 @@ public class TurnPlayerTest {
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(PlayerTurned.class)).isEqualTo(new PlayerTurned(RIGHT));
+    }
+
+    @Test
+    void given__whenTurnPlayer_thenIllegalState() {
+        Assertions.assertThatThrownBy(() -> commandApi.publish(new TurnPlayer(RIGHT))).isInstanceOf(IllegalStateException.class);
     }
 }

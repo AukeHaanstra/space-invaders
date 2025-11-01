@@ -1,6 +1,8 @@
+import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
+import nl.pancompany.eventstore.record.Event;
 import nl.pancompany.eventstore.record.SequencedEvent;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.EntityTags;
@@ -14,21 +16,24 @@ import java.util.List;
 
 import static nl.pancompany.spaceinvaders.Constants.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 public class PlayerCreatorTest {
 
     EventStore eventStore;
+    EventBus eventBus;
     CommandApi commandApi;
 
     @BeforeEach
     void setUp() {
         SpaceInvaders spaceInvaders = new SpaceInvaders(eventStore = new EventStore(), false);
+        eventBus = eventStore.getEventBus();
         commandApi = spaceInvaders.getCommandApi();
     }
 
     @Test
-    void createsPlayerWhenNoPlayerCreated() {
+    void given__whenCreateGame_thenPlayerCreated() {
         commandApi.publish(new CreateGame());
 
         Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class));
@@ -36,5 +41,16 @@ public class PlayerCreatorTest {
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(PlayerCreated.class)).isEqualTo(new PlayerCreated(PLAYER_IMAGE_PATH,
                 PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED));
+    }
+
+    @Test
+    void givenPlayerCreated_whenCreateGame_thenIllegalState() {
+        PlayerCreated playerCreated = new PlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED);
+        eventStore.append(Event.of(EntityTags.PLAYER), Event.of(playerCreated, EntityTags.PLAYER));
+
+        commandApi.publish(new CreateGame());
+
+        await().untilAsserted(() -> assertThat(eventBus.hasLoggedExceptions()).isTrue());
+        assertThat(eventBus.getLoggedExceptions().getLast().exception()).isInstanceOf(IllegalStateException.class);
     }
 }
