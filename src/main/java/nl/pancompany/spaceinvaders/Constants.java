@@ -1,6 +1,17 @@
 package nl.pancompany.spaceinvaders;
 
-public interface Commons {
+import nl.pancompany.eventstore.query.Tag;
+
+public interface Constants {
+
+    String GAME_ID = "1";
+    String PLAYER_ID = "1";
+    String SHOT_ID = "1";
+
+    String GAME_TAG = "Game";
+    String PLAYER_TAG = "Player";
+    String ALIEN_TAG = "Alien";
+    String SHOT_TAG = "Shot";
 
     int BOARD_WIDTH = 358;
     int BOARD_HEIGHT = 350;

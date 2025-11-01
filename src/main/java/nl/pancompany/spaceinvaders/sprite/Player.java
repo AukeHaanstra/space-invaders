@@ -1,15 +1,14 @@
 package nl.pancompany.spaceinvaders.sprite;
 
-import nl.pancompany.spaceinvaders.Commons;
+import nl.pancompany.spaceinvaders.Constants;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
-import static nl.pancompany.spaceinvaders.Commons.PLAYER_BORDER;
+import static nl.pancompany.spaceinvaders.Constants.PLAYER_BORDER;
+import static nl.pancompany.spaceinvaders.Constants.PLAYER_WIDTH;
 
 public class Player extends Sprite {
-
-    private int width;
 
     public Player() {
 
@@ -22,7 +21,6 @@ public class Player extends Sprite {
 
         var ii = new ImageIcon(getClass().getResource(playerImg));
 
-        width = ii.getImage().getWidth(null); // = 15, just like declared in Commons
         setImage(ii.getImage());
 
         int START_X = 270;
@@ -41,9 +39,9 @@ public class Player extends Sprite {
             x = PLAYER_BORDER;
         }
 
-        if (x >= Commons.BOARD_WIDTH - (width + PLAYER_BORDER)) { // might be replaced by constant
+        if (x >= Constants.BOARD_WIDTH - (PLAYER_WIDTH + PLAYER_BORDER)) {
 
-            x = Commons.BOARD_WIDTH - (width + PLAYER_BORDER);
+            x = Constants.BOARD_WIDTH - (PLAYER_WIDTH + PLAYER_BORDER);
         }
     }
 
