@@ -5,6 +5,7 @@ import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.spaceinvaders.game.create.PrepareGameCommandHandler;
 import nl.pancompany.spaceinvaders.player.creator.PlayerCreator;
+import nl.pancompany.spaceinvaders.player.turn.TurnPlayerCommandHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,16 +34,19 @@ public class SpaceInvaders extends JFrame  {
 
         // Command handlers
         PrepareGameCommandHandler prepareGameCommandHandler = new PrepareGameCommandHandler(eventStore);
+        TurnPlayerCommandHandler turnPlayerCommandHandler = new TurnPlayerCommandHandler(eventStore);
+        commandApi = CommandApi.builder()
+                .prepareGameCommandHandler(prepareGameCommandHandler)
+                .turnPlayerCommandHandler(turnPlayerCommandHandler)
+                .build();
+
+        // Query handlers
 
         // Automations
         PlayerCreator playerCreator = new PlayerCreator(eventStore);
 
         // Event-handler registrations
         eventBus.registerAsynchronousEventHandler(playerCreator);
-
-        commandApi = CommandApi.builder()
-                .prepareGameCommandHandler(prepareGameCommandHandler)
-                .build();
     }
 
     private void initUI() { // 3

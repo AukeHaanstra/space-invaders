@@ -1,6 +1,8 @@
 package nl.pancompany.spaceinvaders;
 
+import nl.pancompany.spaceinvaders.events.SpriteTurned;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
+import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Player;
 import nl.pancompany.spaceinvaders.sprite.Shot;
@@ -21,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
+import static nl.pancompany.spaceinvaders.events.SpriteTurned.TurnDirection.LEFT;
+import static nl.pancompany.spaceinvaders.events.SpriteTurned.TurnDirection.RIGHT;
 
 public class Board extends JPanel {
 
@@ -84,6 +89,7 @@ public class Board extends JPanel {
         public void keyPressed(KeyEvent e) {
 
             player.keyPressed(e); // delegate left & right keystrokes to player entity
+            directionKeyPressed(e); // translator
 
             int x = player.getX();
             int y = player.getY();
@@ -99,6 +105,19 @@ public class Board extends JPanel {
                         shot = new Shot(x, y);
                     }
                 }
+            }
+        }
+
+        public void directionKeyPressed(KeyEvent e) {
+
+            int key = e.getKeyCode();
+
+            if (key == KeyEvent.VK_LEFT) {
+                commandApi.publish(new TurnPlayer(LEFT));
+            }
+
+            if (key == KeyEvent.VK_RIGHT) {
+                commandApi.publish(new TurnPlayer(RIGHT));
             }
         }
     }
