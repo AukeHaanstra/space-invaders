@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders.player.turn;
+package nl.pancompany.spaceinvaders.player.stop;
 
 import lombok.RequiredArgsConstructor;
 import nl.pancompany.eventstore.EventStore;
@@ -10,19 +10,19 @@ import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.events.PlayerCreated;
-import nl.pancompany.spaceinvaders.events.PlayerTurned;
+import nl.pancompany.spaceinvaders.events.PlayerStopped;
 import nl.pancompany.spaceinvaders.shared.Direction;
 
 @RequiredArgsConstructor
-public class TurnPlayerCommandHandler {
+public class StopPlayerCommandHandler {
 
     private final EventStore eventStore;
 
-    public void decide(TurnPlayer turnPlayer) {
+    public void decide(StopPlayer stopPlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
-                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class)));
-        stateManager.getState().orElseThrow(() -> new IllegalStateException("Player turned before being created."));
-        stateManager.apply(new PlayerTurned(turnPlayer.getDirection()), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
+                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerStopped.class)));
+        stateManager.getState().orElseThrow(() -> new IllegalStateException("Player stopped before being created."));
+        stateManager.apply(new PlayerStopped(), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
     }
 
     private static class PlayerState {
@@ -34,8 +34,8 @@ public class TurnPlayerCommandHandler {
         }
 
         @EventSourced
-        void evolve(PlayerTurned playerTurned) {
-            direction = playerTurned.getDirection();
+        void evolve(PlayerStopped playerStopped) {
+            direction = Direction.NONE;
         }
     }
 }

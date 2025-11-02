@@ -10,14 +10,12 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
 import nl.pancompany.spaceinvaders.EntityTags;
-import nl.pancompany.spaceinvaders.events.GameCycleInitiated;
-import nl.pancompany.spaceinvaders.events.PlayerCreated;
-import nl.pancompany.spaceinvaders.events.PlayerMoved;
-import nl.pancompany.spaceinvaders.events.PlayerTurned;
-import nl.pancompany.spaceinvaders.events.SpriteTurned.TurnDirection;
+import nl.pancompany.spaceinvaders.events.*;
+import nl.pancompany.spaceinvaders.shared.Direction;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
 import static nl.pancompany.spaceinvaders.Constants.*;
+import static nl.pancompany.spaceinvaders.shared.Direction.NONE;
 
 @RequiredArgsConstructor
 public class PlayerMover {
@@ -31,19 +29,20 @@ public class PlayerMover {
 
     private void decide(MovePlayer movePlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
-                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class, PlayerMoved.class)));
+                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class, PlayerMoved.class,
+                        PlayerStopped.class)));
         PlayerState playerState = stateManager.getState().orElseThrow(
                 () -> new IllegalStateException("Player must be created before moving."));
 
-        int dx = 0;
-
-        if (playerState.turnDirection == TurnDirection.LEFT) {
-            dx = -PLAYER_SPEED;
-        } else if (playerState.turnDirection == TurnDirection.RIGHT) {
-            dx = PLAYER_SPEED;
-        } else {
+        if (playerState.direction == NONE) {
             return;
         }
+
+        int dx = switch (playerState.direction) {
+            case LEFT -> -PLAYER_SPEED;
+            case RIGHT -> PLAYER_SPEED;
+            default -> throw new IllegalStateException("Unknown move direction: " + playerState.direction);
+        };
 
         int newX = playerState.x + dx;
 
@@ -58,17 +57,23 @@ public class PlayerMover {
 
         int x;
         int y;
-        TurnDirection turnDirection;
+        Direction direction;
 
         @StateCreator
         PlayerState(PlayerCreated playerCreated) {
             x = playerCreated.getStartX();
             y = playerCreated.getStartY();
+            direction = playerCreated.getDirection();
         }
 
         @EventSourced
         void evolve(PlayerTurned playerTurned) {
-            turnDirection = playerTurned.getTurnDirection();
+            direction = playerTurned.getDirection();
+        }
+
+        @EventSourced
+        void evolve(PlayerStopped playerStopped) {
+            direction = NONE;
         }
 
         @EventSourced

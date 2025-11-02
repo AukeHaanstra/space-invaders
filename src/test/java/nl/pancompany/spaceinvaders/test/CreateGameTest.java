@@ -1,5 +1,6 @@
 package nl.pancompany.spaceinvaders.test;
 
+import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
@@ -23,11 +24,13 @@ public class CreateGameTest {
 
     EventStore eventStore;
     CommandApi commandApi;
+    EventBus eventBus;
 
     @BeforeEach
     void setUp() {
         SpaceInvaders spaceInvaders = new SpaceInvaders(eventStore = new EventStore(), false);
         commandApi = spaceInvaders.getCommandApi();
+        eventBus = eventStore.getEventBus();
     }
 
     @Test
@@ -38,6 +41,7 @@ public class CreateGameTest {
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(GameCreated.class)).isEqualTo(new GameCreated());
+        assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 
     @Test

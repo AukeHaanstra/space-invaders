@@ -1,5 +1,6 @@
 package nl.pancompany.spaceinvaders.test;
 
+import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
@@ -11,31 +12,34 @@ import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.PlayerCreated;
 import nl.pancompany.spaceinvaders.events.PlayerTurned;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
-import org.assertj.core.api.Assertions;
+import nl.pancompany.spaceinvaders.shared.Direction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static nl.pancompany.spaceinvaders.Constants.*;
-import static nl.pancompany.spaceinvaders.events.SpriteTurned.TurnDirection.RIGHT;
+import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 public class TurnPlayerTest {
 
     EventStore eventStore;
     CommandApi commandApi;
+    EventBus eventBus;
 
     @BeforeEach
     void setUp() {
         SpaceInvaders spaceInvaders = new SpaceInvaders(eventStore = new EventStore(), false);
         commandApi = spaceInvaders.getCommandApi();
+        eventBus = eventStore.getEventBus();
     }
 
     @Test
     void givenPlayerCreated_whenTurnPlayer_thenPlayerTurned() {
-        PlayerCreated playerCreated = new PlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED);
+        PlayerCreated playerCreated = new PlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
         eventStore.append(Event.of(playerCreated, EntityTags.PLAYER));
 
         commandApi.publish(new TurnPlayer(RIGHT));
@@ -44,10 +48,11 @@ public class TurnPlayerTest {
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(PlayerTurned.class)).isEqualTo(new PlayerTurned(RIGHT));
+        assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 
     @Test
     void given__whenTurnPlayer_thenIllegalState() {
-        Assertions.assertThatThrownBy(() -> commandApi.publish(new TurnPlayer(RIGHT))).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> commandApi.publish(new TurnPlayer(RIGHT))).isInstanceOf(IllegalStateException.class);
     }
 }

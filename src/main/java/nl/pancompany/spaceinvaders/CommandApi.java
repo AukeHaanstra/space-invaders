@@ -11,6 +11,8 @@ import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
+import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
+import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayerCommandHandler;
 
@@ -34,13 +36,18 @@ public class CommandApi {
     private final CreateGameCommandHandler createGameCommandHandler;
     private final TurnPlayerCommandHandler turnPlayerCommandHandler;
     private final InitiateGameCycleCommandHandler initiateGameCycleCommandHandler;
+    private final StopPlayerCommandHandler stopPlayerCommandHandler;
 
     public void publish(Object command) {
         switch (command) {
             case null -> throw new IllegalArgumentException("Null Command");
+            // Game
             case CreateGame createGame -> COMMAND_EXECUTOR.accept(() ->createGameCommandHandler.decide(createGame));
-            case TurnPlayer turnPlayer -> COMMAND_EXECUTOR.accept(() -> turnPlayerCommandHandler.decide(turnPlayer));
             case InitiateGameCycle initiateGameCycle -> COMMAND_EXECUTOR.accept(() -> initiateGameCycleCommandHandler.decide(initiateGameCycle));
+            // Player
+            case TurnPlayer turnPlayer -> COMMAND_EXECUTOR.accept(() -> turnPlayerCommandHandler.decide(turnPlayer));
+            case StopPlayer stopPlayer -> COMMAND_EXECUTOR.accept(() -> stopPlayerCommandHandler.decide(stopPlayer));
+
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }
 

@@ -1,6 +1,7 @@
 package nl.pancompany.spaceinvaders.events;
 
 import lombok.Data;
+import nl.pancompany.spaceinvaders.shared.Direction;
 
 @Data
 public class SpriteCreated {
@@ -9,4 +10,5 @@ public class SpriteCreated {
     private final int startX;
     private final int startY;
     private final int speed;
+    private final Direction direction;
 }

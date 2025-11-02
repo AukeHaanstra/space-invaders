@@ -11,6 +11,7 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.events.PlayerCreated;
+import nl.pancompany.spaceinvaders.shared.Direction;
 
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class PlayerCreator {
 
     @EventHandler
     private void react(GameCreated gameCreated) {
-        COMMAND_EXECUTOR.accept(() -> decide(new RegisterPlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED)));
+        COMMAND_EXECUTOR.accept(() -> decide(new RegisterPlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE)));
     }
 
     private void decide(RegisterPlayerCreated registerPlayerCreated) {
@@ -38,7 +39,8 @@ public class PlayerCreator {
                         registerPlayerCreated.getImagePath(),
                         registerPlayerCreated.getStartX(),
                         registerPlayerCreated.getStartY(),
-                        registerPlayerCreated.getSpeed()),
+                        registerPlayerCreated.getSpeed(),
+                        registerPlayerCreated.getDirection()),
                 Tags.and(EntityTags.PLAYER, EntityTags.GAME));
     }
 

@@ -2,6 +2,7 @@ package nl.pancompany.spaceinvaders;
 
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
+import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Player;
@@ -18,8 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import static nl.pancompany.spaceinvaders.events.SpriteTurned.TurnDirection.LEFT;
-import static nl.pancompany.spaceinvaders.events.SpriteTurned.TurnDirection.RIGHT;
+import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
+import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 
 public class Board extends JPanel {
 
@@ -77,7 +78,22 @@ public class Board extends JPanel {
         public void keyReleased(KeyEvent e) {
 
             player.keyReleased(e); // delegate left & right key released events to player entity
+            directionKeyReleased(e);
         }
+
+        private void directionKeyReleased(KeyEvent e) {
+
+            int key = e.getKeyCode();
+
+            if (key == KeyEvent.VK_LEFT) {
+                commandApi.publish(new StopPlayer());
+            }
+
+            if (key == KeyEvent.VK_RIGHT) {
+                commandApi.publish(new StopPlayer());
+            }
+        }
+
 
         @Override
         public void keyPressed(KeyEvent e) {
@@ -102,7 +118,7 @@ public class Board extends JPanel {
             }
         }
 
-        public void directionKeyPressed(KeyEvent e) {
+        private void directionKeyPressed(KeyEvent e) {
 
             int key = e.getKeyCode();
 

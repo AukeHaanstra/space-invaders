@@ -9,4 +9,5 @@ public class RegisterSpriteCreated {
     private final int startX;
     private final int startY;
     private final int speed;
+    private final Direction direction;
 }

@@ -1,13 +1,10 @@
 package nl.pancompany.spaceinvaders.events;
 
 import lombok.Data;
+import nl.pancompany.spaceinvaders.shared.Direction;
 
 @Data
 public class SpriteTurned {
 
-    public enum TurnDirection {
-        LEFT, RIGHT
-    }
-
-    private final TurnDirection turnDirection;
+    private final Direction direction;
 }
