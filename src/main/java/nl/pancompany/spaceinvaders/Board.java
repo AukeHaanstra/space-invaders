@@ -7,6 +7,7 @@ import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Player;
 import nl.pancompany.spaceinvaders.sprite.Shot;
+import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,8 +25,9 @@ import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 
 public class Board extends JPanel {
 
-    private final CommandApi commandApi;
     private final Dimension dimensions = new Dimension(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
+    private final CommandApi commandApi;
+    private final QueryApi queryApi;
     private List<Alien> aliens;
     private Player player;
     private Shot shot; // single shot from the player
@@ -39,8 +41,9 @@ public class Board extends JPanel {
 
     private Timer timer;
 
-    public Board(CommandApi commandApi) {
+    public Board(CommandApi commandApi, QueryApi queryApi) {
         this.commandApi = commandApi;
+        this.queryApi = queryApi;
         initBoard(); // 5
     }
 
@@ -347,7 +350,7 @@ public class Board extends JPanel {
     }
 
     private void drawPlayer(Graphics g) {
-
+        SpriteReadModel spriteReadModel = queryApi.publish();
         if (player.isVisible()) {
 
             // here actually take the filename from the entity and load it as an image !

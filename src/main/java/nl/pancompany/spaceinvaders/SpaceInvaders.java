@@ -9,6 +9,10 @@ import nl.pancompany.spaceinvaders.player.creator.PlayerCreator;
 import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayerCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.Sprite;
+import nl.pancompany.spaceinvaders.sprite.get.SpriteProjector;
+import nl.pancompany.spaceinvaders.sprite.get.SpriteQueryHandler;
+import nl.pancompany.spaceinvaders.sprite.get.SpriteRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +21,7 @@ import java.awt.*;
 public class SpaceInvaders extends JFrame  {
 
     CommandApi commandApi;
+    QueryApi queryApi;
 
     static void main(String[] args) { // 1
         EventQueue.invokeLater(() -> {
@@ -49,13 +54,24 @@ public class SpaceInvaders extends JFrame  {
                 .stopPlayerCommandHandler(stopPlayerCommandHandler)
                 .build();
 
-        // Query handlers
+        // Query handlers, projectors and repositories
+        // Sprite
+        SpriteRepository spriteRepository = new SpriteRepository();
+        SpriteProjector spriteProjector = new SpriteProjector(spriteRepository);
+        SpriteQueryHandler spriteQueryHandler = new SpriteQueryHandler(spriteRepository);
+        queryApi = QueryApi.builder()
+                // Sprite
+                .spriteQueryHandler(spriteQueryHandler)
+                .build();
+
+        // Query event-handler registrations
+        eventBus.registerAsynchronousEventHandler(spriteProjector);
 
         // Automations
         PlayerCreator playerCreator = new PlayerCreator(eventStore);
         PlayerMover playerMover = new PlayerMover(eventStore);
 
-        // Event-handler registrations
+        // Automation event-handler registrations
         eventBus.registerAsynchronousEventHandler(playerCreator);
         eventBus.registerAsynchronousEventHandler(playerMover);
     }
@@ -63,7 +79,7 @@ public class SpaceInvaders extends JFrame  {
     private void initUI() { // 3
         setTitle("Space Invaders");
         setLayout(new BorderLayout());
-        Board board = new Board(commandApi);
+        Board board = new Board(commandApi, queryApi);
         setContentPane(board); // 4
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
