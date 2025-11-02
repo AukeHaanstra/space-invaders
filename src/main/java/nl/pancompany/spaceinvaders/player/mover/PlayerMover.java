@@ -31,7 +31,7 @@ public class PlayerMover {
 
     private void decide(MovePlayer movePlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
-                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class)));
+                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class, PlayerMoved.class)));
         PlayerState playerState = stateManager.getState().orElseThrow(
                 () -> new IllegalStateException("Player must be created before moving."));
 
@@ -47,7 +47,7 @@ public class PlayerMover {
 
         int newX = playerState.x + dx;
 
-        if (newX <= PLAYER_BORDER || newX >= Constants.BOARD_WIDTH - (PLAYER_WIDTH + PLAYER_BORDER)) {
+        if (newX <= PLAYER_STOP_X_LEFT || newX >= PLAYER_STOP_X_RIGHT) {
             return; // don't move off the board
         }
 

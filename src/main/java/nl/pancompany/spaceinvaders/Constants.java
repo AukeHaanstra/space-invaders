@@ -33,6 +33,10 @@ public interface Constants {
     int PLAYER_START_Y = 280;
     int PLAYER_SPEED = 2;
     String PLAYER_IMAGE_PATH = "/images/player.png";
+    // Player derived constants
+    int PLAYER_STOP_X_LEFT = PLAYER_BORDER;
+    int PLAYER_STOP_X_RIGHT = BOARD_WIDTH - (PLAYER_WIDTH + PLAYER_BORDER);
+
 
     // Miscellaneous
     int GROUND = 290;
