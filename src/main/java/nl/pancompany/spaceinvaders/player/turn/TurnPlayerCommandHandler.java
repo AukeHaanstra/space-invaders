@@ -6,6 +6,7 @@ import nl.pancompany.eventstore.StateManager;
 import nl.pancompany.eventstore.annotation.EventSourced;
 import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.query.Query;
+import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.events.PlayerCreated;
@@ -21,7 +22,7 @@ public class TurnPlayerCommandHandler {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
                 Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class)));
         stateManager.getState().orElseThrow(() -> new IllegalStateException("Player turned before being created."));
-        stateManager.apply(new PlayerTurned(turnPlayer.getTurnDirection()), EntityTags.PLAYER);
+        stateManager.apply(new PlayerTurned(turnPlayer.getTurnDirection()), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
     }
 
     private static class PlayerState {

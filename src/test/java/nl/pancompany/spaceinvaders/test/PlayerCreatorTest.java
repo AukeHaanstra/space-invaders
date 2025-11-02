@@ -1,9 +1,11 @@
+package nl.pancompany.spaceinvaders.test;
+
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
+import nl.pancompany.eventstore.data.Event;
+import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
-import nl.pancompany.eventstore.record.Event;
-import nl.pancompany.eventstore.record.SequencedEvent;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
@@ -15,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static nl.pancompany.spaceinvaders.Constants.*;
+import static nl.pancompany.spaceinvaders.test.TestUtil.withoutLogging;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 public class PlayerCreatorTest {
@@ -45,12 +47,15 @@ public class PlayerCreatorTest {
 
     @Test
     void givenPlayerCreated_whenCreateGame_thenIllegalState() {
-        PlayerCreated playerCreated = new PlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED);
-        eventStore.append(Event.of(EntityTags.PLAYER), Event.of(playerCreated, EntityTags.PLAYER));
+        withoutLogging(() -> {
+                    PlayerCreated playerCreated = new PlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED);
+                    eventStore.append(Event.of(playerCreated, EntityTags.PLAYER));
 
-        commandApi.publish(new CreateGame());
+                    commandApi.publish(new CreateGame());
 
-        await().untilAsserted(() -> assertThat(eventBus.hasLoggedExceptions()).isTrue());
-        assertThat(eventBus.getLoggedExceptions().getLast().exception()).isInstanceOf(IllegalStateException.class);
+                    await().untilAsserted(() -> assertThat(eventBus.hasLoggedExceptions()).isTrue());
+                    assertThat(eventBus.getLoggedExceptions().getLast().exception()).isInstanceOf(IllegalStateException.class);
+                }
+        );
     }
 }

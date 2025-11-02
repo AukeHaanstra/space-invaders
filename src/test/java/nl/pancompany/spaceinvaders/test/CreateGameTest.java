@@ -1,8 +1,10 @@
+package nl.pancompany.spaceinvaders.test;
+
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
-import nl.pancompany.eventstore.record.Event;
-import nl.pancompany.eventstore.record.SequencedEvent;
+import nl.pancompany.eventstore.data.Event;
+import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
@@ -41,7 +43,7 @@ public class CreateGameTest {
     @Test
     void givenGameCreated_whenCreateGame_thenIllegalState() {
         GameCreated gameCreated = new GameCreated();
-        eventStore.append(Event.of(EntityTags.GAME), Event.of(gameCreated, EntityTags.GAME));
+        eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
         Assertions.assertThatThrownBy(() -> commandApi.publish(new CreateGame())).isInstanceOf(IllegalStateException.class);
     }

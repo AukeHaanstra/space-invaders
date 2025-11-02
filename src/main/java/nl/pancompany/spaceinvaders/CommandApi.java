@@ -17,11 +17,11 @@ public class CommandApi {
 
     public void publish(Object command) {
         switch (command) {
-            case null -> throw new IllegalStateException("Null Command");
+            case null -> throw new IllegalArgumentException("Null Command");
             case CreateGame createGame -> createGameCommandHandler.decide(createGame);
             case TurnPlayer turnPlayer -> turnPlayerCommandHandler.decide(turnPlayer);
             case InitiateGameCycle initiateGameCycle -> initiateGameCycleCommandHandler.decide(initiateGameCycle);
-            default -> throw new IllegalStateException("Unexpected Command: " + command);
+            default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }
 
     }

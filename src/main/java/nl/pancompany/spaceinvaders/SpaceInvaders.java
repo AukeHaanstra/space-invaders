@@ -6,6 +6,7 @@ import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
 import nl.pancompany.spaceinvaders.player.creator.PlayerCreator;
+import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayerCommandHandler;
 
 import javax.swing.*;
@@ -47,9 +48,11 @@ public class SpaceInvaders extends JFrame  {
 
         // Automations
         PlayerCreator playerCreator = new PlayerCreator(eventStore);
+        PlayerMover playerMover = new PlayerMover(eventStore);
 
         // Event-handler registrations
         eventBus.registerAsynchronousEventHandler(playerCreator);
+        eventBus.registerAsynchronousEventHandler(playerMover);
     }
 
     private void initUI() { // 3

@@ -11,8 +11,6 @@ import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.events.GameCycleInitiated;
 
-import java.time.LocalTime;
-
 @RequiredArgsConstructor
 public class InitiateGameCycleCommandHandler {
     private final EventStore eventStore;
@@ -20,7 +18,7 @@ public class InitiateGameCycleCommandHandler {
     public void decide(InitiateGameCycle initiateGameCycle) {
         StateManager<GameState> stateManager = eventStore.loadState(GameState.class,
                 Query.of(EntityTags.GAME, Type.of(GameCreated.class)));
-        GameState gameState = stateManager.getState().orElseThrow(() -> new IllegalStateException(
+        stateManager.getState().orElseThrow(() -> new IllegalStateException(
                 "Game must be created before initiating a game cycle."));
         stateManager.apply(new GameCycleInitiated(), EntityTags.GAME);
     }
