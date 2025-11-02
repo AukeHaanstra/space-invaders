@@ -352,7 +352,7 @@ public class Board extends JPanel {
     }
 
     private void drawPlayer(Graphics g) {
-        SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID), SpriteReadModel.class)
+        SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
                 .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
         if (player.isVisible()) {
 
