@@ -9,7 +9,6 @@ import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
-import nl.pancompany.spaceinvaders.Constants;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.events.GameCycleInitiated;
 import nl.pancompany.spaceinvaders.events.PlayerCreated;
@@ -17,6 +16,7 @@ import nl.pancompany.spaceinvaders.events.PlayerMoved;
 import nl.pancompany.spaceinvaders.events.PlayerTurned;
 import nl.pancompany.spaceinvaders.events.SpriteTurned.TurnDirection;
 
+import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
 import static nl.pancompany.spaceinvaders.Constants.*;
 
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class PlayerMover {
 
     @EventHandler
     private void react(GameCycleInitiated gameCycleInitiated) {
-        decide(new MovePlayer());
+        COMMAND_EXECUTOR.accept(() -> decide(new MovePlayer()));
     }
 
     private void decide(MovePlayer movePlayer) {

@@ -12,6 +12,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
+        <log4j.version>2.25.2</log4j.version>
     </properties>
 
     <dependencyManagement>
@@ -30,7 +31,12 @@
         <dependency>
             <groupId>nl.pancompany</groupId>
             <artifactId>eventstore</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.failsafe</groupId>
+            <artifactId>failsafe</artifactId>
+            <version>3.3.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -38,9 +44,14 @@
             <version>2.0.17</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>2.0.17</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

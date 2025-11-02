@@ -1,5 +1,13 @@
 package nl.pancompany.spaceinvaders;
 
+import dev.failsafe.Failsafe;
+import dev.failsafe.FailsafeExecutor;
+import dev.failsafe.RetryPolicy;
+import dev.failsafe.function.CheckedRunnable;
+import nl.pancompany.eventstore.StateManager.StateManagerOptimisticLockingException;
+
+import java.util.function.Consumer;
+
 public interface Constants {
 
     // Ids
@@ -46,6 +54,5 @@ public interface Constants {
     int NUMBER_OF_ALIENS_TO_DESTROY = 24;
     int CHANCE = 5;
     int DELAY = 17;
-
 
 }

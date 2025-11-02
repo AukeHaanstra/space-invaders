@@ -14,6 +14,7 @@ import nl.pancompany.spaceinvaders.events.PlayerCreated;
 
 import java.util.Optional;
 
+import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
 import static nl.pancompany.spaceinvaders.Constants.*;
 
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class PlayerCreator {
 
     @EventHandler
     private void react(GameCreated gameCreated) {
-        decide(new RegisterPlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED));
+        COMMAND_EXECUTOR.accept(() -> decide(new RegisterPlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED)));
     }
 
     private void decide(RegisterPlayerCreated registerPlayerCreated) {
