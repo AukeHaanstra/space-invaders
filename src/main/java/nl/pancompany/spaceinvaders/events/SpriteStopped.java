@@ -1,10 +1,7 @@
 package nl.pancompany.spaceinvaders.events;
 
-import lombok.Data;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
-@Data
-public class SpriteStopped {
+public record SpriteStopped(SpriteId id) {
 
-    private final SpriteId id;
 }

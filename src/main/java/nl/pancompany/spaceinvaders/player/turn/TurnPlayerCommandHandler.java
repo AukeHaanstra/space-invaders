@@ -23,7 +23,7 @@ public class TurnPlayerCommandHandler {
     public void decide(TurnPlayer turnPlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
                 Query.of(EntityTags.PLAYER, Types.or(SpriteCreated.class, SpriteTurned.class)));
-        stateManager.getState().orElseThrow(() -> new IllegalStateException("Player turned before being created."));
+        stateManager.getState().orElseThrow(() -> new IllegalStateException("Player cannot turn before being created."));
         stateManager.apply(new SpriteTurned(PLAYER_SPRITE_ID, turnPlayer.getDirection()), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
     }
 
@@ -37,7 +37,7 @@ public class TurnPlayerCommandHandler {
 
         @EventSourced
         void evolve(SpriteTurned spriteTurned) {
-            direction = spriteTurned.getDirection();
+            direction = spriteTurned.direction();
         }
     }
 }

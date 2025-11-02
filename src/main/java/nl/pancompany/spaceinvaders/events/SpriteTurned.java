@@ -1,12 +1,8 @@
 package nl.pancompany.spaceinvaders.events;
 
-import lombok.Data;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
-@Data
-public class SpriteTurned {
+public record SpriteTurned(SpriteId id, Direction direction) {
 
-    private final SpriteId id;
-    private final Direction direction;
 }

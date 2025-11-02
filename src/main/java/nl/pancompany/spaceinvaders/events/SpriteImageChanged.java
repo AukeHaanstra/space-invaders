@@ -2,6 +2,5 @@ package nl.pancompany.spaceinvaders.events;
 
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
-public record SpriteMoved(SpriteId id, int newX, int newY) {
-
+public record SpriteImageChanged(SpriteId id, String imagePath) {
 }

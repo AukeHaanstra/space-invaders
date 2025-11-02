@@ -23,7 +23,7 @@ public class StopPlayerCommandHandler {
     public void decide(StopPlayer stopPlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
                 Query.of(EntityTags.PLAYER, Types.or(SpriteCreated.class, SpriteStopped.class)));
-        stateManager.getState().orElseThrow(() -> new IllegalStateException("Player stopped before being created."));
+        stateManager.getState().orElseThrow(() -> new IllegalStateException("Player cannot stop before being created."));
         stateManager.apply(new SpriteStopped(PLAYER_SPRITE_ID), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
     }
 

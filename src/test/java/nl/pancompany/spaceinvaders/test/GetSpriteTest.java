@@ -8,10 +8,7 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.QueryApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
-import nl.pancompany.spaceinvaders.events.SpriteCreated;
-import nl.pancompany.spaceinvaders.events.SpriteMoved;
-import nl.pancompany.spaceinvaders.events.SpriteStopped;
-import nl.pancompany.spaceinvaders.events.SpriteTurned;
+import nl.pancompany.spaceinvaders.events.*;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
@@ -108,6 +105,22 @@ public class GetSpriteTest {
         assertThat(readModel).isPresent();
         assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
         assertThat(readModel.get().direction()).isEqualTo(Direction.NONE);
+    }
+
+    @Test
+    void givenSpriteCreated_whenSpriteImageChanged_thenImagePathIsUpdated() {
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+                PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
+        eventStore.append(Event.of(spriteCreated, PLAYER));
+
+        SpriteImageChanged spriteStopped = new SpriteImageChanged(PLAYER_SPRITE_ID, "newPath");
+        eventStore.append(Event.of(spriteStopped, PLAYER));
+        await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(2));
+
+        Optional<SpriteReadModel> readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
+        assertThat(readModel).isPresent();
+        assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
+        assertThat(readModel.get().imagePath()).isEqualTo("newPath");
     }
 
 }

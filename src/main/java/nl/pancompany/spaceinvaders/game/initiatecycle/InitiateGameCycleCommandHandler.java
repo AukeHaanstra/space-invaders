@@ -19,7 +19,7 @@ public class InitiateGameCycleCommandHandler {
         StateManager<GameState> stateManager = eventStore.loadState(GameState.class,
                 Query.of(EntityTags.GAME, Type.of(GameCreated.class)));
         stateManager.getState().orElseThrow(() -> new IllegalStateException(
-                "Game must be created before initiating a game cycle."));
+                "Game cannot be initiated before being created."));
         stateManager.apply(new GameCycleInitiated(), EntityTags.GAME);
     }
 

@@ -32,7 +32,7 @@ public class PlayerMover {
                 Query.of(EntityTags.PLAYER, Types.or(SpriteCreated.class, SpriteTurned.class, SpriteMoved.class,
                         SpriteStopped.class)));
         PlayerState playerState = stateManager.getState().orElseThrow(
-                () -> new IllegalStateException("Player must be created before moving."));
+                () -> new IllegalStateException("Player cannot move before being created."));
 
         if (playerState.direction == NONE) {
             return;
@@ -61,14 +61,14 @@ public class PlayerMover {
 
         @StateCreator
         PlayerState(SpriteCreated spriteCreated) {
-            x = spriteCreated.getStartX();
-            y = spriteCreated.getStartY();
-            direction = spriteCreated.getDirection();
+            x = spriteCreated.startX();
+            y = spriteCreated.startY();
+            direction = spriteCreated.direction();
         }
 
         @EventSourced
         void evolve(SpriteTurned spriteTurned) {
-            direction = spriteTurned.getDirection();
+            direction = spriteTurned.direction();
         }
 
         @EventSourced
@@ -78,8 +78,8 @@ public class PlayerMover {
 
         @EventSourced
         void evolve(SpriteMoved spriteMoved) {
-            x = spriteMoved.getNewX();
-            y = spriteMoved.getNewY();
+            x = spriteMoved.newX();
+            y = spriteMoved.newY();
         }
     }
 }

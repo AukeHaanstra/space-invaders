@@ -2,10 +2,7 @@ package nl.pancompany.spaceinvaders.sprite.get;
 
 import lombok.RequiredArgsConstructor;
 import nl.pancompany.eventstore.annotation.EventHandler;
-import nl.pancompany.spaceinvaders.events.SpriteCreated;
-import nl.pancompany.spaceinvaders.events.SpriteMoved;
-import nl.pancompany.spaceinvaders.events.SpriteStopped;
-import nl.pancompany.spaceinvaders.events.SpriteTurned;
+import nl.pancompany.spaceinvaders.events.*;
 
 import static java.lang.String.format;
 import static nl.pancompany.spaceinvaders.shared.Direction.NONE;
@@ -16,30 +13,36 @@ public class SpriteProjector {
     private final SpriteRepository spriteRepository;
 
     @EventHandler
-    void handle(SpriteCreated spriteCreated) {
-        if (spriteRepository.findById(spriteCreated.getId()).isPresent()) {
-            throw new IllegalStateException(format("Sprite with id %s not found.", spriteCreated.getId()));
+    void create(SpriteCreated spriteCreated) {
+        if (spriteRepository.findById(spriteCreated.id()).isPresent()) {
+            throw new IllegalStateException(format("Sprite with id %s not found.", spriteCreated.id()));
         }
-        SpriteReadModel sprite = new SpriteReadModel(spriteCreated.getId(), false, spriteCreated.getImagePath(), false,
-                spriteCreated.getStartX(), spriteCreated.getStartY(), spriteCreated.getSpeed(), spriteCreated.getDirection());
+        SpriteReadModel sprite = new SpriteReadModel(spriteCreated.id(), false, spriteCreated.imagePath(), false,
+                spriteCreated.startX(), spriteCreated.startY(), spriteCreated.speed(), spriteCreated.direction());
         spriteRepository.save(sprite);
     }
 
     @EventHandler
-    void handle(SpriteTurned spriteTurned) {
-        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteTurned.getId());
-        spriteRepository.save(sprite.withDirection(spriteTurned.getDirection()));
+    void update(SpriteTurned spriteTurned) {
+        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteTurned.id());
+        spriteRepository.save(sprite.withDirection(spriteTurned.direction()));
     }
 
     @EventHandler
-    void handle(SpriteStopped spriteStopped) {
-        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteStopped.getId());
+    void update(SpriteStopped spriteStopped) {
+        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteStopped.id());
         spriteRepository.save(sprite.withDirection(NONE));
     }
 
     @EventHandler
-    void handle(SpriteMoved spriteMoved) {
-        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteMoved.getId());
-        spriteRepository.save(sprite.withX(spriteMoved.getNewX()).withY(spriteMoved.getNewY()));
+    void update(SpriteMoved spriteMoved) {
+        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteMoved.id());
+        spriteRepository.save(sprite.withX(spriteMoved.newX()).withY(spriteMoved.newY()));
+    }
+
+    @EventHandler
+    void update(SpriteImageChanged spriteImageChanged) {
+        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteImageChanged.id());
+        spriteRepository.save(sprite.withImage(spriteImageChanged.imagePath()));
     }
 }

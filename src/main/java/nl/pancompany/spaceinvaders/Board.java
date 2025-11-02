@@ -7,6 +7,7 @@ import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Player;
 import nl.pancompany.spaceinvaders.sprite.Shot;
+import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
 
@@ -188,9 +189,9 @@ public class Board extends JPanel {
                             && shotY >= (alienY)
                             && shotY <= (alienY + Constants.ALIEN_HEIGHT)) {
 
-                        var ii = new ImageIcon(getClass().getResource(explImg));
+                        var ii = new ImageIcon(getClass().getResource(explImg)); // explosion image
                         alien.setImage(ii.getImage());
-                        alien.setDying(true);
+                        alien.setDying(true); // allows the explosion image set above to be shown for one gamecycle
                         deaths++;
                         shot.die();
                     }
@@ -287,7 +288,7 @@ public class Board extends JPanel {
                         && bombY <= (playerY + Constants.PLAYER_HEIGHT)) {
 
                     var ii = new ImageIcon(getClass().getResource(explImg));
-                    player.setImage(ii.getImage());
+                    commandApi.publish(new ChangeSpriteImage(PLAYER_SPRITE_ID, explImg));
                     player.setDying(true);
                     bomb.setDestroyed(true);
                 }

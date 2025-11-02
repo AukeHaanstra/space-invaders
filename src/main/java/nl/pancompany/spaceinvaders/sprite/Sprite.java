@@ -17,24 +17,26 @@ public class Sprite {
         visible = true;
     }
 
+    public void setDying(boolean dying) {
+
+        this.dying = dying;
+    }
+
     public void die() {
 
         visible = false;
     }
 
-    public boolean isVisible() {
-
-        return visible;
-    }
-
-    protected void setVisible(boolean visible) {
-
-        this.visible = visible;
-    }
-
     public void setImage(Image image) {
 
         this.image = image;
+    }
+
+    ///////
+
+    public boolean isVisible() {
+
+        return visible;
     }
 
     public Image getImage() {
@@ -60,11 +62,6 @@ public class Sprite {
     public int getX() {
 
         return x;
-    }
-
-    public void setDying(boolean dying) {
-
-        this.dying = dying;
     }
 
     public boolean isDying() {
