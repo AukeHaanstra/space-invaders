@@ -7,6 +7,7 @@ import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Player;
 import nl.pancompany.spaceinvaders.sprite.Shot;
+import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import static nl.pancompany.spaceinvaders.Constants.PLAYER_SPRITE_ID;
 import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
 import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 
@@ -350,11 +352,12 @@ public class Board extends JPanel {
     }
 
     private void drawPlayer(Graphics g) {
-        SpriteReadModel spriteReadModel = queryApi.publish();
+        SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID), SpriteReadModel.class)
+                .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
         if (player.isVisible()) {
 
-            // here actually take the filename from the entity and load it as an image !
-            g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+            Image playerImage = new ImageIcon(getClass().getResource(playerReadModel.imagePath())).getImage();
+            g.drawImage(playerImage, playerReadModel.x(), playerReadModel.y(), this);
         }
 
         if (player.isDying()) {

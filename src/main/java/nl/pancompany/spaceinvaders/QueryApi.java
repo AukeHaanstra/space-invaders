@@ -13,14 +13,14 @@ public class QueryApi {
 
     private final SpriteQueryHandler spriteQueryHandler;
 
-    public <T> Optional<T> publish(Object query, Class<T> responseType) {
-        switch (query) {
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> query(Object query, Class<T> resultType) {
+        return switch (query) {
             case null -> throw new IllegalArgumentException("Null Query");
             // Sprite
-            case GetSpriteById getSpriteById -> spriteQueryHandler.get(getSpriteById);
+            case GetSpriteById getSpriteById -> (Optional<T>) spriteQueryHandler.get(getSpriteById);
 
             default -> throw new IllegalArgumentException("Unexpected Query: " + query);
-        }
-
+        };
     }
 }
