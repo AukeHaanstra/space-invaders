@@ -10,7 +10,7 @@ import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.events.GameCreated;
-import nl.pancompany.spaceinvaders.events.PlayerCreated;
+import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.shared.Direction;
 
 import java.util.Optional;
@@ -30,12 +30,13 @@ public class PlayerCreator {
 
     private void decide(RegisterPlayerCreated registerPlayerCreated) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
-                Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class)));
+                Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class)));
         Optional<PlayerState> playerState = stateManager.getState();
         if (playerState.isPresent()) {
             throw new IllegalStateException("Player cannot be created twice.");
         }
-        stateManager.apply(new PlayerCreated(
+        stateManager.apply(new SpriteCreated(
+                        PLAYER_SPRITE_ID,
                         registerPlayerCreated.getImagePath(),
                         registerPlayerCreated.getStartX(),
                         registerPlayerCreated.getStartY(),
@@ -47,7 +48,7 @@ public class PlayerCreator {
     private static class PlayerState {
 
         @StateCreator
-        PlayerState(PlayerCreated playerCreated) {
+        PlayerState(SpriteCreated spriteCreated) {
         }
 
     }

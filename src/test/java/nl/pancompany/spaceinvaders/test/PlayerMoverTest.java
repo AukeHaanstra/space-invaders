@@ -42,7 +42,7 @@ public class PlayerMoverTest {
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
         await().untilAsserted(() -> {
-            Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class));
+            Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
             List<SequencedEvent> events = eventStore.read(query);
             assertThat(events).hasSize(1);
         });
@@ -52,7 +52,7 @@ public class PlayerMoverTest {
 
         // then
         Thread.sleep(500);
-        Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerMoved.class));
+        Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteMoved.class));
         assertThat(eventStore.read(query)).isEmpty();
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
@@ -64,23 +64,24 @@ public class PlayerMoverTest {
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
         await().untilAsserted(() -> {
-            Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class));
+            Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
             List<SequencedEvent> events = eventStore.read(query);
             assertThat(events).hasSize(1);
         });
 
-        PlayerTurned playerTurned = new PlayerTurned(RIGHT);
-        eventStore.append(Event.of(playerTurned, EntityTags.PLAYER));
+        SpriteTurned spriteTurned = new SpriteTurned(PLAYER_SPRITE_ID, RIGHT);
+        eventStore.append(Event.of(spriteTurned, EntityTags.PLAYER));
 
         // when
         commandApi.publish(new InitiateGameCycle());
 
         // then
         await().untilAsserted(() -> {
-            Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerMoved.class));
+            Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteMoved.class));
             List<SequencedEvent> sequencedEvents = eventStore.read(query);
             assertThat(sequencedEvents).hasSize(1);
-            assertThat(sequencedEvents.getFirst().payload(PlayerMoved.class)).isEqualTo(new PlayerMoved(PLAYER_START_X + PLAYER_SPEED, PLAYER_START_Y));
+            assertThat(sequencedEvents.getFirst().payload(SpriteMoved.class)).isEqualTo(new SpriteMoved(PLAYER_SPRITE_ID,
+                    PLAYER_START_X + PLAYER_SPEED, PLAYER_START_Y));
         });
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
@@ -92,23 +93,24 @@ public class PlayerMoverTest {
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
         await().untilAsserted(() -> {
-            Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class));
+            Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
             List<SequencedEvent> events = eventStore.read(query);
             assertThat(events).hasSize(1);
         });
 
-        PlayerTurned playerTurned = new PlayerTurned(LEFT);
-        eventStore.append(Event.of(playerTurned, EntityTags.PLAYER));
+        SpriteTurned spriteTurned = new SpriteTurned(PLAYER_SPRITE_ID, LEFT);
+        eventStore.append(Event.of(spriteTurned, EntityTags.PLAYER));
 
         // when
         commandApi.publish(new InitiateGameCycle());
 
         // then
         await().untilAsserted(() -> {
-            Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerMoved.class));
+            Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteMoved.class));
             List<SequencedEvent> sequencedEvents = eventStore.read(query);
             assertThat(sequencedEvents).hasSize(1);
-            assertThat(sequencedEvents.getFirst().payload(PlayerMoved.class)).isEqualTo(new PlayerMoved(PLAYER_START_X - PLAYER_SPEED, PLAYER_START_Y));
+            assertThat(sequencedEvents.getFirst().payload(SpriteMoved.class)).isEqualTo(new SpriteMoved(PLAYER_SPRITE_ID,
+                    PLAYER_START_X - PLAYER_SPEED, PLAYER_START_Y));
         });
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
@@ -120,20 +122,20 @@ public class PlayerMoverTest {
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
         await().untilAsserted(() -> {
-            Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class));
+            Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
             List<SequencedEvent> events = eventStore.read(query);
             assertThat(events).hasSize(1);
         });
 
-        PlayerStopped playerStopped = new PlayerStopped();
-        eventStore.append(Event.of(playerStopped, EntityTags.PLAYER));
+        SpriteStopped spriteStopped = new SpriteStopped(PLAYER_SPRITE_ID);
+        eventStore.append(Event.of(spriteStopped, EntityTags.PLAYER));
 
         // when
         commandApi.publish(new InitiateGameCycle());
 
         // then
         Thread.sleep(500);
-        Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerMoved.class));
+        Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteMoved.class));
         assertThat(eventStore.read(query)).isEmpty();
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
@@ -145,26 +147,27 @@ public class PlayerMoverTest {
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
         await().untilAsserted(() -> {
-            Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class));
+            Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
             List<SequencedEvent> events = eventStore.read(query);
             assertThat(events).hasSize(1);
         });
 
-        PlayerTurned playerTurned = new PlayerTurned(RIGHT);
-        eventStore.append(Event.of(playerTurned, EntityTags.PLAYER));
+        SpriteTurned spriteTurned = new SpriteTurned(PLAYER_SPRITE_ID, RIGHT);
+        eventStore.append(Event.of(spriteTurned, EntityTags.PLAYER));
 
-        PlayerMoved playerMoved = new PlayerMoved(PLAYER_STOP_X_RIGHT, PLAYER_START_Y);
-        eventStore.append(Event.of(playerMoved, EntityTags.PLAYER));
+        SpriteMoved spriteMoved = new SpriteMoved(PLAYER_SPRITE_ID, PLAYER_STOP_X_RIGHT, PLAYER_START_Y);
+        eventStore.append(Event.of(spriteMoved, EntityTags.PLAYER));
 
         // when
         commandApi.publish(new InitiateGameCycle());
 
         // then
         Thread.sleep(500);
-        Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerMoved.class));
+        Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteMoved.class));
         List<SequencedEvent> sequencedEvents = eventStore.read(query);
         assertThat(sequencedEvents).hasSize(1);
-        assertThat(sequencedEvents.getFirst().payload(PlayerMoved.class)).isEqualTo(new PlayerMoved(PLAYER_STOP_X_RIGHT, PLAYER_START_Y));
+        assertThat(sequencedEvents.getFirst().payload(SpriteMoved.class)).isEqualTo(new SpriteMoved(PLAYER_SPRITE_ID,
+                PLAYER_STOP_X_RIGHT, PLAYER_START_Y));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 
@@ -175,26 +178,27 @@ public class PlayerMoverTest {
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
         await().untilAsserted(() -> {
-            Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerCreated.class));
+            Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
             List<SequencedEvent> events = eventStore.read(query);
             assertThat(events).hasSize(1);
         });
 
-        PlayerTurned playerTurned = new PlayerTurned(LEFT);
-        eventStore.append(Event.of(playerTurned, EntityTags.PLAYER));
+        SpriteTurned spriteTurned = new SpriteTurned(PLAYER_SPRITE_ID, LEFT);
+        eventStore.append(Event.of(spriteTurned, EntityTags.PLAYER));
 
-        PlayerMoved playerMoved = new PlayerMoved(PLAYER_STOP_X_LEFT, PLAYER_START_Y);
-        eventStore.append(Event.of(playerMoved, EntityTags.PLAYER));
+        SpriteMoved spriteMoved = new SpriteMoved(PLAYER_SPRITE_ID, PLAYER_STOP_X_LEFT, PLAYER_START_Y);
+        eventStore.append(Event.of(spriteMoved, EntityTags.PLAYER));
 
         // when
         commandApi.publish(new InitiateGameCycle());
 
         // then
         Thread.sleep(500);
-        Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerMoved.class));
+        Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteMoved.class));
         List<SequencedEvent> sequencedEvents = eventStore.read(query);
         assertThat(sequencedEvents).hasSize(1);
-        assertThat(sequencedEvents.getFirst().payload(PlayerMoved.class)).isEqualTo(new PlayerMoved(PLAYER_STOP_X_LEFT, PLAYER_START_Y));
+        assertThat(sequencedEvents.getFirst().payload(SpriteMoved.class)).isEqualTo(new SpriteMoved(PLAYER_SPRITE_ID,
+                PLAYER_STOP_X_LEFT, PLAYER_START_Y));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

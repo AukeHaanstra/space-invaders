@@ -9,8 +9,8 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
-import nl.pancompany.spaceinvaders.events.PlayerCreated;
-import nl.pancompany.spaceinvaders.events.PlayerStopped;
+import nl.pancompany.spaceinvaders.events.SpriteStopped;
+import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,15 +38,15 @@ public class StopPlayerTest {
 
     @Test
     void givenPlayerCreated_whenTurnPlayer_thenPlayerTurned() {
-        PlayerCreated playerCreated = new PlayerCreated(PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
-        eventStore.append(Event.of(playerCreated, EntityTags.PLAYER));
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
+        eventStore.append(Event.of(spriteCreated, EntityTags.PLAYER));
 
         commandApi.publish(new StopPlayer());
 
-        Query query = Query.of(EntityTags.PLAYER, Type.of(PlayerStopped.class));
+        Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteStopped.class));
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
-        assertThat(events.getFirst().payload(PlayerStopped.class)).isEqualTo(new PlayerStopped());
+        assertThat(events.getFirst().payload(SpriteStopped.class)).isEqualTo(new SpriteStopped(PLAYER_SPRITE_ID));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

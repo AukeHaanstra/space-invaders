@@ -1,9 +1,12 @@
 package nl.pancompany.spaceinvaders.test;
 
 import nl.pancompany.eventstore.EventBus;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TestUtil {
 
@@ -11,8 +14,16 @@ public class TestUtil {
     }
 
     public static void withoutLogging(Runnable runnable) {
-        Logger.getLogger(EventBus.class.getName()).setLevel(Level.OFF);
+        setLogLevel(EventBus.class.getName(), Level.OFF);
         runnable.run();
-        Logger.getLogger(EventBus.class.getName()).setLevel(Level.INFO);
+        setLogLevel(EventBus.class.getName(), Level.INFO);
+    }
+
+    public static void setLogLevel(String loggerName, Level level) {
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        Configuration config = context.getConfiguration();
+        LoggerConfig loggerConfig = config.getLoggerConfig(loggerName);
+        loggerConfig.setLevel(level);
+        context.updateLoggers();
     }
 }

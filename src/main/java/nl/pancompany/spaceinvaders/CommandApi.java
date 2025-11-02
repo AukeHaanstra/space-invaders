@@ -25,10 +25,11 @@ public class CommandApi {
     private static final RetryPolicy<Object> RETRY_POLICY = RetryPolicy.builder()
             .handle(StateManagerOptimisticLockingException.class)
             .withMaxRetries(10)
-            .onFailedAttempt(event -> log.info("Command execution failed", event.getLastException()))
+            .onFailedAttempt(event -> log.info("Command execution failed:", event.getLastException()))
             .onRetry(event -> log.info("Command execution failure #{}. Retrying.", event.getAttemptCount()))
             .onRetriesExceeded(event -> log.warn("Failed to execute command. Max retries exceeded."))
-            .onAbort(event -> log.warn("Command execution aborted.", event.getException()))
+            .abortOn(IllegalStateException.class)
+            .onAbort(event -> log.warn("Command execution aborted:", event.getException()))
             .build();
     private static final FailsafeExecutor<Object> COMMAND_RETRY_EXECUTOR = Failsafe.with(RETRY_POLICY);
     public static final Consumer<CheckedRunnable> COMMAND_EXECUTOR = COMMAND_RETRY_EXECUTOR::run;

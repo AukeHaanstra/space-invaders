@@ -29,8 +29,8 @@ public class PlayerMover {
 
     private void decide(MovePlayer movePlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
-                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class, PlayerMoved.class,
-                        PlayerStopped.class)));
+                Query.of(EntityTags.PLAYER, Types.or(SpriteCreated.class, SpriteTurned.class, SpriteMoved.class,
+                        SpriteStopped.class)));
         PlayerState playerState = stateManager.getState().orElseThrow(
                 () -> new IllegalStateException("Player must be created before moving."));
 
@@ -50,7 +50,7 @@ public class PlayerMover {
             return; // don't move off the board
         }
 
-        stateManager.apply(new PlayerMoved(newX, playerState.y), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
+        stateManager.apply(new SpriteMoved(PLAYER_SPRITE_ID, newX, playerState.y), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
     }
 
     private static class PlayerState {
@@ -60,26 +60,26 @@ public class PlayerMover {
         Direction direction;
 
         @StateCreator
-        PlayerState(PlayerCreated playerCreated) {
-            x = playerCreated.getStartX();
-            y = playerCreated.getStartY();
-            direction = playerCreated.getDirection();
+        PlayerState(SpriteCreated spriteCreated) {
+            x = spriteCreated.getStartX();
+            y = spriteCreated.getStartY();
+            direction = spriteCreated.getDirection();
         }
 
         @EventSourced
-        void evolve(PlayerTurned playerTurned) {
-            direction = playerTurned.getDirection();
+        void evolve(SpriteTurned spriteTurned) {
+            direction = spriteTurned.getDirection();
         }
 
         @EventSourced
-        void evolve(PlayerStopped playerStopped) {
+        void evolve(SpriteStopped spriteStopped) {
             direction = NONE;
         }
 
         @EventSourced
-        void evolve(PlayerMoved playerMoved) {
-            x = playerMoved.getNewX();
-            y = playerMoved.getNewY();
+        void evolve(SpriteMoved spriteMoved) {
+            x = spriteMoved.getNewX();
+            y = spriteMoved.getNewY();
         }
     }
 }

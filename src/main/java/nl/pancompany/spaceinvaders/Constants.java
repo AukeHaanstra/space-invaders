@@ -1,13 +1,16 @@
 package nl.pancompany.spaceinvaders;
 
+import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
+
 public interface Constants {
 
     // Ids
     String GAME_ID = "1";
-    String PLAYER_ID = "1";
-    String SHOT_ID = "1";
+    SpriteId PLAYER_SPRITE_ID = SpriteId.of("1");
+    SpriteId SHOT_SPRITE_ID = SpriteId.of("2");
 
     // Entity names
+    String SPRITE_ENTITY = "Sprite";
     String GAME_ENTITY = "Game";
     String PLAYER_ENTITY = "Player";
     String ALIEN_ENTITY = "Alien";

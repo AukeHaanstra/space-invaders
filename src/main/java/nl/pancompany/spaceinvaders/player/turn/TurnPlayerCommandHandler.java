@@ -9,9 +9,11 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
 import nl.pancompany.spaceinvaders.EntityTags;
-import nl.pancompany.spaceinvaders.events.PlayerCreated;
-import nl.pancompany.spaceinvaders.events.PlayerTurned;
+import nl.pancompany.spaceinvaders.events.SpriteCreated;
+import nl.pancompany.spaceinvaders.events.SpriteTurned;
 import nl.pancompany.spaceinvaders.shared.Direction;
+
+import static nl.pancompany.spaceinvaders.Constants.PLAYER_SPRITE_ID;
 
 @RequiredArgsConstructor
 public class TurnPlayerCommandHandler {
@@ -20,9 +22,9 @@ public class TurnPlayerCommandHandler {
 
     public void decide(TurnPlayer turnPlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
-                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerTurned.class)));
+                Query.of(EntityTags.PLAYER, Types.or(SpriteCreated.class, SpriteTurned.class)));
         stateManager.getState().orElseThrow(() -> new IllegalStateException("Player turned before being created."));
-        stateManager.apply(new PlayerTurned(turnPlayer.getDirection()), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
+        stateManager.apply(new SpriteTurned(PLAYER_SPRITE_ID, turnPlayer.getDirection()), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
     }
 
     private static class PlayerState {
@@ -30,12 +32,12 @@ public class TurnPlayerCommandHandler {
         Direction direction;
 
         @StateCreator
-        PlayerState(PlayerCreated playerCreated) {
+        PlayerState(SpriteCreated spriteCreated) {
         }
 
         @EventSourced
-        void evolve(PlayerTurned playerTurned) {
-            direction = playerTurned.getDirection();
+        void evolve(SpriteTurned spriteTurned) {
+            direction = spriteTurned.getDirection();
         }
     }
 }

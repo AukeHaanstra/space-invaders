@@ -9,9 +9,11 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
 import nl.pancompany.spaceinvaders.EntityTags;
-import nl.pancompany.spaceinvaders.events.PlayerCreated;
-import nl.pancompany.spaceinvaders.events.PlayerStopped;
+import nl.pancompany.spaceinvaders.events.SpriteCreated;
+import nl.pancompany.spaceinvaders.events.SpriteStopped;
 import nl.pancompany.spaceinvaders.shared.Direction;
+
+import static nl.pancompany.spaceinvaders.Constants.PLAYER_SPRITE_ID;
 
 @RequiredArgsConstructor
 public class StopPlayerCommandHandler {
@@ -20,9 +22,9 @@ public class StopPlayerCommandHandler {
 
     public void decide(StopPlayer stopPlayer) {
         StateManager<PlayerState> stateManager = eventStore.loadState(PlayerState.class,
-                Query.of(EntityTags.PLAYER, Types.or(PlayerCreated.class, PlayerStopped.class)));
+                Query.of(EntityTags.PLAYER, Types.or(SpriteCreated.class, SpriteStopped.class)));
         stateManager.getState().orElseThrow(() -> new IllegalStateException("Player stopped before being created."));
-        stateManager.apply(new PlayerStopped(), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
+        stateManager.apply(new SpriteStopped(PLAYER_SPRITE_ID), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
     }
 
     private static class PlayerState {
@@ -30,11 +32,11 @@ public class StopPlayerCommandHandler {
         Direction direction;
 
         @StateCreator
-        PlayerState(PlayerCreated playerCreated) {
+        PlayerState(SpriteCreated spriteCreated) {
         }
 
         @EventSourced
-        void evolve(PlayerStopped playerStopped) {
+        void evolve(SpriteStopped spriteStopped) {
             direction = Direction.NONE;
         }
     }
