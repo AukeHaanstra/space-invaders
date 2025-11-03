@@ -44,7 +44,7 @@ public class SpriteCreatorTest {
         commandApi.publish(new CreateGame());
 
         Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
-        await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(TOTAL_NUMBER_OF_SPRITES_CREATED));
+        await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(SpriteCreated.class)).isEqualTo(new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH,
                 PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE));
