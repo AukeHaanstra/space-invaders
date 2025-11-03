@@ -2,12 +2,26 @@ package nl.pancompany.spaceinvaders;
 
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
 public interface Constants {
 
     // Ids
     String GAME_ID = "1";
     SpriteId PLAYER_SPRITE_ID = SpriteId.of("1");
     SpriteId SHOT_SPRITE_ID = SpriteId.of("2");
+    List<SpriteId> ALIEN_SPRITE_IDS = IntStream.range(3, 27) // 24 aliens
+            .mapToObj(String::valueOf)
+            .map(SpriteId::of)
+            .toList();
+    List<SpriteId> BOMB_SPRITE_IDS = IntStream.range(27, 51) // 24 bombs, one for each alien
+            .mapToObj(String::valueOf)
+            .map(SpriteId::of)
+            .toList();
+    default SpriteId getBombId(SpriteId alienId) {
+        return BOMB_SPRITE_IDS.get(ALIEN_SPRITE_IDS.indexOf(alienId));
+    }
 
     // Entity names
     String SPRITE_ENTITY = "Sprite";
@@ -27,6 +41,12 @@ public interface Constants {
     int ALIEN_WIDTH = 12;
     int ALIEN_START_X = 150;
     int ALIEN_START_Y = 5;
+    int ALIEN_SPEED = 1;
+    String ALIEN_IMAGE_PATH = "/images/alien.png";
+
+    // Bomb
+    String BOMB_IMAGE_PATH = "/images/bomb.png";
+    int BOMB_SPEED = 1;
 
     // Player
     int PLAYER_BORDER = 5;

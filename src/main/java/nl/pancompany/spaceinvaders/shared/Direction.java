@@ -1,5 +1,5 @@
 package nl.pancompany.spaceinvaders.shared;
 
 public enum Direction {
-    LEFT, RIGHT, NONE
+    LEFT, RIGHT, UP, DOWN, NONE
 }

@@ -9,10 +9,12 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
+import nl.pancompany.spaceinvaders.Constants;
 import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.shared.Direction;
+import nl.pancompany.spaceinvaders.sprite.Alien;
 
 import java.util.Optional;
 
@@ -28,6 +30,19 @@ public class SpriteCreator {
     private void react(GameCreated gameCreated) {
         // Player
         COMMAND_EXECUTOR.accept(() -> decide(new RegisterSpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE)));
+
+        // 24 Aliens and 24 Bombs
+        // The alien image size is 12x12px. We put 6px space among the aliens.
+        int n = 0;
+        for (int i = 0; i < 4; i++) { // 4 rows
+            for (int j = 0; j < 6; j++, n++) { // 6 columns
+                final int row = i, col = j, alienNo = n;
+                COMMAND_EXECUTOR.accept(() -> decide(new RegisterSpriteCreated(ALIEN_SPRITE_IDS.get(alienNo), ALIEN_IMAGE_PATH,
+                        ALIEN_START_X + 18 * col, ALIEN_START_Y + 18 * row, ALIEN_SPEED, Direction.LEFT)));
+                COMMAND_EXECUTOR.accept(() -> decide(new RegisterSpriteCreated(BOMB_SPRITE_IDS.get(alienNo), BOMB_IMAGE_PATH,
+                        ALIEN_START_X + 18 * col, ALIEN_START_Y + 18 * row, BOMB_SPEED, Direction.DOWN)));
+            }
+        }
     }
 
     private void decide(RegisterSpriteCreated registerSpriteCreated) {

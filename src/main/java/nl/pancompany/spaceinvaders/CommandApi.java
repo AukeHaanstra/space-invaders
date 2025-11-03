@@ -13,14 +13,14 @@ import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
-import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
-import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSprite;
 import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSpriteCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
+import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 
 import java.util.function.Consumer;
 
@@ -58,15 +58,15 @@ public class CommandApi {
             case CreateGame createGame -> COMMAND_EXECUTOR.accept(() ->createGameCommandHandler.decide(createGame));
             case InitiateGameCycle initiateGameCycle -> COMMAND_EXECUTOR.accept(() -> initiateGameCycleCommandHandler.decide(initiateGameCycle));
             // Player
-            case TurnSprite turnSprite -> COMMAND_EXECUTOR.accept(() -> turnSpriteCommandHandler.decide(turnSprite));
             case StopPlayer stopPlayer -> COMMAND_EXECUTOR.accept(() -> stopPlayerCommandHandler.decide(stopPlayer));
             // Sprite
+            case TurnSprite turnSprite -> COMMAND_EXECUTOR.accept(() -> turnSpriteCommandHandler.decide(turnSprite));
             case ChangeSpriteImage changeSpriteImage -> COMMAND_EXECUTOR.accept(() -> changeSpriteImageCommandHandler.decide(changeSpriteImage));
             case TriggerSpriteExplosion triggerSpriteExplosion -> COMMAND_EXECUTOR.accept(() -> triggerSpriteExplosionCommandHandler.decide(triggerSpriteExplosion));
             case RestInPeaceSprite restInPeaceSprite -> COMMAND_EXECUTOR.accept(() -> restInPeaceSpriteCommandHandler.decide(restInPeaceSprite));
 
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }
-
     }
+
 }

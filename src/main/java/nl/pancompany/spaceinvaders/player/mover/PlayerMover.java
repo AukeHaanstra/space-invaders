@@ -41,7 +41,7 @@ public class PlayerMover {
         int dx = switch (playerState.direction) {
             case LEFT -> -PLAYER_SPEED;
             case RIGHT -> PLAYER_SPEED;
-            default -> throw new IllegalStateException("Unknown move direction: " + playerState.direction);
+            default -> throw new IllegalStateException("Illegal player move direction: " + playerState.direction);
         };
 
         int newX = playerState.x + dx;
