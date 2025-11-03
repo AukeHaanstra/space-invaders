@@ -1,7 +1,9 @@
 package nl.pancompany.spaceinvaders;
 
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
+import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
+import nl.pancompany.spaceinvaders.game.stop.StopGame;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
 import nl.pancompany.spaceinvaders.sprite.Alien;
@@ -38,7 +40,6 @@ public class Board extends JPanel {
     private int direction = -1;
     private int deaths = 0;
 
-    private boolean inGame = true;
     private final String explImg = "/images/explosion.png";
     private String message = "Game Over";
 
@@ -56,6 +57,7 @@ public class Board extends JPanel {
 
         commandApi.publish(new CreateGame());
         gameInit(); // 6 initialize domain entities (sprites) as Board fields -> on BoardReady event
+
         addKeyListener(new TAdapter()); // 7 start listening to keystrokes: modify entities accordingly -> translation
         timer = new Timer(Constants.DELAY, new GameCycle()); // 8 start scheduled update-repaint gamecycles (9-12: update entities & repaint UI) -> can also emit events
         timer.start();
@@ -116,6 +118,7 @@ public class Board extends JPanel {
 
             if (key == KeyEvent.VK_SPACE) {
 
+            boolean inGame = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found.")).inGame();
                 if (inGame) {
 
                     if (!shot.isVisible()) { // create a new shot when space pressed and previous shot is not visible anymore
@@ -166,7 +169,7 @@ public class Board extends JPanel {
 
         if (deaths == Constants.NUMBER_OF_ALIENS_TO_DESTROY) {
 
-            inGame = false;
+            commandApi.publish(new StopGame());
             timer.stop();
             message = "Game won!";
         }
@@ -251,7 +254,7 @@ public class Board extends JPanel {
                 int y = alien.getY();
 
                 if (y > Constants.GROUND - Constants.ALIEN_HEIGHT) {
-                    inGame = false;
+                    commandApi.publish(new StopGame());
                     message = "Invasion!";
                 }
 
@@ -315,6 +318,7 @@ public class Board extends JPanel {
 //        g.drawRect(1, 1, Commons.BOARD_WIDTH-1, Commons.BOARD_HEIGHT-1);
         g.setColor(Color.green);
 
+        boolean inGame = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found.")).inGame();
         if (inGame) { // check whether player is still alive or game over
 
             g.drawLine(0, Constants.GROUND,
@@ -364,7 +368,7 @@ public class Board extends JPanel {
 
         if (playerReadModel.explosionTriggered()) {
             commandApi.publish(new RestInPeaceSprite(PLAYER_SPRITE_ID)); // Since gamecycle is almost over (update() already ran), player will become invisible (and game will stop) in the next gamecycle
-            inGame = false;
+            commandApi.publish(new StopGame());
         }
     }
 

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 public class CreateGameTest {
@@ -49,6 +50,6 @@ public class CreateGameTest {
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
-        Assertions.assertThatThrownBy(() -> commandApi.publish(new CreateGame())).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> commandApi.publish(new CreateGame())).isInstanceOf(IllegalStateException.class);
     }
 }

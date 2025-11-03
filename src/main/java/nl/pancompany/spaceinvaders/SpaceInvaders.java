@@ -4,7 +4,9 @@ import lombok.Getter;
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
+import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
+import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.creator.SpriteCreator;
 import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
@@ -46,6 +48,7 @@ public class SpaceInvaders extends JFrame  {
         // Game
         CreateGameCommandHandler createGameCommandHandler = new CreateGameCommandHandler(eventStore);
         InitiateGameCycleCommandHandler initiateGameCycleCommandHandler = new InitiateGameCycleCommandHandler(eventStore);
+        StopGameCommandHandler stopGameCommandHandler = new StopGameCommandHandler(eventStore);
         // Player
         TurnSpriteCommandHandler turnSpriteCommandHandler = new TurnSpriteCommandHandler(eventStore);
         StopPlayerCommandHandler stopPlayerCommandHandler = new StopPlayerCommandHandler(eventStore);
@@ -58,6 +61,7 @@ public class SpaceInvaders extends JFrame  {
                 // Game
                 .createGameCommandHandler(createGameCommandHandler)
                 .initiateGameCycleCommandHandler(initiateGameCycleCommandHandler)
+                .stopGameCommandHandler(stopGameCommandHandler)
                 // Player
                 .turnSpriteCommandHandler(turnSpriteCommandHandler)
                 .stopPlayerCommandHandler(stopPlayerCommandHandler)
@@ -68,6 +72,8 @@ public class SpaceInvaders extends JFrame  {
                 .build();
 
         // Query handlers, projectors and repositories
+        // Game (live model)
+        GameQueryHandler gameQueryHandler = new GameQueryHandler();
         // Sprite
         SpriteRepository spriteRepository = new SpriteRepository();
         SpriteProjector spriteProjector = new SpriteProjector(spriteRepository);
@@ -75,10 +81,12 @@ public class SpaceInvaders extends JFrame  {
         queryApi = QueryApi.builder()
                 // Sprite
                 .spriteQueryHandler(spriteQueryHandler)
+                .gameQueryHandler(gameQueryHandler)
                 .build();
 
         // Query event-handler registrations
         eventBus.registerAsynchronousEventHandler(spriteProjector);
+        eventBus.registerAsynchronousEventHandler(gameQueryHandler);
 
         // Automations
         // Player

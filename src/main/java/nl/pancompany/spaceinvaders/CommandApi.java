@@ -11,6 +11,8 @@ import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
+import nl.pancompany.spaceinvaders.game.stop.StopGame;
+import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
@@ -43,6 +45,7 @@ public class CommandApi {
     // Game
     private final CreateGameCommandHandler createGameCommandHandler;
     private final InitiateGameCycleCommandHandler initiateGameCycleCommandHandler;
+    private final StopGameCommandHandler stopGameCommandHandler;
     // Player
     private final TurnSpriteCommandHandler turnSpriteCommandHandler;
     private final StopPlayerCommandHandler stopPlayerCommandHandler;
@@ -55,8 +58,9 @@ public class CommandApi {
         switch (command) {
             case null -> throw new IllegalArgumentException("Null Command");
             // Game
-            case CreateGame createGame -> COMMAND_EXECUTOR.accept(() ->createGameCommandHandler.decide(createGame));
+            case CreateGame createGame -> COMMAND_EXECUTOR.accept(() -> createGameCommandHandler.decide(createGame));
             case InitiateGameCycle initiateGameCycle -> COMMAND_EXECUTOR.accept(() -> initiateGameCycleCommandHandler.decide(initiateGameCycle));
+            case StopGame stopGame -> COMMAND_EXECUTOR.accept(() -> stopGameCommandHandler.decide(stopGame));
             // Player
             case StopPlayer stopPlayer -> COMMAND_EXECUTOR.accept(() -> stopPlayerCommandHandler.decide(stopPlayer));
             // Sprite
