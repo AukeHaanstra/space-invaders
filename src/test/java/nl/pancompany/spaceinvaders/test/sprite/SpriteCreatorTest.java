@@ -8,7 +8,7 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static nl.pancompany.spaceinvaders.Constants.*;
+import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.test.TestUtil.withoutLogging;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;

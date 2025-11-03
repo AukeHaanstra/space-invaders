@@ -5,6 +5,7 @@ import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.stopper.StopGame;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
+import nl.pancompany.spaceinvaders.shared.Constants;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Shot;
@@ -25,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import static nl.pancompany.spaceinvaders.Constants.PLAYER_SPRITE_ID;
+import static nl.pancompany.spaceinvaders.shared.Constants.PLAYER_SPRITE_ID;
 import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
 import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 

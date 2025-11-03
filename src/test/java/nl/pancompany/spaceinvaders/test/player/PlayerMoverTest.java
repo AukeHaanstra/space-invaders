@@ -7,7 +7,7 @@ import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.*;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static nl.pancompany.spaceinvaders.Constants.*;
+import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
 import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders;
+package nl.pancompany.spaceinvaders.shared;
 
 import nl.pancompany.eventstore.query.Tag;
 

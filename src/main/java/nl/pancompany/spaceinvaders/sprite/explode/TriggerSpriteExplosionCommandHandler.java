@@ -12,8 +12,8 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.events.SpriteExplosionTriggered;
 
-import static nl.pancompany.spaceinvaders.Constants.SPRITE_ENTITY;
-import static nl.pancompany.spaceinvaders.EntityTags.GAME;
+import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
+import static nl.pancompany.spaceinvaders.shared.EntityTags.GAME;
 
 @RequiredArgsConstructor
 public class TriggerSpriteExplosionCommandHandler {

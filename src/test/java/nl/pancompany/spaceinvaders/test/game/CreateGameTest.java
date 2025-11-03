@@ -7,11 +7,10 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.eventstore.data.Event;
 import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.spaceinvaders.CommandApi;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

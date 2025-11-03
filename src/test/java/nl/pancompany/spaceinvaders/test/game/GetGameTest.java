@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static nl.pancompany.spaceinvaders.EntityTags.GAME;
+import static nl.pancompany.spaceinvaders.shared.EntityTags.GAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 

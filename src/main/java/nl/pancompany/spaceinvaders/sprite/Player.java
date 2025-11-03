@@ -1,12 +1,12 @@
 package nl.pancompany.spaceinvaders.sprite;
 
-import nl.pancompany.spaceinvaders.Constants;
+import nl.pancompany.spaceinvaders.shared.Constants;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
-import static nl.pancompany.spaceinvaders.Constants.PLAYER_BORDER;
-import static nl.pancompany.spaceinvaders.Constants.PLAYER_WIDTH;
+import static nl.pancompany.spaceinvaders.shared.Constants.PLAYER_BORDER;
+import static nl.pancompany.spaceinvaders.shared.Constants.PLAYER_WIDTH;
 
 public class Player extends Sprite {
 

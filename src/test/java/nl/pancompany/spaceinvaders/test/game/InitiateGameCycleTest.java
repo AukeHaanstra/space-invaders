@@ -7,7 +7,7 @@ import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Types;
 import nl.pancompany.spaceinvaders.CommandApi;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.events.GameCycleInitiated;

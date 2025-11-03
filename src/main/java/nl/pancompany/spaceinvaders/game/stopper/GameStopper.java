@@ -8,14 +8,14 @@ import nl.pancompany.eventstore.annotation.EventSourced;
 import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.events.GameStopped;
 import nl.pancompany.spaceinvaders.events.SpriteMoved;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
-import static nl.pancompany.spaceinvaders.Constants.ALIEN_HEIGHT;
-import static nl.pancompany.spaceinvaders.Constants.GROUND_Y;
+import static nl.pancompany.spaceinvaders.shared.Constants.ALIEN_HEIGHT;
+import static nl.pancompany.spaceinvaders.shared.Constants.GROUND_Y;
 import static nl.pancompany.spaceinvaders.shared.IdUtil.isAlien;
 
 @RequiredArgsConstructor

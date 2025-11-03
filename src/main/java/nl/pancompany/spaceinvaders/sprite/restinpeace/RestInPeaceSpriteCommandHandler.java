@@ -10,11 +10,10 @@ import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
-import nl.pancompany.spaceinvaders.events.SpriteExplosionTriggered;
 import nl.pancompany.spaceinvaders.events.SpriteRestsInPeace;
 
-import static nl.pancompany.spaceinvaders.Constants.SPRITE_ENTITY;
-import static nl.pancompany.spaceinvaders.EntityTags.GAME;
+import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
+import static nl.pancompany.spaceinvaders.shared.EntityTags.GAME;
 
 @RequiredArgsConstructor
 public class RestInPeaceSpriteCommandHandler {

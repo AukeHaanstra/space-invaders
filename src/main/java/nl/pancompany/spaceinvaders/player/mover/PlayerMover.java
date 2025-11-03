@@ -9,12 +9,12 @@ import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.events.*;
 import nl.pancompany.spaceinvaders.shared.Direction;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
-import static nl.pancompany.spaceinvaders.Constants.*;
+import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.shared.Direction.NONE;
 
 @RequiredArgsConstructor

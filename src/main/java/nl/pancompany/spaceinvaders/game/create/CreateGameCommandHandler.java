@@ -6,7 +6,7 @@ import nl.pancompany.eventstore.StateManager;
 import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 
 import java.util.Optional;

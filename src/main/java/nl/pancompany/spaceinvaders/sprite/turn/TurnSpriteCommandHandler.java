@@ -9,13 +9,13 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.events.SpriteTurned;
 import nl.pancompany.spaceinvaders.shared.Direction;
 
-import static nl.pancompany.spaceinvaders.Constants.PLAYER_SPRITE_ID;
-import static nl.pancompany.spaceinvaders.Constants.SPRITE_ENTITY;
+import static nl.pancompany.spaceinvaders.shared.Constants.PLAYER_SPRITE_ID;
+import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
 
 @RequiredArgsConstructor
 public class TurnSpriteCommandHandler {

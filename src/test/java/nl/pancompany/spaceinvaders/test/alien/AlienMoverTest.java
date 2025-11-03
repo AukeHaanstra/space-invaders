@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static nl.pancompany.spaceinvaders.Constants.SPRITE_ENTITY;
+import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;

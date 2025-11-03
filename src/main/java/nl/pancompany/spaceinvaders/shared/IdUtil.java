@@ -2,8 +2,8 @@ package nl.pancompany.spaceinvaders.shared;
 
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
-import static nl.pancompany.spaceinvaders.Constants.ALIEN_SPRITE_IDS;
-import static nl.pancompany.spaceinvaders.Constants.BOMB_SPRITE_IDS;
+import static nl.pancompany.spaceinvaders.shared.Constants.ALIEN_SPRITE_IDS;
+import static nl.pancompany.spaceinvaders.shared.Constants.BOMB_SPRITE_IDS;
 
 public class IdUtil {
 

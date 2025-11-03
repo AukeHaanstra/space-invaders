@@ -10,15 +10,15 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
-import nl.pancompany.spaceinvaders.Constants;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.Constants;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.events.*;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
-import static nl.pancompany.spaceinvaders.Constants.ALIEN_SPRITE_IDS;
-import static nl.pancompany.spaceinvaders.Constants.SPRITE_ENTITY;
+import static nl.pancompany.spaceinvaders.shared.Constants.ALIEN_SPRITE_IDS;
+import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
 import static nl.pancompany.spaceinvaders.shared.IdUtil.isAlien;
 
 @RequiredArgsConstructor

@@ -6,16 +6,11 @@ import nl.pancompany.eventstore.StateManager;
 import nl.pancompany.eventstore.annotation.EventSourced;
 import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.query.*;
-import nl.pancompany.spaceinvaders.Constants;
-import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.events.SpriteImageChanged;
-import nl.pancompany.spaceinvaders.events.SpriteTurned;
-import nl.pancompany.spaceinvaders.shared.Direction;
 
-import static nl.pancompany.spaceinvaders.Constants.PLAYER_SPRITE_ID;
-import static nl.pancompany.spaceinvaders.Constants.SPRITE_ENTITY;
-import static nl.pancompany.spaceinvaders.EntityTags.GAME;
+import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
+import static nl.pancompany.spaceinvaders.shared.EntityTags.GAME;
 
 @RequiredArgsConstructor
 public class ChangeSpriteImageCommandHandler {

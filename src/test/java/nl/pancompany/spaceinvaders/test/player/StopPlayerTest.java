@@ -7,7 +7,7 @@ import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
-import nl.pancompany.spaceinvaders.EntityTags;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.SpriteStopped;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static nl.pancompany.spaceinvaders.Constants.*;
+import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
