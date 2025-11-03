@@ -39,8 +39,8 @@ public class PlayerMover {
         }
 
         int dx = switch (playerState.direction) {
-            case LEFT -> -PLAYER_SPEED;
-            case RIGHT -> PLAYER_SPEED;
+            case LEFT -> -playerState.speed;
+            case RIGHT -> playerState.speed;
             default -> throw new IllegalStateException("Illegal player move direction: " + playerState.direction);
         };
 
@@ -59,12 +59,14 @@ public class PlayerMover {
         int x;
         int y;
         Direction direction;
+        int speed;
 
         @StateCreator
         PlayerState(SpriteCreated spriteCreated) {
             x = spriteCreated.startX();
             y = spriteCreated.startY();
             direction = spriteCreated.direction();
+            speed = spriteCreated.speed();
         }
 
         @EventSourced

@@ -11,14 +11,16 @@ import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
-import nl.pancompany.spaceinvaders.game.stop.StopGame;
-import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
+import nl.pancompany.spaceinvaders.game.stopper.StopGame;
+import nl.pancompany.spaceinvaders.game.stopper.GameStopper;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.move.MoveSprite;
+import nl.pancompany.spaceinvaders.sprite.move.MoveSpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSprite;
 import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
@@ -45,7 +47,7 @@ public class CommandApi {
     // Game
     private final CreateGameCommandHandler createGameCommandHandler;
     private final InitiateGameCycleCommandHandler initiateGameCycleCommandHandler;
-    private final StopGameCommandHandler stopGameCommandHandler;
+    private final GameStopper gameStopper;
     // Player
     private final TurnSpriteCommandHandler turnSpriteCommandHandler;
     private final StopPlayerCommandHandler stopPlayerCommandHandler;
@@ -53,6 +55,7 @@ public class CommandApi {
     private final ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler;
     private final TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler;
     private final RestInPeaceSpriteCommandHandler restInPeaceSpriteCommandHandler;
+    private final MoveSpriteCommandHandler moveSpriteCommandHandler;
 
     public void publish(Object command) {
         switch (command) {
@@ -60,7 +63,7 @@ public class CommandApi {
             // Game
             case CreateGame createGame -> COMMAND_EXECUTOR.accept(() -> createGameCommandHandler.decide(createGame));
             case InitiateGameCycle initiateGameCycle -> COMMAND_EXECUTOR.accept(() -> initiateGameCycleCommandHandler.decide(initiateGameCycle));
-            case StopGame stopGame -> COMMAND_EXECUTOR.accept(() -> stopGameCommandHandler.decide(stopGame));
+            case StopGame stopGame -> COMMAND_EXECUTOR.accept(() -> gameStopper.decide(stopGame));
             // Player
             case StopPlayer stopPlayer -> COMMAND_EXECUTOR.accept(() -> stopPlayerCommandHandler.decide(stopPlayer));
             // Sprite
@@ -68,6 +71,7 @@ public class CommandApi {
             case ChangeSpriteImage changeSpriteImage -> COMMAND_EXECUTOR.accept(() -> changeSpriteImageCommandHandler.decide(changeSpriteImage));
             case TriggerSpriteExplosion triggerSpriteExplosion -> COMMAND_EXECUTOR.accept(() -> triggerSpriteExplosionCommandHandler.decide(triggerSpriteExplosion));
             case RestInPeaceSprite restInPeaceSprite -> COMMAND_EXECUTOR.accept(() -> restInPeaceSpriteCommandHandler.decide(restInPeaceSprite));
+            case MoveSprite moveSprite -> COMMAND_EXECUTOR.accept(() -> moveSpriteCommandHandler.decide(moveSprite));
 
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }

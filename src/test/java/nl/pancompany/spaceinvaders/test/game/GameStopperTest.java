@@ -11,9 +11,7 @@ import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.events.GameStopped;
-import nl.pancompany.spaceinvaders.game.create.CreateGame;
-import nl.pancompany.spaceinvaders.game.stop.StopGame;
-import org.assertj.core.api.Assertions;
+import nl.pancompany.spaceinvaders.game.stopper.StopGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
-public class StopGameTest {
+public class GameStopperTest {
 
     EventStore eventStore;
     CommandApi commandApi;

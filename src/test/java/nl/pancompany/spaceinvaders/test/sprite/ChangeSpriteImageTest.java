@@ -44,7 +44,7 @@ public class ChangeSpriteImageTest {
     }
 
     @Test
-    void givenPlayerCreated_whenChangeSpriteImage_thenSpriteImageChanged() {
+    void givenSpriteCreated_whenChangeSpriteImage_thenSpriteImageChanged() {
         SpriteId spriteId = SpriteId.random();
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
         SpriteCreated spriteCreated = new SpriteCreated(spriteId, "path1", 0, 0, 1, Direction.NONE);

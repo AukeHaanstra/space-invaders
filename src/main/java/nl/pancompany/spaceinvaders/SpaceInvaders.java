@@ -3,20 +3,23 @@ package nl.pancompany.spaceinvaders;
 import lombok.Getter;
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
+import nl.pancompany.spaceinvaders.alien.dropper.AlienDropper;
+import nl.pancompany.spaceinvaders.alien.mover.AlienMover;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
-import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
-import nl.pancompany.spaceinvaders.sprite.creator.SpriteCreator;
+import nl.pancompany.spaceinvaders.game.stopper.GameStopper;
 import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
-import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.creator.SpriteCreator;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteProjector;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteQueryHandler;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteRepository;
+import nl.pancompany.spaceinvaders.sprite.move.MoveSpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSpriteCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,7 +51,7 @@ public class SpaceInvaders extends JFrame  {
         // Game
         CreateGameCommandHandler createGameCommandHandler = new CreateGameCommandHandler(eventStore);
         InitiateGameCycleCommandHandler initiateGameCycleCommandHandler = new InitiateGameCycleCommandHandler(eventStore);
-        StopGameCommandHandler stopGameCommandHandler = new StopGameCommandHandler(eventStore);
+        GameStopper stopGameCommandHandler = new GameStopper(eventStore); // TODO: Remove when only automation
         // Player
         TurnSpriteCommandHandler turnSpriteCommandHandler = new TurnSpriteCommandHandler(eventStore);
         StopPlayerCommandHandler stopPlayerCommandHandler = new StopPlayerCommandHandler(eventStore);
@@ -56,12 +59,13 @@ public class SpaceInvaders extends JFrame  {
         ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler = new ChangeSpriteImageCommandHandler(eventStore);
         TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler = new TriggerSpriteExplosionCommandHandler(eventStore);
         RestInPeaceSpriteCommandHandler restInPeaceSpriteCommandHandler = new RestInPeaceSpriteCommandHandler(eventStore);
+        MoveSpriteCommandHandler moveSpriteCommandHandler = new MoveSpriteCommandHandler(eventStore);
 
         commandApi = CommandApi.builder()
                 // Game
                 .createGameCommandHandler(createGameCommandHandler)
                 .initiateGameCycleCommandHandler(initiateGameCycleCommandHandler)
-                .stopGameCommandHandler(stopGameCommandHandler)
+                .gameStopper(stopGameCommandHandler)
                 // Player
                 .turnSpriteCommandHandler(turnSpriteCommandHandler)
                 .stopPlayerCommandHandler(stopPlayerCommandHandler)
@@ -69,6 +73,7 @@ public class SpaceInvaders extends JFrame  {
                 .changeSpriteImageCommandHandler(changeSpriteImageCommandHandler)
                 .triggerSpriteExplosionCommandHandler(triggerSpriteExplosionCommandHandler)
                 .restInPeaceSpriteCommandHandler(restInPeaceSpriteCommandHandler)
+                .moveSpriteCommandHandler(moveSpriteCommandHandler) // TODO: Check whether used!
                 .build();
 
         // Query handlers, projectors and repositories
@@ -89,14 +94,24 @@ public class SpaceInvaders extends JFrame  {
         eventBus.registerAsynchronousEventHandler(gameQueryHandler);
 
         // Automations
+        // Game
+        GameStopper gameStopper = new GameStopper(eventStore);
         // Player
         SpriteCreator spriteCreator = new SpriteCreator(eventStore);
         PlayerMover playerMover = new PlayerMover(eventStore);
+        // Alien
+        AlienMover alienMover = new AlienMover(eventStore);
+        AlienDropper alienDropper = new AlienDropper(eventStore);
 
         // Automation event-handler registrations
+        // Game
+        eventBus.registerAsynchronousEventHandler(gameStopper);
         // Player
         eventBus.registerAsynchronousEventHandler(spriteCreator);
         eventBus.registerAsynchronousEventHandler(playerMover);
+        // Alien
+        eventBus.registerAsynchronousEventHandler(alienMover);
+        eventBus.registerAsynchronousEventHandler(alienDropper);
     }
 
     private void initUI() { // 3

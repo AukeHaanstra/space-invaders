@@ -19,9 +19,6 @@ public interface Constants {
             .mapToObj(String::valueOf)
             .map(SpriteId::of)
             .toList();
-    default SpriteId getBombId(SpriteId alienId) {
-        return BOMB_SPRITE_IDS.get(ALIEN_SPRITE_IDS.indexOf(alienId));
-    }
 
     // Entity names
     String SPRITE_ENTITY = "Sprite";
@@ -43,6 +40,7 @@ public interface Constants {
     int ALIEN_START_Y = 5;
     int ALIEN_SPEED = 1;
     String ALIEN_IMAGE_PATH = "/images/alien.png";
+    int ALIEN_STEP_DOWN = 15;
 
     // Bomb
     String BOMB_IMAGE_PATH = "/images/bomb.png";
@@ -62,10 +60,10 @@ public interface Constants {
 
 
     // Miscellaneous
-    int GROUND = 290;
+    int GROUND_Y = 290;
     int BOMB_HEIGHT = 5;
 
-    int GO_DOWN = 15;
+
     int NUMBER_OF_ALIENS_TO_DESTROY = 24;
     // TODO: Easily win game (no bombs)
 //    int CHANCE = 15;

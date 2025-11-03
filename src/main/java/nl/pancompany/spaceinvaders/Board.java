@@ -3,7 +3,7 @@ package nl.pancompany.spaceinvaders;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
-import nl.pancompany.spaceinvaders.game.stop.StopGame;
+import nl.pancompany.spaceinvaders.game.stopper.StopGame;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
 import nl.pancompany.spaceinvaders.sprite.Alien;
@@ -225,7 +225,7 @@ public class Board extends JPanel {
                 while (i1.hasNext()) {
 
                     Alien a2 = i1.next();
-                    a2.setY(a2.getY() + Constants.GO_DOWN);
+                    a2.setY(a2.getY() + Constants.ALIEN_STEP_DOWN);
                 }
             }
 
@@ -238,7 +238,7 @@ public class Board extends JPanel {
                 while (i2.hasNext()) {
 
                     Alien a = i2.next();
-                    a.setY(a.getY() + Constants.GO_DOWN);
+                    a.setY(a.getY() + Constants.ALIEN_STEP_DOWN);
                 }
             }
         }
@@ -253,7 +253,7 @@ public class Board extends JPanel {
 
                 int y = alien.getY();
 
-                if (y > Constants.GROUND - Constants.ALIEN_HEIGHT) {
+                if (y > Constants.GROUND_Y - Constants.ALIEN_HEIGHT) {
                     commandApi.publish(new StopGame("Invasion!"));
                 }
 
@@ -301,7 +301,7 @@ public class Board extends JPanel {
 
                 bomb.setY(bomb.getY() + 1);
 
-                if (bomb.getY() >= Constants.GROUND - Constants.BOMB_HEIGHT) {
+                if (bomb.getY() >= Constants.GROUND_Y - Constants.BOMB_HEIGHT) {
 
                     bomb.setDestroyed(true);
                 }
@@ -320,8 +320,8 @@ public class Board extends JPanel {
         boolean inGame = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found.")).inGame();
         if (inGame) { // check whether player is still alive or game over
 
-            g.drawLine(0, Constants.GROUND,
-                    Constants.BOARD_WIDTH, Constants.GROUND);
+            g.drawLine(0, Constants.GROUND_Y,
+                    Constants.BOARD_WIDTH, Constants.GROUND_Y);
 
             drawAliens(g);
             drawPlayer(g);

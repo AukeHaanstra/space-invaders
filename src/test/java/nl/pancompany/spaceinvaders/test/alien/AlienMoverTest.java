@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders.test.sprite;
+package nl.pancompany.spaceinvaders.test.alien;
 
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
-public class TriggerSpriteExplosionTest {
+public class AlienMoverTest {
 
     EventStore eventStore;
     CommandApi commandApi;

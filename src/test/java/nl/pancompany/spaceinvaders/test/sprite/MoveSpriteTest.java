@@ -10,10 +10,10 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
-import nl.pancompany.spaceinvaders.events.SpriteExplosionTriggered;
+import nl.pancompany.spaceinvaders.events.SpriteMoved;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
-import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
+import nl.pancompany.spaceinvaders.sprite.move.MoveSprite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
-public class TriggerSpriteExplosionTest {
+public class MoveSpriteTest {
 
     EventStore eventStore;
     CommandApi commandApi;
@@ -38,25 +38,23 @@ public class TriggerSpriteExplosionTest {
     }
 
     @Test
-    void given__whenTriggerSpriteExplosion_thenIllegalState() {
-        assertThatThrownBy(() -> commandApi.publish(new TriggerSpriteExplosion(SpriteId.random())))
-                .isInstanceOf(IllegalStateException.class);
+    void given__whenMoveSprite_thenIllegalState() {
+        assertThatThrownBy(() -> commandApi.publish(new MoveSprite(SpriteId.random(), 4, 2))).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void givenSpriteCreated_whenTriggerSpriteExplosion_thenSpriteExplosionTriggered() {
+    void givenSpriteCreated_whenMoveSprite_thenSpriteMoved() {
         SpriteId spriteId = SpriteId.random();
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
-        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "path", 0, 0, 1, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "path", 0, 0, 0, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, spriteTag));
 
-        commandApi.publish(new TriggerSpriteExplosion(spriteId));
+        commandApi.publish(new MoveSprite(spriteId, 4, 2));
 
-        Query query = Query.of(spriteTag, Type.of(SpriteExplosionTriggered.class));
+        Query query = Query.of(spriteTag, Type.of(SpriteMoved.class));
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
-        assertThat(events.getFirst().payload(SpriteExplosionTriggered.class)).isEqualTo(
-                new SpriteExplosionTriggered(spriteId));
+        assertThat(events.getFirst().payload(SpriteMoved.class)).isEqualTo(new SpriteMoved(spriteId, 4, 2));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

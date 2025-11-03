@@ -46,7 +46,7 @@ public class RestInPeaceSpriteTest {
     }
 
     @Test
-    void givenPlayerCreated_whenRestInPeaceSprite_thenSpriteRestsInPeace() {
+    void givenSpriteCreated_whenRestInPeaceSprite_thenSpriteRestsInPeace() {
         SpriteId spriteId = SpriteId.random();
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
         SpriteCreated spriteCreated = new SpriteCreated(spriteId, "path", 0, 0, 1, Direction.NONE);
