@@ -169,7 +169,6 @@ public class Board extends JPanel {
     }
 
     private void update() {
-
         if (deaths == Constants.NUMBER_OF_ALIENS_TO_DESTROY) {
 
             commandApi.publish(new StopGame("Game won!"));

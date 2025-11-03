@@ -42,15 +42,6 @@ public class StopGameTest {
     }
 
     @Test
-    void givenGameStopped_whenStopGame_thenIllegalState() {
-        GameCreated gameCreated = new GameCreated();
-        GameStopped gameStopped = new GameStopped("message");
-        eventStore.append(Event.of(gameCreated, EntityTags.GAME), Event.of(gameStopped, EntityTags.GAME));
-
-        assertThatThrownBy(() -> commandApi.publish(new StopGame("message2"))).isInstanceOf(IllegalStateException.class);
-    }
-
-    @Test
     void givenGameCreated__whenStopGame_thenGameStopped() {
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
@@ -64,5 +55,23 @@ public class StopGameTest {
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 
+    /*
+            It is allowed to try to stop the game twice, because a new gamecycle might have started while the previous
+            StopGame command still needs to be processed.
+     */
+    @Test
+    void givenGameStopped_whenStopGame_thenGameStopped() {
+        GameCreated gameCreated = new GameCreated();
+        GameStopped gameStopped = new GameStopped("message");
+        eventStore.append(Event.of(gameCreated, EntityTags.GAME), Event.of(gameStopped, EntityTags.GAME));
+
+        commandApi.publish(new StopGame("message2"));
+
+        Query query = Query.of(EntityTags.GAME, Type.of(GameStopped.class));
+        await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(2));
+        List<SequencedEvent> events = eventStore.read(query);
+        assertThat(events.getFirst().payload(GameStopped.class)).isEqualTo(new GameStopped("message"));
+        assertThat(eventBus.hasLoggedExceptions()).isFalse();
+    }
 
 }

@@ -46,6 +46,7 @@ public class PlayerMover {
 
         int newX = playerState.x + dx;
 
+        // TODO: Comment out to go beyond player boundaries (to check invasion or win game)
         if (newX <= PLAYER_STOP_X_LEFT || newX >= PLAYER_STOP_X_RIGHT) {
             return; // don't move off the board
         }

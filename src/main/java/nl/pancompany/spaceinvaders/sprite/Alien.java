@@ -25,7 +25,8 @@ public class Alien extends Sprite {
     }
 
     public void act(int direction) {
-
+        // TODO: Speeding up the game (to check invasion)
+//        this.x += 5 * direction;
         this.x += direction;
     }
 

@@ -22,11 +22,8 @@ public class StopGameCommandHandler {
     public void decide(StopGame stopGame) {
         StateManager<GameState> stateManager = eventStore.loadState(GameState.class,
                 Query.of(EntityTags.GAME, Type.of(GameCreated.class).orType(GameStopped.class)));
-        GameState gameState = stateManager.getState().orElseThrow(
+        stateManager.getState().orElseThrow(
                 () -> new IllegalStateException("Game cannot be stoppped before being created."));
-        if (!gameState.inGame) {
-            throw new IllegalStateException("Game cannot be stoppped twice.");
-        }
         stateManager.apply(new GameStopped(stopGame.message()), EntityTags.GAME);
     }
 
