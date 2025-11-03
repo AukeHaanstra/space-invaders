@@ -24,7 +24,7 @@ public class Sprite {
 
     public void die() {
 
-        visible = false;
+        visible = false; // if exploded, it already died, so it disappears when we say Rest In Peace
     }
 
     public void setImage(Image image) {

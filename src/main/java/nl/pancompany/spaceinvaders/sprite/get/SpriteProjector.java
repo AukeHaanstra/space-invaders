@@ -23,7 +23,7 @@ public class SpriteProjector {
         if (spriteRepository.findById(spriteCreated.id()).isPresent()) {
             throw new IllegalStateException(format("Sprite with id %s not found.", spriteCreated.id()));
         }
-        SpriteReadModel sprite = new SpriteReadModel(spriteCreated.id(), false, spriteCreated.imagePath(), false,
+        SpriteReadModel sprite = new SpriteReadModel(spriteCreated.id(), true, spriteCreated.imagePath(), false,
                 spriteCreated.startX(), spriteCreated.startY(), spriteCreated.speed(), spriteCreated.direction());
         spriteRepository.save(sprite);
     }
@@ -56,5 +56,11 @@ public class SpriteProjector {
     void update(SpriteExplosionTriggered spriteExplosionTriggered) {
         SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteExplosionTriggered.id());
         spriteRepository.save(sprite.withExplosionTriggered(true));
+    }
+
+    @EventHandler(enableReplay = true)
+    void update(SpriteRestsInPeace spriteRestsInPeace) {
+        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteRestsInPeace.id());
+        spriteRepository.save(sprite.withVisible(false));
     }
 }

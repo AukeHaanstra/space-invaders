@@ -14,6 +14,7 @@ import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandH
 import nl.pancompany.spaceinvaders.sprite.get.SpriteProjector;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteQueryHandler;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteRepository;
+import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSpriteCommandHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,6 +52,7 @@ public class SpaceInvaders extends JFrame  {
         // Sprite
         ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler = new ChangeSpriteImageCommandHandler(eventStore);
         TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler = new TriggerSpriteExplosionCommandHandler(eventStore);
+        RestInPeaceSpriteCommandHandler restInPeaceSpriteCommandHandler = new RestInPeaceSpriteCommandHandler(eventStore);
 
         commandApi = CommandApi.builder()
                 // Game
@@ -62,6 +64,7 @@ public class SpaceInvaders extends JFrame  {
                 // Sprite
                 .changeSpriteImageCommandHandler(changeSpriteImageCommandHandler)
                 .triggerSpriteExplosionCommandHandler(triggerSpriteExplosionCommandHandler)
+                .restInPeaceSpriteCommandHandler(restInPeaceSpriteCommandHandler)
                 .build();
 
         // Query handlers, projectors and repositories

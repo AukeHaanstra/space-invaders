@@ -17,7 +17,7 @@ public class InitiateGameCycleCommandHandler {
 
     public void decide(InitiateGameCycle initiateGameCycle) {
         StateManager<GameState> stateManager = eventStore.loadState(GameState.class,
-                Query.of(EntityTags.GAME, Type.of(GameCreated.class)));
+                Query.of(EntityTags.GAME, Type.of(GameCreated.class))); // Not GameCycleInitiated.class, to save resources
         stateManager.getState().orElseThrow(() -> new IllegalStateException(
                 "Game cannot be initiated before being created."));
         stateManager.apply(new GameCycleInitiated(), EntityTags.GAME);
@@ -29,7 +29,7 @@ public class InitiateGameCycleCommandHandler {
         GameState(GameCreated gameCreated) {
         }
 
-        @EventSourced
+        // Not @EventSourced, to save resources
         void evolve(GameCycleInitiated gameCycleInitiated) {
         }
 

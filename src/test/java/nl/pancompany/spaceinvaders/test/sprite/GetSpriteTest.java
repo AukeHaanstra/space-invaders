@@ -56,7 +56,7 @@ public class GetSpriteTest {
         assertThat(readModel.get().speed()).isEqualTo(PLAYER_SPEED);
         assertThat(readModel.get().direction()).isEqualTo(Direction.LEFT);
         assertThat(readModel.get().explosionTriggered()).isEqualTo(false);
-        assertThat(readModel.get().visible()).isEqualTo(false);
+        assertThat(readModel.get().visible()).isEqualTo(true);
     }
 
     @Test
@@ -141,6 +141,22 @@ public class GetSpriteTest {
     }
 
     @Test
+    void givenSpriteCreated_whenRestInPeaceSprite_thenVisibilityIsUpdated() {
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+                PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
+        eventStore.append(Event.of(spriteCreated, PLAYER));
+
+        SpriteRestsInPeace spriteRestsInPeace = new SpriteRestsInPeace(PLAYER_SPRITE_ID);
+        eventStore.append(Event.of(spriteRestsInPeace, PLAYER));
+        await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(2));
+
+        Optional<SpriteReadModel> readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
+        assertThat(readModel).isPresent();
+        assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
+        assertThat(readModel.get().visible()).isFalse();
+    }
+
+    @Test
     void givenSpriteEvents_whenPartialReplay_thenReadModelPartiallyUpdated() throws InterruptedException {
         // given
         SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, // 1
@@ -150,11 +166,13 @@ public class GetSpriteTest {
         SpriteStopped spriteStopped = new SpriteStopped(PLAYER_SPRITE_ID); // 4, NONE: 3rd value
         SpriteImageChanged spriteImageChanged = new SpriteImageChanged(PLAYER_SPRITE_ID, "newPath"); // 5
         SpriteExplosionTriggered spriteExplosionTriggered = new SpriteExplosionTriggered(PLAYER_SPRITE_ID); // 6
+        SpriteRestsInPeace spriteRestsInPeace = new SpriteRestsInPeace(PLAYER_SPRITE_ID); // 7
         eventStore.append(Event.of(spriteCreated, PLAYER), Event.of(spriteTurned, PLAYER), Event.of(spriteMoved, PLAYER),
-                Event.of(spriteStopped, PLAYER), Event.of(spriteImageChanged, PLAYER), Event.of(spriteExplosionTriggered, PLAYER));
+                Event.of(spriteStopped, PLAYER), Event.of(spriteImageChanged, PLAYER),
+                Event.of(spriteExplosionTriggered, PLAYER), Event.of(spriteRestsInPeace, PLAYER));
 
         // assert given events have updated the read model
-        await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(6));
+        await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(7));
 
         Optional<SpriteReadModel> readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
         assertThat(readModel).isPresent();
@@ -177,7 +195,7 @@ public class GetSpriteTest {
         });
 
         Thread.sleep(400); // wait a little longer for any events to be erroneously replayed
-        assertThat(eventStore.read(playerQuery)).hasSize(6);
+        assertThat(eventStore.read(playerQuery)).hasSize(7);
         readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
         assertThat(readModel).isPresent();
         assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
@@ -187,7 +205,7 @@ public class GetSpriteTest {
         assertThat(readModel.get().speed()).isEqualTo(PLAYER_SPEED);
         assertThat(readModel.get().direction()).isEqualTo(Direction.RIGHT); // 2nd value
         assertThat(readModel.get().explosionTriggered()).isEqualTo(false); // old value
-        assertThat(readModel.get().visible()).isEqualTo(false);
+        assertThat(readModel.get().visible()).isEqualTo(true);
     }
 
 }

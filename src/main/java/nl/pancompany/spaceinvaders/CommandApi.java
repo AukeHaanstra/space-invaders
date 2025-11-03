@@ -19,6 +19,8 @@ import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSprite;
+import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSpriteCommandHandler;
 
 import java.util.function.Consumer;
 
@@ -38,12 +40,16 @@ public class CommandApi {
     private static final FailsafeExecutor<Object> COMMAND_RETRY_EXECUTOR = Failsafe.with(RETRY_POLICY);
     public static final Consumer<CheckedRunnable> COMMAND_EXECUTOR = COMMAND_RETRY_EXECUTOR::run;
 
+    // Game
     private final CreateGameCommandHandler createGameCommandHandler;
-    private final TurnPlayerCommandHandler turnPlayerCommandHandler;
     private final InitiateGameCycleCommandHandler initiateGameCycleCommandHandler;
+    // Player
+    private final TurnPlayerCommandHandler turnPlayerCommandHandler;
     private final StopPlayerCommandHandler stopPlayerCommandHandler;
+    // Sprite
     private final ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler;
     private final TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler;
+    private final RestInPeaceSpriteCommandHandler restInPeaceSpriteCommandHandler;
 
     public void publish(Object command) {
         switch (command) {
@@ -57,6 +63,7 @@ public class CommandApi {
             // Sprite
             case ChangeSpriteImage changeSpriteImage -> COMMAND_EXECUTOR.accept(() -> changeSpriteImageCommandHandler.decide(changeSpriteImage));
             case TriggerSpriteExplosion triggerSpriteExplosion -> COMMAND_EXECUTOR.accept(() -> triggerSpriteExplosionCommandHandler.decide(triggerSpriteExplosion));
+            case RestInPeaceSprite restInPeaceSprite -> COMMAND_EXECUTOR.accept(() -> restInPeaceSpriteCommandHandler.decide(restInPeaceSprite));
 
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }

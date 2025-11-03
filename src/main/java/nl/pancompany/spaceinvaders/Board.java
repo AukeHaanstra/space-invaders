@@ -11,6 +11,7 @@ import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
+import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSprite;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +34,6 @@ public class Board extends JPanel {
     private final CommandApi commandApi;
     private final QueryApi queryApi;
     private List<Alien> aliens;
-    private Player player;
     private Shot shot; // single shot from the player
     
     private int direction = -1;
@@ -75,7 +75,7 @@ public class Board extends JPanel {
             }
         }
 
-        player = new Player();
+//        player = new Player();
         shot = new Shot();
     }
 
@@ -84,7 +84,7 @@ public class Board extends JPanel {
         @Override
         public void keyReleased(KeyEvent e) {
 
-            player.keyReleased(e); // delegate left & right key released events to player entity
+            // delegate left & right key released events to player entity
             directionKeyReleased(e);
         }
 
@@ -105,11 +105,13 @@ public class Board extends JPanel {
         @Override
         public void keyPressed(KeyEvent e) {
 
-            player.keyPressed(e); // delegate left & right keystrokes to player entity
+            // delegate left & right keystrokes to player entity
             directionKeyPressed(e); // translator
 
-            int x = player.getX();
-            int y = player.getY();
+            SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
+                    .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
+            int x = playerReadModel.x();
+            int y = playerReadModel.y();
 
             int key = e.getKeyCode();
 
@@ -169,9 +171,6 @@ public class Board extends JPanel {
             timer.stop();
             message = "Game won!";
         }
-
-        // player
-        player.act();
 
         // shot
         if (shot.isVisible()) {
@@ -278,10 +277,12 @@ public class Board extends JPanel {
 
             int bombX = bomb.getX();
             int bombY = bomb.getY();
-            int playerX = player.getX();
-            int playerY = player.getY();
+            SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
+                    .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
+            int playerX = playerReadModel.x();
+            int playerY = playerReadModel.y();
 
-            if (player.isVisible() && !bomb.isDestroyed()) {
+            if (playerReadModel.visible() && !bomb.isDestroyed()) {
 
                 if (bombX >= (playerX)
                         && bombX <= (playerX + Constants.PLAYER_WIDTH)
@@ -341,14 +342,14 @@ public class Board extends JPanel {
 
         for (Alien alien : aliens) {
 
-            if (alien.isVisible()) {
-
+            if (alien.isVisible()) { // if RIP, in previous gamecycle, alien will now become invisible
+                // if explosionTriggered, first display set explosion image
                 g.drawImage(alien.getImage(), alien.getX(), alien.getY(), this);
             }
 
             if (alien.isDying()) {
 
-                alien.die();
+                alien.die(); // Since gamecycle is almost over (update() already ran), alien will become invisible (and game will stop) in the next gamecycle
             }
         }
     }
@@ -356,15 +357,14 @@ public class Board extends JPanel {
     private void drawPlayer(Graphics g) {
         SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
                 .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
-        if (player.isVisible()) {
-
+        if (playerReadModel.visible()) { // if RIP, in previous gamecycle, player will now become invisible
+            // if explosionTriggered, first display set explosion image
             Image playerImage = new ImageIcon(getClass().getResource(playerReadModel.imagePath())).getImage();
             g.drawImage(playerImage, playerReadModel.x(), playerReadModel.y(), this);
         }
 
         if (playerReadModel.explosionTriggered()) {
-
-            player.die(); // Since gamecycle is almost over (update() already ran), player will become invisible (and game will stop), next gamecycle
+            commandApi.publish(new RestInPeaceSprite(PLAYER_SPRITE_ID)); // Since gamecycle is almost over (update() already ran), player will become invisible (and game will stop) in the next gamecycle
             inGame = false;
         }
     }
