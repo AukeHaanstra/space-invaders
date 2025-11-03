@@ -8,7 +8,7 @@ import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHa
 import nl.pancompany.spaceinvaders.player.creator.PlayerCreator;
 import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
-import nl.pancompany.spaceinvaders.player.turn.TurnPlayerCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteProjector;
@@ -47,7 +47,7 @@ public class SpaceInvaders extends JFrame  {
         CreateGameCommandHandler createGameCommandHandler = new CreateGameCommandHandler(eventStore);
         InitiateGameCycleCommandHandler initiateGameCycleCommandHandler = new InitiateGameCycleCommandHandler(eventStore);
         // Player
-        TurnPlayerCommandHandler turnPlayerCommandHandler = new TurnPlayerCommandHandler(eventStore);
+        TurnSpriteCommandHandler turnSpriteCommandHandler = new TurnSpriteCommandHandler(eventStore);
         StopPlayerCommandHandler stopPlayerCommandHandler = new StopPlayerCommandHandler(eventStore);
         // Sprite
         ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler = new ChangeSpriteImageCommandHandler(eventStore);
@@ -59,7 +59,7 @@ public class SpaceInvaders extends JFrame  {
                 .createGameCommandHandler(createGameCommandHandler)
                 .initiateGameCycleCommandHandler(initiateGameCycleCommandHandler)
                 // Player
-                .turnPlayerCommandHandler(turnPlayerCommandHandler)
+                .turnSpriteCommandHandler(turnSpriteCommandHandler)
                 .stopPlayerCommandHandler(stopPlayerCommandHandler)
                 // Sprite
                 .changeSpriteImageCommandHandler(changeSpriteImageCommandHandler)

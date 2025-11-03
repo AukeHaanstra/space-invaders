@@ -13,8 +13,8 @@ import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
-import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
-import nl.pancompany.spaceinvaders.player.turn.TurnPlayerCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
+import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
@@ -44,7 +44,7 @@ public class CommandApi {
     private final CreateGameCommandHandler createGameCommandHandler;
     private final InitiateGameCycleCommandHandler initiateGameCycleCommandHandler;
     // Player
-    private final TurnPlayerCommandHandler turnPlayerCommandHandler;
+    private final TurnSpriteCommandHandler turnSpriteCommandHandler;
     private final StopPlayerCommandHandler stopPlayerCommandHandler;
     // Sprite
     private final ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler;
@@ -58,7 +58,7 @@ public class CommandApi {
             case CreateGame createGame -> COMMAND_EXECUTOR.accept(() ->createGameCommandHandler.decide(createGame));
             case InitiateGameCycle initiateGameCycle -> COMMAND_EXECUTOR.accept(() -> initiateGameCycleCommandHandler.decide(initiateGameCycle));
             // Player
-            case TurnPlayer turnPlayer -> COMMAND_EXECUTOR.accept(() -> turnPlayerCommandHandler.decide(turnPlayer));
+            case TurnSprite turnSprite -> COMMAND_EXECUTOR.accept(() -> turnSpriteCommandHandler.decide(turnSprite));
             case StopPlayer stopPlayer -> COMMAND_EXECUTOR.accept(() -> stopPlayerCommandHandler.decide(stopPlayer));
             // Sprite
             case ChangeSpriteImage changeSpriteImage -> COMMAND_EXECUTOR.accept(() -> changeSpriteImageCommandHandler.decide(changeSpriteImage));

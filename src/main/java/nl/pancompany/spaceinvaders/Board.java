@@ -3,9 +3,8 @@ package nl.pancompany.spaceinvaders;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
-import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
+import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
 import nl.pancompany.spaceinvaders.sprite.Alien;
-import nl.pancompany.spaceinvaders.sprite.Player;
 import nl.pancompany.spaceinvaders.sprite.Shot;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
@@ -132,11 +131,11 @@ public class Board extends JPanel {
             int key = e.getKeyCode();
 
             if (key == KeyEvent.VK_LEFT) {
-                commandApi.publish(new TurnPlayer(LEFT));
+                commandApi.publish(new TurnSprite(PLAYER_SPRITE_ID, LEFT));
             }
 
             if (key == KeyEvent.VK_RIGHT) {
-                commandApi.publish(new TurnPlayer(RIGHT));
+                commandApi.publish(new TurnSprite(PLAYER_SPRITE_ID, RIGHT));
             }
         }
     }
