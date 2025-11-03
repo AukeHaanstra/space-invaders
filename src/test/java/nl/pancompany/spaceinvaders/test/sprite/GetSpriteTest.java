@@ -3,6 +3,7 @@ package nl.pancompany.spaceinvaders.test.sprite;
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.data.Event;
+import nl.pancompany.eventstore.data.SequencePosition;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.spaceinvaders.QueryApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
@@ -113,8 +114,8 @@ public class GetSpriteTest {
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
         eventStore.append(Event.of(spriteCreated, PLAYER));
 
-        SpriteImageChanged spriteStopped = new SpriteImageChanged(PLAYER_SPRITE_ID, "newPath");
-        eventStore.append(Event.of(spriteStopped, PLAYER));
+        SpriteImageChanged spriteImageChanged = new SpriteImageChanged(PLAYER_SPRITE_ID, "newPath");
+        eventStore.append(Event.of(spriteImageChanged, PLAYER));
         await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(2));
 
         Optional<SpriteReadModel> readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
@@ -137,6 +138,56 @@ public class GetSpriteTest {
         assertThat(readModel).isPresent();
         assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
         assertThat(readModel.get().explosionTriggered()).isTrue();
+    }
+
+    @Test
+    void givenSpriteEvents_whenPartialReplay_thenReadModelPartiallyUpdated() throws InterruptedException {
+        // given
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, // 1
+                PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT); // LEFT: 1st value
+        SpriteTurned spriteTurned = new SpriteTurned(PLAYER_SPRITE_ID, Direction.RIGHT); // 2, RIGHT: 2nd value
+        SpriteMoved spriteMoved = new SpriteMoved(PLAYER_SPRITE_ID, 42, 24); // 3
+        SpriteStopped spriteStopped = new SpriteStopped(PLAYER_SPRITE_ID); // 4, NONE: 3rd value
+        SpriteImageChanged spriteImageChanged = new SpriteImageChanged(PLAYER_SPRITE_ID, "newPath"); // 5
+        SpriteExplosionTriggered spriteExplosionTriggered = new SpriteExplosionTriggered(PLAYER_SPRITE_ID); // 6
+        eventStore.append(Event.of(spriteCreated, PLAYER), Event.of(spriteTurned, PLAYER), Event.of(spriteMoved, PLAYER),
+                Event.of(spriteStopped, PLAYER), Event.of(spriteImageChanged, PLAYER), Event.of(spriteExplosionTriggered, PLAYER));
+
+        // assert given events have updated the read model
+        await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(6));
+
+        Optional<SpriteReadModel> readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
+        assertThat(readModel).isPresent();
+        assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
+        assertThat(readModel.get().imagePath()).isEqualTo("newPath");
+        assertThat(readModel.get().x()).isEqualTo(42);
+        assertThat(readModel.get().y()).isEqualTo(24);
+        assertThat(readModel.get().speed()).isEqualTo(PLAYER_SPEED);
+        assertThat(readModel.get().direction()).isEqualTo(Direction.NONE); // 3rd value
+        assertThat(readModel.get().explosionTriggered()).isEqualTo(true);
+        assertThat(readModel.get().visible()).isEqualTo(false);
+
+        // when
+        eventBus.replay(SequencePosition.of(3)); // replay events 0, 1, 2
+
+        // then
+        await().untilAsserted(() -> {
+            Optional<SpriteReadModel> spriteReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
+            assertThat(spriteReadModel.get().x()).isEqualTo(42);
+        });
+
+        Thread.sleep(400); // wait a little longer for any events to be erroneously replayed
+        assertThat(eventStore.read(playerQuery)).hasSize(6);
+        readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
+        assertThat(readModel).isPresent();
+        assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
+        assertThat(readModel.get().imagePath()).isEqualTo(PLAYER_IMAGE_PATH); // old value
+        assertThat(readModel.get().x()).isEqualTo(42); // new value
+        assertThat(readModel.get().y()).isEqualTo(24); // new value
+        assertThat(readModel.get().speed()).isEqualTo(PLAYER_SPEED);
+        assertThat(readModel.get().direction()).isEqualTo(Direction.RIGHT); // 2nd value
+        assertThat(readModel.get().explosionTriggered()).isEqualTo(false); // old value
+        assertThat(readModel.get().visible()).isEqualTo(false);
     }
 
 }

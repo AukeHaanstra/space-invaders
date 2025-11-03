@@ -4,13 +4,15 @@ import nl.pancompany.spaceinvaders.shared.ReadModelNotFoundException;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
 
 public class SpriteRepository {
 
-    HashMap<SpriteId, SpriteReadModel> sprites = new HashMap<>();
+    Map<SpriteId, SpriteReadModel> sprites = new ConcurrentHashMap<>();
 
     public Optional<SpriteReadModel> findById(SpriteId id) {
         return Optional.ofNullable(sprites.get(id));
@@ -24,4 +26,7 @@ public class SpriteRepository {
         sprites.put(sprite.spriteId(), sprite);
     }
 
+    public void deleteAll() {
+        sprites.clear();
+    }
 }

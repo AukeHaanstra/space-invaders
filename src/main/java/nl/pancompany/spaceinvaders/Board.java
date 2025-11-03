@@ -364,7 +364,7 @@ public class Board extends JPanel {
 
         if (playerReadModel.explosionTriggered()) {
 
-            player.die();
+            player.die(); // Since gamecycle is almost over (update() already ran), player will become invisible (and game will stop), next gamecycle
             inGame = false;
         }
     }

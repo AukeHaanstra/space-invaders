@@ -2,6 +2,7 @@ package nl.pancompany.spaceinvaders.sprite.get;
 
 import lombok.RequiredArgsConstructor;
 import nl.pancompany.eventstore.annotation.EventHandler;
+import nl.pancompany.eventstore.annotation.ResetHandler;
 import nl.pancompany.spaceinvaders.events.*;
 
 import static java.lang.String.format;
@@ -12,7 +13,12 @@ public class SpriteProjector {
 
     private final SpriteRepository spriteRepository;
 
-    @EventHandler
+    @ResetHandler
+    void reset() {
+        spriteRepository.deleteAll();
+    }
+
+    @EventHandler(enableReplay = true)
     void create(SpriteCreated spriteCreated) {
         if (spriteRepository.findById(spriteCreated.id()).isPresent()) {
             throw new IllegalStateException(format("Sprite with id %s not found.", spriteCreated.id()));
@@ -22,31 +28,31 @@ public class SpriteProjector {
         spriteRepository.save(sprite);
     }
 
-    @EventHandler
+    @EventHandler(enableReplay = true)
     void update(SpriteTurned spriteTurned) {
         SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteTurned.id());
         spriteRepository.save(sprite.withDirection(spriteTurned.direction()));
     }
 
-    @EventHandler
+    @EventHandler(enableReplay = true)
     void update(SpriteStopped spriteStopped) {
         SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteStopped.id());
         spriteRepository.save(sprite.withDirection(NONE));
     }
 
-    @EventHandler
+    @EventHandler(enableReplay = true)
     void update(SpriteMoved spriteMoved) {
         SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteMoved.id());
         spriteRepository.save(sprite.withX(spriteMoved.newX()).withY(spriteMoved.newY()));
     }
 
-    @EventHandler
+    @EventHandler(enableReplay = true)
     void update(SpriteImageChanged spriteImageChanged) {
         SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteImageChanged.id());
         spriteRepository.save(sprite.withImage(spriteImageChanged.imagePath()));
     }
 
-    @EventHandler
+    @EventHandler(enableReplay = true)
     void update(SpriteExplosionTriggered spriteExplosionTriggered) {
         SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteExplosionTriggered.id());
         spriteRepository.save(sprite.withExplosionTriggered(true));
