@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders.test.player;
+package nl.pancompany.spaceinvaders.test.sprite;
 
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
@@ -22,7 +22,7 @@ import static nl.pancompany.spaceinvaders.test.TestUtil.withoutLogging;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-public class PlayerCreatorTest {
+public class SpriteCreatorTest {
 
     EventStore eventStore;
     EventBus eventBus;
@@ -36,7 +36,7 @@ public class PlayerCreatorTest {
     }
 
     @Test
-    void given__whenCreateGame_thenPlayerCreated() {
+    void given__whenCreateGame_thenSpriteCreated() {
         commandApi.publish(new CreateGame());
 
         Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
@@ -48,7 +48,7 @@ public class PlayerCreatorTest {
     }
 
     @Test
-    void givenPlayerCreated_whenCreateGame_thenIllegalState() {
+    void givenSpriteCreated_whenCreateGame_thenIllegalState() {
         withoutLogging(() -> {
                     SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
                             PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);

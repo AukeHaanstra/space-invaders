@@ -5,7 +5,7 @@ import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
-import nl.pancompany.spaceinvaders.player.creator.PlayerCreator;
+import nl.pancompany.spaceinvaders.sprite.creator.SpriteCreator;
 import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
@@ -82,12 +82,12 @@ public class SpaceInvaders extends JFrame  {
 
         // Automations
         // Player
-        PlayerCreator playerCreator = new PlayerCreator(eventStore);
+        SpriteCreator spriteCreator = new SpriteCreator(eventStore);
         PlayerMover playerMover = new PlayerMover(eventStore);
 
         // Automation event-handler registrations
         // Player
-        eventBus.registerAsynchronousEventHandler(playerCreator);
+        eventBus.registerAsynchronousEventHandler(spriteCreator);
         eventBus.registerAsynchronousEventHandler(playerMover);
     }
 

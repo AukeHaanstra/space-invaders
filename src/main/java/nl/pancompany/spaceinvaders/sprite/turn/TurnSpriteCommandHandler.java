@@ -26,7 +26,7 @@ public class TurnSpriteCommandHandler {
         Tag spriteTag = Tag.of(SPRITE_ENTITY, turnSprite.spriteId().toString());
         StateManager<SpriteState> stateManager = eventStore.loadState(SpriteState.class,
                 Query.of(spriteTag, Types.or(SpriteCreated.class, SpriteTurned.class)));
-        stateManager.getState().orElseThrow(() -> new IllegalStateException("Player cannot turn before being created."));
+        stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot turn before being created."));
         if (turnSprite.direction() == null || turnSprite.direction() == Direction.NONE) {
             throw new IllegalArgumentException("Turn direction can only be left or right.");
         }
