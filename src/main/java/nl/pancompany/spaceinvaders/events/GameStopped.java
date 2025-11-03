@@ -1,4 +1,5 @@
 package nl.pancompany.spaceinvaders.events;
 
-public record GameStopped() {
+public record GameStopped(String message) {
+
 }

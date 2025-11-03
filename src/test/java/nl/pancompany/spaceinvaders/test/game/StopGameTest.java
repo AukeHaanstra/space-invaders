@@ -38,16 +38,16 @@ public class StopGameTest {
 
     @Test
     void given__whenStopGame_thenIllegalState() {
-        assertThatThrownBy(() -> commandApi.publish(new StopGame())).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> commandApi.publish(new StopGame("message"))).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     void givenGameStopped_whenStopGame_thenIllegalState() {
         GameCreated gameCreated = new GameCreated();
-        GameStopped gameStopped = new GameStopped();
+        GameStopped gameStopped = new GameStopped("message");
         eventStore.append(Event.of(gameCreated, EntityTags.GAME), Event.of(gameStopped, EntityTags.GAME));
 
-        assertThatThrownBy(() -> commandApi.publish(new StopGame())).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> commandApi.publish(new StopGame("message2"))).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -55,12 +55,12 @@ public class StopGameTest {
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, EntityTags.GAME));
 
-        commandApi.publish(new StopGame());
+        commandApi.publish(new StopGame("message"));
 
         Query query = Query.of(EntityTags.GAME, Type.of(GameStopped.class));
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
-        assertThat(events.getFirst().payload(GameStopped.class)).isEqualTo(new GameStopped());
+        assertThat(events.getFirst().payload(GameStopped.class)).isEqualTo(new GameStopped("message"));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

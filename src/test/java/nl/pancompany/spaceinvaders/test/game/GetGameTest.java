@@ -55,9 +55,14 @@ public class GetGameTest {
         eventStore.append(Event.of(gameCreated, GAME));
         await().untilAsserted(() -> assertThat(eventStore.read(gameQuery)).hasSize(1));
 
+        GameStopped gameStopped = new GameStopped("Game Over!");
+        eventStore.append(Event.of(gameStopped, GAME));
+
+        await().untilAsserted(() -> assertThat(eventStore.read(gameQuery)).hasSize(2));
         Optional<GameReadModel> readModel = queryApi.query(new GetGame());
         assertThat(readModel).isPresent();
-        assertThat(readModel.get().inGame()).isTrue();
+        assertThat(readModel.get().inGame()).isFalse();
+        assertThat(readModel.get().message().get()).isEqualTo("Game Over!");
     }
 
 }

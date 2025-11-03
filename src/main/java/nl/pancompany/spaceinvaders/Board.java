@@ -41,7 +41,6 @@ public class Board extends JPanel {
     private int deaths = 0;
 
     private final String explImg = "/images/explosion.png";
-    private String message = "Game Over";
 
     private Timer timer;
 
@@ -152,6 +151,10 @@ public class Board extends JPanel {
         }
 
         private void doGameCycle() {
+            boolean inGame = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found.")).inGame();
+            if (!inGame) {
+                timer.stop(); // only stop time when gameover is a fact
+            }
             update(); // 9 update domain entities according to business (game) rules -> state changes, can be split per entity, on each cycle event; business rules in update()
             repaint(); // 10 results in paintComponent() being called -> automation: react to above state changes in @EventHandling UI components in each slice
             // emit Commands for new desired state changes
@@ -169,9 +172,7 @@ public class Board extends JPanel {
 
         if (deaths == Constants.NUMBER_OF_ALIENS_TO_DESTROY) {
 
-            commandApi.publish(new StopGame());
-            timer.stop();
-            message = "Game won!";
+            commandApi.publish(new StopGame("Game won!"));
         }
 
         // shot
@@ -254,8 +255,7 @@ public class Board extends JPanel {
                 int y = alien.getY();
 
                 if (y > Constants.GROUND - Constants.ALIEN_HEIGHT) {
-                    commandApi.publish(new StopGame());
-                    message = "Invasion!";
+                    commandApi.publish(new StopGame("Invasion!"));
                 }
 
                 alien.act(direction);  // alien moves by |<direction>| = 1 pixel per gamecycle; player moves by 2 pixels per gamecycle
@@ -330,11 +330,6 @@ public class Board extends JPanel {
             drawBombing(g);
 
         } else {
-
-            if (timer.isRunning()) {
-                timer.stop();
-            }
-
             gameOver(g);
         }
 
@@ -368,7 +363,7 @@ public class Board extends JPanel {
 
         if (playerReadModel.explosionTriggered()) {
             commandApi.publish(new RestInPeaceSprite(PLAYER_SPRITE_ID)); // Since gamecycle is almost over (update() already ran), player will become invisible (and game will stop) in the next gamecycle
-            commandApi.publish(new StopGame());
+            commandApi.publish(new StopGame("Game Over"));
         }
     }
 
@@ -408,6 +403,8 @@ public class Board extends JPanel {
 
         g.setColor(Color.white);
         g.setFont(small);
+        String message = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found."))
+                .message().orElseThrow(() -> new IllegalStateException("Gameover message not found."));
         g.drawString(message, (Constants.BOARD_WIDTH - fontMetrics.stringWidth(message)) / 2,
                 Constants.BOARD_WIDTH / 2);
     }

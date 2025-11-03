@@ -12,12 +12,12 @@ public class GameQueryHandler {
 
     @EventHandler
     private void update(GameCreated gameCreated) {
-        gameReadModel = new GameReadModel(true);
+        gameReadModel = new GameReadModel(true, Optional.empty());
     }
 
     @EventHandler
     private void update(GameStopped gameCreated) {
-        gameReadModel = new GameReadModel(false);
+        gameReadModel = new GameReadModel(false, Optional.of(gameCreated.message()));
     }
 
     public Optional<GameReadModel> get() {

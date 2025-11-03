@@ -27,12 +27,13 @@ public class StopGameCommandHandler {
         if (!gameState.inGame) {
             throw new IllegalStateException("Game cannot be stoppped twice.");
         }
-        stateManager.apply(new GameStopped(), EntityTags.GAME);
+        stateManager.apply(new GameStopped(stopGame.message()), EntityTags.GAME);
     }
 
     private static class GameState {
 
         boolean inGame;
+        String message;
 
         @StateCreator
         GameState(GameCreated gameCreated) {
@@ -42,6 +43,7 @@ public class StopGameCommandHandler {
         @EventSourced
         void evolve(GameStopped gameStopped) {
             inGame = false;
+            message = gameStopped.message();
         }
 
     }

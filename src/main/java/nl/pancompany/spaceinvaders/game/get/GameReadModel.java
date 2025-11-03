@@ -1,5 +1,7 @@
 package nl.pancompany.spaceinvaders.game.get;
 
-public record GameReadModel(boolean inGame) {
+import java.util.Optional;
+
+public record GameReadModel(boolean inGame, Optional<String> message) {
 
 }
