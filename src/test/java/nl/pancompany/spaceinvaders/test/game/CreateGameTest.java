@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders.test;
+package nl.pancompany.spaceinvaders.test.game;
 
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;

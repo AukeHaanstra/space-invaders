@@ -45,4 +45,10 @@ public class SpriteProjector {
         SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteImageChanged.id());
         spriteRepository.save(sprite.withImage(spriteImageChanged.imagePath()));
     }
+
+    @EventHandler
+    void update(SpriteExplosionTriggered spriteExplosionTriggered) {
+        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteExplosionTriggered.id());
+        spriteRepository.save(sprite.withExplosionTriggered(true));
+    }
 }

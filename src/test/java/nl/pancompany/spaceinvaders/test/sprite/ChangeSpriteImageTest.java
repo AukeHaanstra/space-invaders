@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders.test;
+package nl.pancompany.spaceinvaders.test.sprite;
 
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
@@ -8,12 +8,9 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
-import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.events.SpriteImageChanged;
-import nl.pancompany.spaceinvaders.events.SpriteTurned;
-import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
@@ -23,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static nl.pancompany.spaceinvaders.Constants.*;
-import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
@@ -42,7 +38,7 @@ public class ChangeSpriteImageTest {
     }
 
     @Test
-    void given__whenTurnPlayer_thenIllegalState() {
+    void given__whenChangeSpriteImage_thenIllegalState() {
         assertThatThrownBy(() -> commandApi.publish(new ChangeSpriteImage(SpriteId.random(), "path")))
                 .isInstanceOf(IllegalStateException.class);
     }

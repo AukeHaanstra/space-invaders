@@ -8,6 +8,7 @@ import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Player;
 import nl.pancompany.spaceinvaders.sprite.Shot;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
+import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
 
@@ -288,8 +289,8 @@ public class Board extends JPanel {
                         && bombY <= (playerY + Constants.PLAYER_HEIGHT)) {
 
                     var ii = new ImageIcon(getClass().getResource(explImg));
-                    commandApi.publish(new ChangeSpriteImage(PLAYER_SPRITE_ID, explImg));
-                    player.setDying(true);
+                    commandApi.publish(new TriggerSpriteExplosion(PLAYER_SPRITE_ID));
+                    commandApi.publish(new ChangeSpriteImage(PLAYER_SPRITE_ID, explImg)); // make simple automation to trigger ChangeSpriteImage upon SpriteExplosionTriggered
                     bomb.setDestroyed(true);
                 }
             }
@@ -361,7 +362,7 @@ public class Board extends JPanel {
             g.drawImage(playerImage, playerReadModel.x(), playerReadModel.y(), this);
         }
 
-        if (player.isDying()) {
+        if (playerReadModel.explosionTriggered()) {
 
             player.die();
             inGame = false;

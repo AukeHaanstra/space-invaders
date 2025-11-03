@@ -17,6 +17,8 @@ import nl.pancompany.spaceinvaders.player.turn.TurnPlayer;
 import nl.pancompany.spaceinvaders.player.turn.TurnPlayerCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
+import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandHandler;
 
 import java.util.function.Consumer;
 
@@ -41,6 +43,7 @@ public class CommandApi {
     private final InitiateGameCycleCommandHandler initiateGameCycleCommandHandler;
     private final StopPlayerCommandHandler stopPlayerCommandHandler;
     private final ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler;
+    private final TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler;
 
     public void publish(Object command) {
         switch (command) {
@@ -53,6 +56,7 @@ public class CommandApi {
             case StopPlayer stopPlayer -> COMMAND_EXECUTOR.accept(() -> stopPlayerCommandHandler.decide(stopPlayer));
             // Sprite
             case ChangeSpriteImage changeSpriteImage -> COMMAND_EXECUTOR.accept(() -> changeSpriteImageCommandHandler.decide(changeSpriteImage));
+            case TriggerSpriteExplosion triggerSpriteExplosion -> COMMAND_EXECUTOR.accept(() -> triggerSpriteExplosionCommandHandler.decide(triggerSpriteExplosion));
 
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }

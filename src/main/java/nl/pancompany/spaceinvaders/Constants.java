@@ -48,6 +48,6 @@ public interface Constants {
     int GO_DOWN = 15;
     int NUMBER_OF_ALIENS_TO_DESTROY = 24;
     int CHANCE = 5;
-    int DELAY = 17;
+    int DELAY = 17; // 60 Hz refresh rate -> 17 ms between each gamecycle
 
 }

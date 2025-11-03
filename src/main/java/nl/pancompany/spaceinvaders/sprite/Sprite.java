@@ -17,7 +17,7 @@ public class Sprite {
         visible = true;
     }
 
-    public void setDying(boolean dying) {
+    public void setDying(boolean dying) { // only used with: true, only for player and aliens that explode
 
         this.dying = dying;
     }

@@ -14,6 +14,7 @@ import nl.pancompany.spaceinvaders.events.SpriteTurned;
 import nl.pancompany.spaceinvaders.shared.Direction;
 
 import static nl.pancompany.spaceinvaders.Constants.PLAYER_SPRITE_ID;
+import static nl.pancompany.spaceinvaders.Constants.SPRITE_ENTITY;
 import static nl.pancompany.spaceinvaders.EntityTags.GAME;
 
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class ChangeSpriteImageCommandHandler {
     private final EventStore eventStore;
 
     public void decide(ChangeSpriteImage changeSpriteImage) {
-        Tag spriteTag = Tag.of(Constants.SPRITE_ENTITY, changeSpriteImage.spriteId().toString());
+        Tag spriteTag = Tag.of(SPRITE_ENTITY, changeSpriteImage.spriteId().toString());
         StateManager<SpriteState> stateManager = eventStore.loadState(SpriteState.class,
                 Query.taggedWith(spriteTag).andHavingType(Type.of(SpriteCreated.class).orType(SpriteImageChanged.class)));
         stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot change image before being created."));

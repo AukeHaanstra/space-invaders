@@ -1,11 +1,9 @@
-package nl.pancompany.spaceinvaders.test;
+package nl.pancompany.spaceinvaders.test.sprite;
 
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.data.Event;
 import nl.pancompany.eventstore.query.Query;
-import nl.pancompany.eventstore.query.Type;
-import nl.pancompany.spaceinvaders.EntityTags;
 import nl.pancompany.spaceinvaders.QueryApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.*;
@@ -56,6 +54,8 @@ public class GetSpriteTest {
         assertThat(readModel.get().y()).isEqualTo(PLAYER_START_Y);
         assertThat(readModel.get().speed()).isEqualTo(PLAYER_SPEED);
         assertThat(readModel.get().direction()).isEqualTo(Direction.LEFT);
+        assertThat(readModel.get().explosionTriggered()).isEqualTo(false);
+        assertThat(readModel.get().visible()).isEqualTo(false);
     }
 
     @Test
@@ -121,6 +121,22 @@ public class GetSpriteTest {
         assertThat(readModel).isPresent();
         assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
         assertThat(readModel.get().imagePath()).isEqualTo("newPath");
+    }
+
+    @Test
+    void givenSpriteCreated_whenSpriteExplosionTriggered_thenImagePathIsUpdated() {
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+                PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
+        eventStore.append(Event.of(spriteCreated, PLAYER));
+
+        SpriteExplosionTriggered spriteExplosionTriggered = new SpriteExplosionTriggered(PLAYER_SPRITE_ID);
+        eventStore.append(Event.of(spriteExplosionTriggered, PLAYER));
+        await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(2));
+
+        Optional<SpriteReadModel> readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
+        assertThat(readModel).isPresent();
+        assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
+        assertThat(readModel.get().explosionTriggered()).isTrue();
     }
 
 }
