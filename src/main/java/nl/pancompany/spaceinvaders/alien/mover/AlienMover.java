@@ -49,6 +49,7 @@ public class AlienMover {
         };
 
         int newX = alienState.x + dx;
+        System.out.println("Alien " + moveAlien.spriteId() + " moved to " + newX);
 
         stateManager.apply(new SpriteMoved(moveAlien.spriteId(), newX, alienState.y), Tags.and(spriteTagAlien, EntityTags.GAME));
     }

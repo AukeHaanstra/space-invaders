@@ -100,8 +100,9 @@ public class SpaceInvaders extends JFrame  {
         SpriteCreator spriteCreator = new SpriteCreator(eventStore);
         PlayerMover playerMover = new PlayerMover(eventStore);
         // Alien
+        // TODO: Automation alienMover seem to cause high cpu
         AlienMover alienMover = new AlienMover(eventStore);
-        AlienDropper alienDropper = new AlienDropper(eventStore);
+//        AlienDropper alienDropper = new AlienDropper(eventStore);
 
         // Automation event-handler registrations
         // Game
@@ -111,7 +112,7 @@ public class SpaceInvaders extends JFrame  {
         eventBus.registerAsynchronousEventHandler(playerMover);
         // Alien
         eventBus.registerAsynchronousEventHandler(alienMover);
-        eventBus.registerAsynchronousEventHandler(alienDropper);
+//        eventBus.registerAsynchronousEventHandler(alienDropper);
     }
 
     private void initUI() { // 3
