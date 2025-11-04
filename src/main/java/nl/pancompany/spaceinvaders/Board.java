@@ -6,6 +6,7 @@ import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.stop.StopGame;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.shared.Constants;
+import nl.pancompany.spaceinvaders.sprite.get.GetSpriteByEntityName;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Shot;
@@ -26,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import static nl.pancompany.spaceinvaders.shared.Constants.PLAYER_SPRITE_ID;
+import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
 import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 
@@ -213,54 +214,54 @@ public class Board extends JPanel {
 
         // aliens
 
-        for (Alien alien : aliens) {
-
-            int x = alien.getX();
-
-            if (x >= Constants.BOARD_WIDTH - Constants.ALIEN_BORDER_RIGHT && direction != -1) {
-
-                direction = -1;
-
-                Iterator<Alien> i1 = aliens.iterator();
-
-                while (i1.hasNext()) {
-
-                    Alien a2 = i1.next();
-                    a2.setY(a2.getY() + Constants.ALIEN_STEP_DOWN);
-                }
-            }
-
-            if (x <= Constants.ALIEN_BORDER_LEFT && direction != 1) {
-
-                direction = 1;
-
-                Iterator<Alien> i2 = aliens.iterator();
-
-                while (i2.hasNext()) {
-
-                    Alien a = i2.next();
-                    a.setY(a.getY() + Constants.ALIEN_STEP_DOWN);
-                }
-            }
-        }
-
-        Iterator<Alien> it = aliens.iterator();
-
-        while (it.hasNext()) {
-
-            Alien alien = it.next();
-
-            if (alien.isVisible()) {
-
-                int y = alien.getY();
-
-                if (y > Constants.GROUND_Y - Constants.ALIEN_HEIGHT) {
-                    commandApi.publish(new StopGame("Invasion!"));
-                }
-
-                alien.act(direction);  // alien moves by |<direction>| = 1 pixel per gamecycle; player moves by 2 pixels per gamecycle
-            }
-        }
+//        for (Alien alien : aliens) {
+//
+//            int x = alien.getX();
+//
+//            if (x >= Constants.BOARD_WIDTH - Constants.ALIEN_BORDER_RIGHT && direction != -1) {
+//
+//                direction = -1;
+//
+//                Iterator<Alien> i1 = aliens.iterator();
+//
+//                while (i1.hasNext()) {
+//
+//                    Alien a2 = i1.next();
+//                    a2.setY(a2.getY() + Constants.ALIEN_STEP_DOWN);
+//                }
+//            }
+//
+//            if (x <= Constants.ALIEN_BORDER_LEFT && direction != 1) {
+//
+//                direction = 1;
+//
+//                Iterator<Alien> i2 = aliens.iterator();
+//
+//                while (i2.hasNext()) {
+//
+//                    Alien a = i2.next();
+//                    a.setY(a.getY() + Constants.ALIEN_STEP_DOWN);
+//                }
+//            }
+//        }
+//
+//        Iterator<Alien> it = aliens.iterator();
+//
+//        while (it.hasNext()) {
+//
+//            Alien alien = it.next();
+//
+//            if (alien.isVisible()) {
+//
+//                int y = alien.getY();
+//
+//                if (y > Constants.GROUND_Y - Constants.ALIEN_HEIGHT) {
+//                    commandApi.publish(new StopGame("Invasion!"));
+//                }
+//
+//                alien.act(direction);  // alien moves by |<direction>| = 1 pixel per gamecycle; player moves by 2 pixels per gamecycle
+//            }
+//        }
 
         // bombs
         var generator = new Random();
@@ -338,16 +339,19 @@ public class Board extends JPanel {
 
     private void drawAliens(Graphics g) {
 
-        for (Alien alien : aliens) {
+        List<SpriteReadModel> aliens = queryApi.query(new GetSpriteByEntityName(ALIEN_ENTITY));
 
-            if (alien.isVisible()) { // if RIP, in previous gamecycle, alien will now become invisible
+        for (SpriteReadModel alien : aliens) {
+
+            if (alien.visible()) { // if RIP, in previous gamecycle, alien will now become invisible
                 // if explosionTriggered, first display set explosion image
-                g.drawImage(alien.getImage(), alien.getX(), alien.getY(), this);
+                Image alienImage = new ImageIcon(getClass().getResource(alien.imagePath())).getImage();
+                g.drawImage(alienImage, alien.x(), alien.y(), this);
             }
 
-            if (alien.isDying()) {
-
-                alien.die(); // Since gamecycle is almost over (update() already ran), alien will become invisible (and game will stop) in the next gamecycle
+            if (alien.explosionTriggered()) {
+                // Since gamecycle is almost over (update() already ran), alien will become invisible (and game will stop) in the next gamecycle
+                commandApi.publish(new RestInPeaceSprite(alien.spriteId()));
             }
         }
     }

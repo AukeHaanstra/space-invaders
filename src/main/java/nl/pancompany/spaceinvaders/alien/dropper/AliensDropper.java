@@ -37,9 +37,9 @@ public class AliensDropper {
 
     @EventHandler
     private void react(GameCycleInitiated gameCycleInitiated) {
-        if (count.finished()) {
+//        if (count.finished()) {
             COMMAND_EXECUTOR.accept(() -> decide(new DropAliens()));
-        }
+//        }
     }
 
     private void decide(DropAliens dropAliens) {
@@ -63,7 +63,7 @@ public class AliensDropper {
                 for (SpriteId alienSpriteId : ALIEN_SPRITE_IDS) {
 
                     Tag spriteTagAlien = Tag.of(SPRITE_ENTITY, alienSpriteId.toString());
-                    int newY = alienState.y + Constants.ALIEN_STEP_DOWN;
+                    int newY = aliensState.aliens.get(alienSpriteId).y + Constants.ALIEN_STEP_DOWN;
                     Direction newDirection = Direction.LEFT;
 
                     if (newY + ALIEN_HEIGHT > GROUND_Y) { // If the bottom of the alien comes below the ground
@@ -73,7 +73,7 @@ public class AliensDropper {
 
                     alienDrops.add(Event.of(new SpriteTurned(alienSpriteId, newDirection),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
-                    alienDrops.add(Event.of(new SpriteMoved(alienSpriteId, alienState.x, newY),
+                    alienDrops.add(Event.of(new SpriteMoved(alienSpriteId, aliensState.aliens.get(alienSpriteId).x, newY),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
                 }
             }
@@ -82,7 +82,7 @@ public class AliensDropper {
                 for (SpriteId alienSpriteId : ALIEN_SPRITE_IDS) {
 
                     Tag spriteTagAlien = Tag.of(SPRITE_ENTITY, alienSpriteId.toString());
-                    int newY = alienState.y + Constants.ALIEN_STEP_DOWN;
+                    int newY = aliensState.aliens.get(alienSpriteId).y + Constants.ALIEN_STEP_DOWN;
                     Direction newDirection = Direction.RIGHT;
 
                     if (newY + ALIEN_HEIGHT > GROUND_Y) { // If the bottom of the alien comes below the ground
@@ -92,7 +92,7 @@ public class AliensDropper {
 
                     alienDrops.add(Event.of(new SpriteTurned(alienSpriteId, newDirection),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
-                    alienDrops.add(Event.of(new SpriteMoved(alienSpriteId, alienState.x, newY),
+                    alienDrops.add(Event.of(new SpriteMoved(alienSpriteId, aliensState.aliens.get(alienSpriteId).x, newY),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
                 }
             }
