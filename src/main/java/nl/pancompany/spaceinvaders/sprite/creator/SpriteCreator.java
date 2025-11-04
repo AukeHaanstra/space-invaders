@@ -60,7 +60,7 @@ public class SpriteCreator {
                         createSprite.startY(),
                         createSprite.speed(),
                         createSprite.direction()),
-                Tags.and(spriteTag, EntityTags.GAME));
+                Tags.and(spriteTag, Tag.of(createSprite.entityName()), EntityTags.GAME));
     }
 
     private static class SpriteState {

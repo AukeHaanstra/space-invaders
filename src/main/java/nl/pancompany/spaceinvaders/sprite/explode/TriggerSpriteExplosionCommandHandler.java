@@ -24,16 +24,18 @@ public class TriggerSpriteExplosionCommandHandler {
         Tag spriteTag = Tag.of(SPRITE_ENTITY, triggerSpriteExplosion.spriteId().toString());
         StateManager<SpriteState> stateManager = eventStore.loadState(SpriteState.class,
                 Query.taggedWith(spriteTag).andHavingType(Type.of(SpriteCreated.class).orType(SpriteExplosionTriggered.class)));
-        stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot explode before being created."));
-        stateManager.apply(new SpriteExplosionTriggered(triggerSpriteExplosion.spriteId()), Tags.and(spriteTag, GAME));
+        SpriteState spriteState = stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot explode before being created."));
+        stateManager.apply(new SpriteExplosionTriggered(triggerSpriteExplosion.spriteId()), Tags.and(spriteTag, Tag.of(spriteState.entityName), GAME));
     }
 
     private static class SpriteState {
 
         boolean explosionTriggered;
+        String entityName;
 
         @StateCreator
         SpriteState(SpriteCreated spriteCreated) {
+            entityName = spriteCreated.entityName();
         }
 
         @EventSourced

@@ -57,6 +57,7 @@ public class ChangeSpriteImageTest {
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(SpriteImageChanged.class)).isEqualTo(
                 new SpriteImageChanged(spriteId, "path2"));
+        assertThat(events.getFirst().tags()).contains(Tag.of("Entity"));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

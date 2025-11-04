@@ -21,15 +21,18 @@ public class ChangeSpriteImageCommandHandler {
         Tag spriteTag = Tag.of(SPRITE_ENTITY, changeSpriteImage.spriteId().toString());
         StateManager<SpriteState> stateManager = eventStore.loadState(SpriteState.class,
                 Query.taggedWith(spriteTag).andHavingType(Type.of(SpriteCreated.class).orType(SpriteImageChanged.class)));
-        stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot change image before being created."));
+        SpriteState spriteState = stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot change image before being created."));
         stateManager.apply(new SpriteImageChanged(changeSpriteImage.spriteId(), changeSpriteImage.imagePath()),
-                Tags.and(spriteTag, GAME) );
+                Tags.and(spriteTag, Tag.of(spriteState.entityName), GAME) );
     }
 
     private static class SpriteState {
 
+        String entityName;
+
         @StateCreator
         SpriteState(SpriteCreated spriteCreated) {
+            entityName = spriteCreated.entityName();
         }
 
         @EventSourced

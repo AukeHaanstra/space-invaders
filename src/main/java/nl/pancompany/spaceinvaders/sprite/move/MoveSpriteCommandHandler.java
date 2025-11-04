@@ -32,7 +32,7 @@ public class MoveSpriteCommandHandler {
         // Almost no game rules here, commands are sent from higher level policies (in player and alien mover automations)
         if (spriteState.visible) { // i.e. not R.I.P.
             stateManager.apply(new SpriteMoved(moveSprite.spriteId(), moveSprite.newX(), moveSprite.newY()),
-                    Tags.and(spriteTag, EntityTags.GAME));
+                    Tags.and(spriteTag, Tag.of(spriteState.entityName), EntityTags.GAME));
         }
     }
 
@@ -42,6 +42,7 @@ public class MoveSpriteCommandHandler {
         int y;
         Direction direction;
         boolean visible;
+        String entityName;
 
         @StateCreator
         SpriteState(SpriteCreated spriteCreated) {
@@ -49,6 +50,7 @@ public class MoveSpriteCommandHandler {
             y = spriteCreated.startY();
             direction = spriteCreated.direction();
             visible = true;
+            entityName = spriteCreated.entityName();
         }
 
         @EventSourced

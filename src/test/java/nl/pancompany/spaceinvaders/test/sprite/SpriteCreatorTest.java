@@ -5,6 +5,7 @@ import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.data.Event;
 import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.eventstore.query.Query;
+import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
@@ -47,6 +48,7 @@ public class SpriteCreatorTest {
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(SpriteCreated.class)).isEqualTo(new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH,
                 PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE));
+        assertThat(events.getFirst().tags()).contains(Tag.of(PLAYER_ENTITY));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

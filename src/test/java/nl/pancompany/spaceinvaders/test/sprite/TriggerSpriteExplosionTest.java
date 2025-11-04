@@ -57,6 +57,7 @@ public class TriggerSpriteExplosionTest {
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(SpriteExplosionTriggered.class)).isEqualTo(
                 new SpriteExplosionTriggered(spriteId));
+        assertThat(events.getFirst().tags()).contains(Tag.of("Entity"));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

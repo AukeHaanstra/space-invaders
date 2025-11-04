@@ -57,6 +57,7 @@ public class RestInPeaceSpriteTest {
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(SpriteRestsInPeace.class)).isEqualTo(
                 new SpriteRestsInPeace(spriteId));
+        assertThat(events.getFirst().tags()).contains(Tag.of("Entity"));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

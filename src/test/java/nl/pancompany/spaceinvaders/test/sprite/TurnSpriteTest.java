@@ -3,6 +3,7 @@ package nl.pancompany.spaceinvaders.test.sprite;
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.query.Query;
+import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.eventstore.data.Event;
 import nl.pancompany.eventstore.data.SequencedEvent;
@@ -69,6 +70,7 @@ public class TurnSpriteTest {
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(SpriteTurned.class)).isEqualTo(new SpriteTurned(PLAYER_SPRITE_ID, RIGHT));
+        assertThat(events.getFirst().tags()).contains(Tag.of(PLAYER_ENTITY));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

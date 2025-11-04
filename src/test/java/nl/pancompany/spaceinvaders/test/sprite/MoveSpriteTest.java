@@ -55,6 +55,7 @@ public class MoveSpriteTest {
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
         assertThat(events.getFirst().payload(SpriteMoved.class)).isEqualTo(new SpriteMoved(spriteId, 4, 2));
+        assertThat(events.getFirst().tags()).contains(Tag.of("Entity"));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
 

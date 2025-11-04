@@ -11,6 +11,7 @@ import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.events.SpriteRestsInPeace;
+import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
 
 import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
 import static nl.pancompany.spaceinvaders.shared.EntityTags.GAME;
@@ -24,16 +25,18 @@ public class RestInPeaceSpriteCommandHandler {
         Tag spriteTag = Tag.of(SPRITE_ENTITY, restInPeaceSprite.spriteId().toString());
         StateManager<SpriteState> stateManager = eventStore.loadState(SpriteState.class,
                 Query.taggedWith(spriteTag).andHavingType(Type.of(SpriteCreated.class).orType(SpriteRestsInPeace.class)));
-        stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot rest in peace before being created."));
-        stateManager.apply(new SpriteRestsInPeace(restInPeaceSprite.spriteId()), Tags.and(spriteTag, GAME));
+        SpriteState spriteState = stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot rest in peace before being created."));
+        stateManager.apply(new SpriteRestsInPeace(restInPeaceSprite.spriteId()), Tags.and(spriteTag, Tag.of(spriteState.entityName), GAME));
     }
 
     private static class SpriteState {
 
         boolean visible;
+        String entityName;
 
         @StateCreator
         SpriteState(SpriteCreated spriteCreated) {
+            entityName = spriteCreated.entityName();
         }
 
         @EventSourced
