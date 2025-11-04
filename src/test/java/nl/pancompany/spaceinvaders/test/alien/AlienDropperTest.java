@@ -6,6 +6,7 @@ import nl.pancompany.eventstore.data.Event;
 import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tag;
+import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
@@ -40,6 +41,7 @@ public class AlienDropperTest {
     void givenAlienMoved_whenGameCycleInitiated_thenAlienMovedDown() {
         SpriteId alienSpriteId = ALIEN_SPRITE_IDS.getFirst();
         Tag alienSpriteTag = Tag.of(SPRITE_ENTITY, alienSpriteId.toString());
+        Tag alienTag = Tag.of(ALIEN_ENTITY);
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, GAME));
         await().untilAsserted(() -> { // wait until alien is created
@@ -48,10 +50,10 @@ public class AlienDropperTest {
         });
         // direction: right
         SpriteTurned spriteTurned = new SpriteTurned(alienSpriteId, Direction.RIGHT);
-        eventStore.append(Event.of(spriteTurned, alienSpriteTag));
+        eventStore.append(Event.of(spriteTurned, Tags.and(alienSpriteTag, alienTag)));
         // position: right border
         SpriteMoved alienSpriteMoved = new SpriteMoved(alienSpriteId, BOARD_WIDTH - ALIEN_BORDER_RIGHT, ALIEN_START_Y);
-        eventStore.append(Event.of(alienSpriteMoved, alienSpriteTag));
+        eventStore.append(Event.of(alienSpriteMoved, Tags.and(alienSpriteTag, alienTag)));
 
         GameCycleInitiated gameCycleInitiated = new GameCycleInitiated();
         eventStore.append(Event.of(gameCycleInitiated, GAME));

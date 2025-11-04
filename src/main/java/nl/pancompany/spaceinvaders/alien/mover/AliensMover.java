@@ -80,8 +80,10 @@ public class AliensMover {
 
         Map<SpriteId, AlienState> aliens = new HashMap<>();
 
-        @StateCreator
-        AliensState(SpriteCreated spriteCreated) {
+        @EventSourced // no @StateCreator, because then all but the first SpriteCreated event would be ignored!
+//        @StateCreator
+//        AliensState(SpriteCreated spriteCreated) {
+        void evolve(SpriteCreated spriteCreated) {
             AlienState alienState = AlienState.builder()
                     .spriteId(spriteCreated.id())
                     .x(spriteCreated.startX())

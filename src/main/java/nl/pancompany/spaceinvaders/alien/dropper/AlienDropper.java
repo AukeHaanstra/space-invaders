@@ -17,8 +17,7 @@ import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
-import static nl.pancompany.spaceinvaders.shared.Constants.ALIEN_SPRITE_IDS;
-import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
+import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.shared.IdUtil.isAlien;
 
 @RequiredArgsConstructor
@@ -26,12 +25,8 @@ public class AlienDropper {
 
     private final EventStore eventStore;
 
-    @EventHandler
+    @EventHandler(requiredTags = ALIEN_ENTITY)
     private void react(SpriteMoved spriteMoved) {
-        if (!isAlien(spriteMoved.id())) {
-            return;
-        }
-
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteMoved.id().toString());
         StateManager<AlienState> stateManager = eventStore.loadState(AlienState.class, // Live read model for this automation
                 Query.of(spriteTag, Types.or(SpriteCreated.class, SpriteTurned.class, SpriteMoved.class,
@@ -58,6 +53,7 @@ public class AlienDropper {
     }
 
     private void decide(DropAlien dropAlien) {
+        Tag alienTag = Tag.of(ALIEN_ENTITY);
         Tag spriteTagAlien = Tag.of(SPRITE_ENTITY, dropAlien.spriteId().toString());
         StateManager<AlienState> stateManager = eventStore.loadState(AlienState.class,
                 Query.of(spriteTagAlien, Types.or(SpriteCreated.class, SpriteTurned.class, SpriteMoved.class,
@@ -72,9 +68,9 @@ public class AlienDropper {
         int newY = alienState.y + Constants.ALIEN_STEP_DOWN;
 
         stateManager.apply(new SpriteTurned(dropAlien.spriteId(), dropAlien.direction()),
-                Tags.and(spriteTagAlien, EntityTags.GAME));
+                Tags.and(spriteTagAlien, alienTag, EntityTags.GAME));
         stateManager.apply(new SpriteMoved(dropAlien.spriteId(), alienState.x, newY),
-                Tags.and(spriteTagAlien, EntityTags.GAME));
+                Tags.and(spriteTagAlien, alienTag, EntityTags.GAME));
     }
 
     private static class AlienState {
