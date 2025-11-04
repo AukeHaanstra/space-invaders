@@ -2,6 +2,7 @@ package nl.pancompany.spaceinvaders.shared;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+// Idea: GetPassage.at(3).of(6) -> getPassage.try() -> only gives passage 3rd of 6 times -> spread load
 public class Count {
 
     private final AtomicInteger counter = new AtomicInteger(0);

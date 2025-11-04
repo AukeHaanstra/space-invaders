@@ -26,7 +26,6 @@ import java.util.Map;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
 import static nl.pancompany.spaceinvaders.shared.Constants.*;
-import static nl.pancompany.spaceinvaders.shared.Constants.ALIEN_SPRITE_IDS;
 
 @RequiredArgsConstructor
 public class AliensDropper {
@@ -49,7 +48,7 @@ public class AliensDropper {
         AliensState aliensState = stateManager.getState().orElseThrow(
                 () -> new IllegalStateException("Aliens cannot be dropped before being created."));
 
-        List<Event> alienDrops = new ArrayList<>();
+        List<Event> eventsToPublish = new ArrayList<>();
 
         for (AlienState alienState : aliensState.aliens.values()) {
 
@@ -70,9 +69,9 @@ public class AliensDropper {
                         return;
                     }
 
-                    alienDrops.add(Event.of(new SpriteTurned(alienSpriteId, newDirection),
+                    eventsToPublish.add(Event.of(new SpriteTurned(alienSpriteId, newDirection),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
-                    alienDrops.add(Event.of(new SpriteMoved(alienSpriteId, aliensState.aliens.get(alienSpriteId).x, newY),
+                    eventsToPublish.add(Event.of(new SpriteMoved(alienSpriteId, aliensState.aliens.get(alienSpriteId).x, newY),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
                 }
             }
@@ -89,16 +88,16 @@ public class AliensDropper {
                         return;
                     }
 
-                    alienDrops.add(Event.of(new SpriteTurned(alienSpriteId, newDirection),
+                    eventsToPublish.add(Event.of(new SpriteTurned(alienSpriteId, newDirection),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
-                    alienDrops.add(Event.of(new SpriteMoved(alienSpriteId, aliensState.aliens.get(alienSpriteId).x, newY),
+                    eventsToPublish.add(Event.of(new SpriteMoved(alienSpriteId, aliensState.aliens.get(alienSpriteId).x, newY),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
                 }
             }
 
         }
 
-        stateManager.apply(alienDrops);
+        stateManager.apply(eventsToPublish);
     }
 
     @Builder

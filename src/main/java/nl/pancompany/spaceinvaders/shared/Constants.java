@@ -45,6 +45,7 @@ public interface Constants {
 
     // Bomb
     String BOMB_IMAGE_PATH = "/images/bomb.png";
+    String BOMB_EXPLOSION_IMAGE_PATH = "/images/explosion.png";
     int BOMB_SPEED = 1;
 
     // Player

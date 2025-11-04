@@ -5,6 +5,7 @@ import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.spaceinvaders.alien.dropper.AliensDropper;
 import nl.pancompany.spaceinvaders.alien.mover.AliensMover;
+import nl.pancompany.spaceinvaders.bomb.dropper.BombsDropper;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
@@ -100,6 +101,8 @@ public class SpaceInvaders extends JFrame  {
         // Alien
         AliensMover aliensMover = new AliensMover(eventStore);
         AliensDropper aliensDropper = new AliensDropper(eventStore);
+        // Bomb
+        BombsDropper bombsDropper = new BombsDropper(eventStore);
 
         // Automation event-handler registrations
         // Player
@@ -108,6 +111,8 @@ public class SpaceInvaders extends JFrame  {
         // Alien
         eventBus.registerAsynchronousEventHandler(aliensMover);
         eventBus.registerAsynchronousEventHandler(aliensDropper);
+        // Bomb
+        eventBus.registerAsynchronousEventHandler(bombsDropper);
     }
 
     private void initUI() { // 3

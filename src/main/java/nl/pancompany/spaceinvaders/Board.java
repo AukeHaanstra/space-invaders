@@ -262,52 +262,52 @@ public class Board extends JPanel {
 //            }
 //        }
 
-        // bombs
-        var generator = new Random();
-
-        for (Alien alien : aliens) {
-
-            int shot = generator.nextInt(15);
-            Alien.Bomb bomb = alien.getBomb();
-
-            if (shot == Constants.CHANCE && alien.isVisible() && bomb.isDestroyed()) {
-
-                bomb.setDestroyed(false);
-                bomb.setX(alien.getX());
-                bomb.setY(alien.getY());
-            }
-
-            int bombX = bomb.getX();
-            int bombY = bomb.getY();
-            SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
-                    .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
-            int playerX = playerReadModel.x();
-            int playerY = playerReadModel.y();
-
-            if (playerReadModel.visible() && !bomb.isDestroyed()) {
-
-                if (bombX >= (playerX)
-                        && bombX <= (playerX + Constants.PLAYER_WIDTH)
-                        && bombY >= (playerY)
-                        && bombY <= (playerY + Constants.PLAYER_HEIGHT)) {
-
-                    var ii = new ImageIcon(getClass().getResource(explImg));
-                    commandApi.publish(new TriggerSpriteExplosion(PLAYER_SPRITE_ID));
-                    commandApi.publish(new ChangeSpriteImage(PLAYER_SPRITE_ID, explImg)); // make simple automation to trigger ChangeSpriteImage upon SpriteExplosionTriggered
-                    bomb.setDestroyed(true);
-                }
-            }
-
-            if (!bomb.isDestroyed()) {
-
-                bomb.setY(bomb.getY() + 1);
-
-                if (bomb.getY() >= Constants.GROUND_Y - Constants.BOMB_HEIGHT) {
-
-                    bomb.setDestroyed(true);
-                }
-            }
-        }
+//        // bombs
+//        var generator = new Random();
+//
+//        for (Alien alien : aliens) {
+//
+//            int shot = generator.nextInt(15);
+//            Alien.Bomb bomb = alien.getBomb();
+//
+//            if (shot == Constants.CHANCE && alien.isVisible() && bomb.isDestroyed()) {
+//
+//                bomb.setDestroyed(false);
+//                bomb.setX(alien.getX());
+//                bomb.setY(alien.getY());
+//            }
+//
+//            int bombX = bomb.getX();
+//            int bombY = bomb.getY();
+//            SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
+//                    .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
+//            int playerX = playerReadModel.x();
+//            int playerY = playerReadModel.y();
+//
+//            if (playerReadModel.visible() && !bomb.isDestroyed()) {
+//
+//                if (bombX >= (playerX)
+//                        && bombX <= (playerX + Constants.PLAYER_WIDTH)
+//                        && bombY >= (playerY)
+//                        && bombY <= (playerY + Constants.PLAYER_HEIGHT)) {
+//
+//                    var ii = new ImageIcon(getClass().getResource(explImg));
+//                    commandApi.publish(new TriggerSpriteExplosion(PLAYER_SPRITE_ID));
+//                    commandApi.publish(new ChangeSpriteImage(PLAYER_SPRITE_ID, explImg)); // make simple automation to trigger ChangeSpriteImage upon SpriteExplosionTriggered
+//                    bomb.setDestroyed(true);
+//                }
+//            }
+//
+//            if (!bomb.isDestroyed()) {
+//
+//                bomb.setY(bomb.getY() + 1);
+//
+//                if (bomb.getY() >= Constants.GROUND_Y - Constants.BOMB_HEIGHT) {
+//
+//                    bomb.setDestroyed(true);
+//                }
+//            }
+//        }
     }
 
     private void doDrawing(Graphics g) {
@@ -380,15 +380,15 @@ public class Board extends JPanel {
 
     private void drawBombing(Graphics g) {
 
-        for (Alien a : aliens) {
+        List<SpriteReadModel> bombs = queryApi.query(new GetSpriteByEntityName(BOMB_ENTITY));
 
-            Alien.Bomb b = a.getBomb();
-
-            if (!b.isDestroyed()) {
-
-                g.drawImage(b.getImage(), b.getX(), b.getY(), this);
+        for (SpriteReadModel bomb : bombs) {
+            if (bomb.visible()) {
+                Image bombImage = new ImageIcon(getClass().getResource(bomb.imagePath())).getImage();
+                g.drawImage(bombImage, bomb.x(), bomb.y(), this);
             }
         }
+
     }
 
     private void gameOver(Graphics g) {

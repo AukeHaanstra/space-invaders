@@ -63,4 +63,10 @@ public class SpriteProjector {
         SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteDestroyed.id());
         spriteRepository.save(sprite.withVisible(false));
     }
+
+    @EventHandler(enableReplay = true)
+    void update(SpriteRespawned spriteRespawned) {
+        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteRespawned.id());
+        spriteRepository.save(sprite.withVisible(true).withX(spriteRespawned.startX()).withY(spriteRespawned.startY()));
+    }
 }

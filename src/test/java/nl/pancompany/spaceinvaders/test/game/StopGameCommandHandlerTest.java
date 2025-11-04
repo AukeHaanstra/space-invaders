@@ -27,8 +27,6 @@ public class StopGameCommandHandlerTest {
     CommandApi commandApi;
     EventBus eventBus;
 
-    // TODO: Refactored from state change to automation: adapt and add to test
-
     @BeforeEach
     void setUp() {
         SpaceInvaders spaceInvaders = new SpaceInvaders(eventStore = new EventStore(), false);

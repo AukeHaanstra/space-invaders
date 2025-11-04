@@ -7,6 +7,7 @@ import nl.pancompany.eventstore.annotation.EventHandler;
 import nl.pancompany.eventstore.annotation.EventSourced;
 import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.query.Query;
+import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
 import nl.pancompany.spaceinvaders.shared.EntityTags;
@@ -51,7 +52,7 @@ public class PlayerMover {
             return; // don't move off the board
         }
 
-        stateManager.apply(new SpriteMoved(PLAYER_SPRITE_ID, newX, playerState.y), Tags.and(EntityTags.PLAYER, EntityTags.GAME));
+        stateManager.apply(new SpriteMoved(PLAYER_SPRITE_ID, newX, playerState.y), Tags.and(EntityTags.PLAYER, Tag.of(PLAYER_ENTITY), EntityTags.GAME));
     }
 
     private static class PlayerState {
