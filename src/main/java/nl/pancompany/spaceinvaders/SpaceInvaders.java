@@ -3,7 +3,7 @@ package nl.pancompany.spaceinvaders;
 import lombok.Getter;
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
-import nl.pancompany.spaceinvaders.alien.dropper.AlienDropper;
+import nl.pancompany.spaceinvaders.alien.dropper.AliensDropper;
 import nl.pancompany.spaceinvaders.alien.mover.AliensMover;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
@@ -102,7 +102,7 @@ public class SpaceInvaders extends JFrame  {
         // Alien
         // TODO: Automation alienMover seem to cause high cpu
         AliensMover aliensMover = new AliensMover(eventStore);
-        AlienDropper alienDropper = new AlienDropper(eventStore);
+        AliensDropper aliensDropper = new AliensDropper(eventStore);
 
         // Automation event-handler registrations
         // Game
@@ -112,7 +112,7 @@ public class SpaceInvaders extends JFrame  {
         eventBus.registerAsynchronousEventHandler(playerMover);
         // Alien
         eventBus.registerAsynchronousEventHandler(aliensMover);
-        eventBus.registerAsynchronousEventHandler(alienDropper);
+        eventBus.registerAsynchronousEventHandler(aliensDropper);
     }
 
     private void initUI() { // 3
