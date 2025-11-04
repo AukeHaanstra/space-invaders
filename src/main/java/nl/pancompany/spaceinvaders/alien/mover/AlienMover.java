@@ -66,6 +66,7 @@ public class AlienMover {
             x = spriteCreated.startX();
             y = spriteCreated.startY();
             direction = spriteCreated.direction();
+            speed = spriteCreated.speed();
             visible = true;
         }
 
