@@ -40,9 +40,11 @@ public class BombsDropper {
     }
 
     private void decide(DropBombs dropBombs) {
+
         Tag bombTag = Tag.of(BOMB_ENTITY);
         Tag alienTag = Tag.of(ALIEN_ENTITY);
         Tag playerTag = Tag.of(PLAYER_ENTITY);
+
         Types eventTypes = Types.or(SpriteCreated.class, SpriteTurned.class, SpriteMoved.class,
                 SpriteDestroyed.class, SpriteRespawned.class);
         StateManager<BombState> stateManager = eventStore.loadState(BombState.class,
@@ -51,6 +53,7 @@ public class BombsDropper {
                         QueryItem.of(alienTag, eventTypes),
                         QueryItem.of(playerTag, eventTypes)
                 ));
+
         BombState bombState = stateManager.getState().orElseThrow(
                 () -> new IllegalStateException("Bombs cannot be dropped before being created."));
 
@@ -58,9 +61,12 @@ public class BombsDropper {
 
         var generator = new Random();
 
+        SpriteState player = bombState.sprites.get(bombState.playerId);
+        Tag spriteTagPlayer = PLAYER;
+
         for (SpriteId alienId : bombState.alienIds) {
+
             SpriteState alien = bombState.sprites.get(alienId);
-            Tag spriteTagAlien = Tag.of(SPRITE_ENTITY, alienId.toString());
 
             SpriteId bombId = getBombId(alienId);
             SpriteState bomb = bombState.sprites.get(bombId);
@@ -72,19 +78,10 @@ public class BombsDropper {
 
                 eventsToPublish.add(Event.of(new SpriteRespawned(bomb.spriteId, alien.getX(), alien.getY()),
                         Tags.and(spriteTagBomb, bombTag, EntityTags.GAME)));
-
-            } else {
-                if (bomb.visible) {
-                    int a = 5;
-                }
             }
 
             int bombX = bomb.getX();
             int bombY = bomb.getY();
-
-            SpriteState player = bombState.sprites.get(bombState.playerId);
-            Tag spriteTagPlayer = PLAYER;
-
             int playerX = player.x;
             int playerY = player.y;
 
