@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
 import static nl.pancompany.spaceinvaders.shared.Constants.*;
@@ -46,7 +45,7 @@ public class AliensDropper {
         Tag alienTag = Tag.of(ALIEN_ENTITY);
         StateManager<AliensState> stateManager = eventStore.loadState(AliensState.class,
                 Query.of(alienTag, Types.or(SpriteCreated.class, SpriteTurned.class, SpriteMoved.class,
-                        SpriteRestsInPeace.class)));
+                        SpriteDestroyed.class)));
         AliensState aliensState = stateManager.getState().orElseThrow(
                 () -> new IllegalStateException("Aliens cannot be dropped before being created."));
 
@@ -54,7 +53,7 @@ public class AliensDropper {
 
         for (AlienState alienState : aliensState.aliens.values()) {
 
-            if (!alienState.visible) { // i.e. R.I.P.
+            if (!alienState.visible) { // i.e. destroyed
                 return;
             }
 
@@ -142,8 +141,8 @@ public class AliensDropper {
         }
 
         @EventSourced
-        void evolve(SpriteRestsInPeace spriteRestsInPeace) {
-            aliens.get(spriteRestsInPeace.id()).setVisible(false);
+        void evolve(SpriteDestroyed spriteDestroyed) {
+            aliens.get(spriteDestroyed.id()).setVisible(false);
         }
     }
 }

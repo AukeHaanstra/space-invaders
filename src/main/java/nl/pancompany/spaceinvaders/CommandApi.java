@@ -21,8 +21,8 @@ import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.move.MoveSprite;
 import nl.pancompany.spaceinvaders.sprite.move.MoveSpriteCommandHandler;
-import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSprite;
-import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSpriteCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
+import nl.pancompany.spaceinvaders.sprite.destroy.DestroySpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 
@@ -54,7 +54,7 @@ public class CommandApi {
     // Sprite
     private final ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler;
     private final TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler;
-    private final RestInPeaceSpriteCommandHandler restInPeaceSpriteCommandHandler;
+    private final DestroySpriteCommandHandler destroySpriteCommandHandler;
     private final MoveSpriteCommandHandler moveSpriteCommandHandler;
 
     public void publish(Object command) {
@@ -70,7 +70,7 @@ public class CommandApi {
             case TurnSprite turnSprite -> COMMAND_EXECUTOR.accept(() -> turnSpriteCommandHandler.decide(turnSprite));
             case ChangeSpriteImage changeSpriteImage -> COMMAND_EXECUTOR.accept(() -> changeSpriteImageCommandHandler.decide(changeSpriteImage));
             case TriggerSpriteExplosion triggerSpriteExplosion -> COMMAND_EXECUTOR.accept(() -> triggerSpriteExplosionCommandHandler.decide(triggerSpriteExplosion));
-            case RestInPeaceSprite restInPeaceSprite -> COMMAND_EXECUTOR.accept(() -> restInPeaceSpriteCommandHandler.decide(restInPeaceSprite));
+            case DestroySprite destroySprite -> COMMAND_EXECUTOR.accept(() -> destroySpriteCommandHandler.decide(destroySprite));
             case MoveSprite moveSprite -> COMMAND_EXECUTOR.accept(() -> moveSpriteCommandHandler.decide(moveSprite));
 
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);

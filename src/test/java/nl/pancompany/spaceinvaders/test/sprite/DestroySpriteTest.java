@@ -10,10 +10,10 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
-import nl.pancompany.spaceinvaders.events.SpriteRestsInPeace;
+import nl.pancompany.spaceinvaders.events.SpriteDestroyed;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
-import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSprite;
+import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
-public class RestInPeaceSpriteTest {
+public class DestroySpriteTest {
 
     EventStore eventStore;
     CommandApi commandApi;
@@ -39,7 +39,7 @@ public class RestInPeaceSpriteTest {
 
     @Test
     void given__whenRestInPeaceSprite_thenIllegalState() {
-        assertThatThrownBy(() -> commandApi.publish(new RestInPeaceSprite(SpriteId.random())))
+        assertThatThrownBy(() -> commandApi.publish(new DestroySprite(SpriteId.random())))
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -50,13 +50,13 @@ public class RestInPeaceSpriteTest {
         SpriteCreated spriteCreated = new SpriteCreated(spriteId, "Entity", "path", 0, 0, 1, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, spriteTag));
 
-        commandApi.publish(new RestInPeaceSprite(spriteId));
+        commandApi.publish(new DestroySprite(spriteId));
 
-        Query query = Query.of(spriteTag, Type.of(SpriteRestsInPeace.class));
+        Query query = Query.of(spriteTag, Type.of(SpriteDestroyed.class));
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
-        assertThat(events.getFirst().payload(SpriteRestsInPeace.class)).isEqualTo(
-                new SpriteRestsInPeace(spriteId));
+        assertThat(events.getFirst().payload(SpriteDestroyed.class)).isEqualTo(
+                new SpriteDestroyed(spriteId));
         assertThat(events.getFirst().tags()).contains(Tag.of("Entity"));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }

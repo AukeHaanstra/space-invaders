@@ -11,14 +11,9 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.*;
-import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
-import nl.pancompany.spaceinvaders.shared.Constants;
 import nl.pancompany.spaceinvaders.shared.Direction;
-import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
-import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.test.TestUtil;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,8 +51,8 @@ public class AliensMoverTest {
             Query query = Query.of(alienSpriteTag, Type.of(SpriteCreated.class));
             assertThat(eventStore.read(query)).hasSize(1);
         });
-        SpriteRestsInPeace spriteRestsInPeace = new SpriteRestsInPeace(alienSpriteId);
-        eventStore.append(Event.of(spriteRestsInPeace, Tags.and(alienSpriteTag, alienTag)));
+        SpriteDestroyed spriteDestroyed = new SpriteDestroyed(alienSpriteId);
+        eventStore.append(Event.of(spriteDestroyed, Tags.and(alienSpriteTag, alienTag)));
 
         GameCycleInitiated gameCycleInitiated = new GameCycleInitiated();
         eventStore.append(Event.of(gameCycleInitiated, GAME));

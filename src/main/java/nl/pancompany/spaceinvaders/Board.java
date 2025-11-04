@@ -14,7 +14,7 @@ import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
-import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSprite;
+import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -351,7 +350,7 @@ public class Board extends JPanel {
 
             if (alien.explosionTriggered()) {
                 // Since gamecycle is almost over (update() already ran), alien will become invisible (and game will stop) in the next gamecycle
-                commandApi.publish(new RestInPeaceSprite(alien.spriteId()));
+                commandApi.publish(new DestroySprite(alien.spriteId()));
             }
         }
     }
@@ -366,7 +365,7 @@ public class Board extends JPanel {
         }
 
         if (playerReadModel.explosionTriggered()) {
-            commandApi.publish(new RestInPeaceSprite(PLAYER_SPRITE_ID)); // Since gamecycle is almost over (update() already ran), player will become invisible (and game will stop) in the next gamecycle
+            commandApi.publish(new DestroySprite(PLAYER_SPRITE_ID)); // Since gamecycle is almost over (update() already ran), player will become invisible (and game will stop) in the next gamecycle
             commandApi.publish(new StopGame("Game Over"));
         }
     }

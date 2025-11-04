@@ -59,8 +59,8 @@ public class SpriteProjector {
     }
 
     @EventHandler(enableReplay = true)
-    void update(SpriteRestsInPeace spriteRestsInPeace) {
-        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteRestsInPeace.id());
+    void update(SpriteDestroyed spriteDestroyed) {
+        SpriteReadModel sprite = spriteRepository.findByIdOrThrow(spriteDestroyed.id());
         spriteRepository.save(sprite.withVisible(false));
     }
 }

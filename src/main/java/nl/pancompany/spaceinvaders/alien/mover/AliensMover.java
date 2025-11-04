@@ -7,13 +7,11 @@ import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.StateManager;
 import nl.pancompany.eventstore.annotation.EventHandler;
 import nl.pancompany.eventstore.annotation.EventSourced;
-import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.data.Event;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
-import nl.pancompany.spaceinvaders.shared.Constants;
 import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.events.*;
 import nl.pancompany.spaceinvaders.shared.Direction;
@@ -38,7 +36,7 @@ public class AliensMover {
         Tag alienTag = Tag.of(ALIEN_ENTITY);
         StateManager<AliensState> stateManager = eventStore.loadState(AliensState.class,
                 Query.of(alienTag, Types.or(SpriteCreated.class, SpriteTurned.class, SpriteMoved.class,
-                        SpriteRestsInPeace.class)));
+                        SpriteDestroyed.class)));
         AliensState aliensState = stateManager.getState().orElseThrow(
                 () -> new IllegalStateException("Aliens cannot move before being created."));
 
@@ -46,7 +44,7 @@ public class AliensMover {
 
         for (AlienState alienState : aliensState.aliens.values()) {
 
-            if (!alienState.visible) { // i.e. R.I.P.
+            if (!alienState.visible) { // i.e. destroyed
                 return;
             }
 
@@ -105,8 +103,8 @@ public class AliensMover {
         }
 
         @EventSourced
-        void evolve(SpriteRestsInPeace spriteRestsInPeace) {
-            aliens.get(spriteRestsInPeace.id()).setVisible(false);
+        void evolve(SpriteDestroyed spriteDestroyed) {
+            aliens.get(spriteDestroyed.id()).setVisible(false);
         }
     }
 }

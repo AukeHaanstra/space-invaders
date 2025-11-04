@@ -147,8 +147,8 @@ public class GetSpriteTest {
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
         eventStore.append(Event.of(spriteCreated, PLAYER));
 
-        SpriteRestsInPeace spriteRestsInPeace = new SpriteRestsInPeace(PLAYER_SPRITE_ID);
-        eventStore.append(Event.of(spriteRestsInPeace, PLAYER));
+        SpriteDestroyed spriteDestroyed = new SpriteDestroyed(PLAYER_SPRITE_ID);
+        eventStore.append(Event.of(spriteDestroyed, PLAYER));
         await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(2));
 
         Optional<SpriteReadModel> readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
@@ -167,10 +167,10 @@ public class GetSpriteTest {
         SpriteStopped spriteStopped = new SpriteStopped(PLAYER_SPRITE_ID); // 4, NONE: 3rd value
         SpriteImageChanged spriteImageChanged = new SpriteImageChanged(PLAYER_SPRITE_ID, "newPath"); // 5
         SpriteExplosionTriggered spriteExplosionTriggered = new SpriteExplosionTriggered(PLAYER_SPRITE_ID); // 6
-        SpriteRestsInPeace spriteRestsInPeace = new SpriteRestsInPeace(PLAYER_SPRITE_ID); // 7
+        SpriteDestroyed spriteDestroyed = new SpriteDestroyed(PLAYER_SPRITE_ID); // 7
         eventStore.append(Event.of(spriteCreated, PLAYER), Event.of(spriteTurned, PLAYER), Event.of(spriteMoved, PLAYER),
                 Event.of(spriteStopped, PLAYER), Event.of(spriteImageChanged, PLAYER),
-                Event.of(spriteExplosionTriggered, PLAYER), Event.of(spriteRestsInPeace, PLAYER));
+                Event.of(spriteExplosionTriggered, PLAYER), Event.of(spriteDestroyed, PLAYER));
 
         // assert given events have updated the read model
         await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(7));

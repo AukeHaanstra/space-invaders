@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders.sprite.restinpeace;
+package nl.pancompany.spaceinvaders.sprite.destroy;
 
 import lombok.RequiredArgsConstructor;
 import nl.pancompany.eventstore.EventStore;
@@ -10,23 +10,22 @@ import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
-import nl.pancompany.spaceinvaders.events.SpriteRestsInPeace;
-import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
+import nl.pancompany.spaceinvaders.events.SpriteDestroyed;
 
 import static nl.pancompany.spaceinvaders.shared.Constants.SPRITE_ENTITY;
 import static nl.pancompany.spaceinvaders.shared.EntityTags.GAME;
 
 @RequiredArgsConstructor
-public class RestInPeaceSpriteCommandHandler {
+public class DestroySpriteCommandHandler {
 
     private final EventStore eventStore;
 
-    public void decide(RestInPeaceSprite restInPeaceSprite) {
-        Tag spriteTag = Tag.of(SPRITE_ENTITY, restInPeaceSprite.spriteId().toString());
+    public void decide(DestroySprite destroySprite) {
+        Tag spriteTag = Tag.of(SPRITE_ENTITY, destroySprite.spriteId().toString());
         StateManager<SpriteState> stateManager = eventStore.loadState(SpriteState.class,
-                Query.taggedWith(spriteTag).andHavingType(Type.of(SpriteCreated.class).orType(SpriteRestsInPeace.class)));
-        SpriteState spriteState = stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot rest in peace before being created."));
-        stateManager.apply(new SpriteRestsInPeace(restInPeaceSprite.spriteId()), Tags.and(spriteTag, Tag.of(spriteState.entityName), GAME));
+                Query.taggedWith(spriteTag).andHavingType(Type.of(SpriteCreated.class).orType(SpriteDestroyed.class)));
+        SpriteState spriteState = stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot be destroyed before being created."));
+        stateManager.apply(new SpriteDestroyed(destroySprite.spriteId()), Tags.and(spriteTag, Tag.of(spriteState.entityName), GAME));
     }
 
     private static class SpriteState {
@@ -40,7 +39,7 @@ public class RestInPeaceSpriteCommandHandler {
         }
 
         @EventSourced
-        void evolve(SpriteRestsInPeace spriteRestsInPeace) {
+        void evolve(SpriteDestroyed spriteDestroyed) {
             visible = false;
         }
     }

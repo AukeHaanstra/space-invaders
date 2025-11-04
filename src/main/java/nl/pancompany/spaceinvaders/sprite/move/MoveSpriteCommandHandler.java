@@ -12,7 +12,7 @@ import nl.pancompany.eventstore.query.Types;
 import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.events.SpriteMoved;
-import nl.pancompany.spaceinvaders.events.SpriteRestsInPeace;
+import nl.pancompany.spaceinvaders.events.SpriteDestroyed;
 import nl.pancompany.spaceinvaders.events.SpriteTurned;
 import nl.pancompany.spaceinvaders.shared.Direction;
 
@@ -27,10 +27,10 @@ public class MoveSpriteCommandHandler {
         Tag spriteTag = Tag.of(SPRITE_ENTITY, moveSprite.spriteId().toString());
         StateManager<SpriteState> stateManager = eventStore.loadState(SpriteState.class,
                 Query.of(spriteTag, Types.or(SpriteCreated.class, SpriteTurned.class, SpriteMoved.class,
-                        SpriteRestsInPeace.class)));
+                        SpriteDestroyed.class)));
         SpriteState spriteState = stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot move before being created."));
         // Almost no game rules here, commands are sent from higher level policies (in player and alien mover automations)
-        if (spriteState.visible) { // i.e. not R.I.P.
+        if (spriteState.visible) { // i.e. not destroyed
             stateManager.apply(new SpriteMoved(moveSprite.spriteId(), moveSprite.newX(), moveSprite.newY()),
                     Tags.and(spriteTag, Tag.of(spriteState.entityName), EntityTags.GAME));
         }
@@ -65,7 +65,7 @@ public class MoveSpriteCommandHandler {
         }
 
         @EventSourced
-        void evolve(SpriteRestsInPeace spriteRestsInPeace) {
+        void evolve(SpriteDestroyed spriteDestroyed) {
             visible = false;
         }
     }

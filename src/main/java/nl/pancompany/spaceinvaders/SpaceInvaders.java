@@ -18,7 +18,7 @@ import nl.pancompany.spaceinvaders.sprite.get.SpriteProjector;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteQueryHandler;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteRepository;
 import nl.pancompany.spaceinvaders.sprite.move.MoveSpriteCommandHandler;
-import nl.pancompany.spaceinvaders.sprite.restinpeace.RestInPeaceSpriteCommandHandler;
+import nl.pancompany.spaceinvaders.sprite.destroy.DestroySpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 
 import javax.swing.*;
@@ -58,7 +58,7 @@ public class SpaceInvaders extends JFrame  {
         // Sprite
         ChangeSpriteImageCommandHandler changeSpriteImageCommandHandler = new ChangeSpriteImageCommandHandler(eventStore);
         TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler = new TriggerSpriteExplosionCommandHandler(eventStore);
-        RestInPeaceSpriteCommandHandler restInPeaceSpriteCommandHandler = new RestInPeaceSpriteCommandHandler(eventStore);
+        DestroySpriteCommandHandler destroySpriteCommandHandler = new DestroySpriteCommandHandler(eventStore);
         MoveSpriteCommandHandler moveSpriteCommandHandler = new MoveSpriteCommandHandler(eventStore);
 
         commandApi = CommandApi.builder()
@@ -72,7 +72,7 @@ public class SpaceInvaders extends JFrame  {
                 // Sprite
                 .changeSpriteImageCommandHandler(changeSpriteImageCommandHandler)
                 .triggerSpriteExplosionCommandHandler(triggerSpriteExplosionCommandHandler)
-                .restInPeaceSpriteCommandHandler(restInPeaceSpriteCommandHandler)
+                .destroySpriteCommandHandler(destroySpriteCommandHandler)
                 .moveSpriteCommandHandler(moveSpriteCommandHandler) // TODO: Check whether used!
                 .build();
 
