@@ -42,7 +42,7 @@ public class GetSpriteTest {
 
     @Test
     void givenSpriteCreated_thenReadModelFound() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X,
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT); // changed to LEFT
         eventStore.append(Event.of(spriteCreated, PLAYER));
         await().untilAsserted(() -> assertThat(eventStore.read(playerQuery)).hasSize(1));
@@ -50,6 +50,7 @@ public class GetSpriteTest {
         Optional<SpriteReadModel> readModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID));
         assertThat(readModel).isPresent();
         assertThat(readModel.get().spriteId()).isEqualTo(PLAYER_SPRITE_ID);
+        assertThat(readModel.get().entityName()).isEqualTo(PLAYER_ENTITY);
         assertThat(readModel.get().imagePath()).isEqualTo(PLAYER_IMAGE_PATH);
         assertThat(readModel.get().x()).isEqualTo(PLAYER_START_X);
         assertThat(readModel.get().y()).isEqualTo(PLAYER_START_Y);
@@ -61,7 +62,7 @@ public class GetSpriteTest {
 
     @Test
     void givenSpriteCreated_whenSpriteTurned_thenDirectionIsUpdated() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X,
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
         eventStore.append(Event.of(spriteCreated, PLAYER));
 
@@ -77,7 +78,7 @@ public class GetSpriteTest {
 
     @Test
     void givenSpriteCreated_whenSpriteMoved_thenCoordinatesAreUpdated() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X,
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
         eventStore.append(Event.of(spriteCreated, PLAYER));
 
@@ -94,7 +95,7 @@ public class GetSpriteTest {
 
     @Test
     void givenSpriteCreated_whenSpriteStopped_thenDirectionIsUpdated() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X,
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
         eventStore.append(Event.of(spriteCreated, PLAYER));
 
@@ -110,7 +111,7 @@ public class GetSpriteTest {
 
     @Test
     void givenSpriteCreated_whenSpriteImageChanged_thenImagePathIsUpdated() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X,
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
         eventStore.append(Event.of(spriteCreated, PLAYER));
 
@@ -126,7 +127,7 @@ public class GetSpriteTest {
 
     @Test
     void givenSpriteCreated_whenSpriteExplosionTriggered_thenImagePathIsUpdated() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X,
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
         eventStore.append(Event.of(spriteCreated, PLAYER));
 
@@ -142,7 +143,7 @@ public class GetSpriteTest {
 
     @Test
     void givenSpriteCreated_whenRestInPeaceSprite_thenVisibilityIsUpdated() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X,
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT);
         eventStore.append(Event.of(spriteCreated, PLAYER));
 
@@ -159,7 +160,7 @@ public class GetSpriteTest {
     @Test
     void givenSpriteEvents_whenPartialReplay_thenReadModelPartiallyUpdated() throws InterruptedException {
         // given
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, // 1
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X, // 1
                 PLAYER_START_Y, PLAYER_SPEED, Direction.LEFT); // LEFT: 1st value
         SpriteTurned spriteTurned = new SpriteTurned(PLAYER_SPRITE_ID, Direction.RIGHT); // 2, RIGHT: 2nd value
         SpriteMoved spriteMoved = new SpriteMoved(PLAYER_SPRITE_ID, 42, 24); // 3

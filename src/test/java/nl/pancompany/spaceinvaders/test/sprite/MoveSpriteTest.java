@@ -46,7 +46,7 @@ public class MoveSpriteTest {
     void givenSpriteCreated_whenMoveSprite_thenSpriteMoved() {
         SpriteId spriteId = SpriteId.random();
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
-        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "path", 0, 0, 0, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "Entity", "path", 0, 0, 0, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, spriteTag));
 
         commandApi.publish(new MoveSprite(spriteId, 4, 2));

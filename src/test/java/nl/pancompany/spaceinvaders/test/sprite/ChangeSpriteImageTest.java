@@ -47,7 +47,7 @@ public class ChangeSpriteImageTest {
     void givenSpriteCreated_whenChangeSpriteImage_thenSpriteImageChanged() {
         SpriteId spriteId = SpriteId.random();
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
-        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "path1", 0, 0, 1, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "Entity", "path1",0, 0, 1, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, spriteTag));
 
         commandApi.publish(new ChangeSpriteImage(spriteId, "path2"));

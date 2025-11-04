@@ -25,6 +25,7 @@ public interface Constants {
     String GAME_ENTITY = "Game";
     String PLAYER_ENTITY = "Player";
     String ALIEN_ENTITY = "Alien";
+    String BOMB_ENTITY = "Bomb";
     String SHOT_ENTITY = "Shot";
 
     // Board

@@ -23,7 +23,7 @@ public class SpriteProjector {
         if (spriteRepository.findById(spriteCreated.id()).isPresent()) {
             throw new IllegalStateException(format("Sprite with id %s already exists.", spriteCreated.id()));
         }
-        SpriteReadModel sprite = new SpriteReadModel(spriteCreated.id(), true, spriteCreated.imagePath(), false,
+        SpriteReadModel sprite = new SpriteReadModel(spriteCreated.id(), spriteCreated.entityName(), true, spriteCreated.imagePath(), false,
                 spriteCreated.startX(), spriteCreated.startY(), spriteCreated.speed(), spriteCreated.direction());
         spriteRepository.save(sprite);
     }

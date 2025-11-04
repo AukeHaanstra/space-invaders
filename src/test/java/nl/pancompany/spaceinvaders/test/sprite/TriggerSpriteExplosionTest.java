@@ -47,7 +47,7 @@ public class TriggerSpriteExplosionTest {
     void givenSpriteCreated_whenTriggerSpriteExplosion_thenSpriteExplosionTriggered() {
         SpriteId spriteId = SpriteId.random();
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
-        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "path", 0, 0, 1, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "Entity", "path", 0, 0, 1, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, spriteTag));
 
         commandApi.publish(new TriggerSpriteExplosion(spriteId));

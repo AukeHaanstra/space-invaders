@@ -45,7 +45,7 @@ public class SpriteCreatorTest {
         Query query = Query.of(EntityTags.PLAYER, Type.of(SpriteCreated.class));
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
-        assertThat(events.getFirst().payload(SpriteCreated.class)).isEqualTo(new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH,
+        assertThat(events.getFirst().payload(SpriteCreated.class)).isEqualTo(new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH,
                 PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
     }
@@ -89,7 +89,7 @@ public class SpriteCreatorTest {
     @Test
     void givenSpriteCreated_whenCreateGame_thenIllegalState() {
         withoutLogging(() -> {
-                    SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X,
+                    SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X,
                             PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
                     eventStore.append(Event.of(spriteCreated, EntityTags.PLAYER));
 

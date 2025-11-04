@@ -44,7 +44,7 @@ public class TurnSpriteTest {
 
     @Test
     void givenSpriteCreated_whenTurnSpriteNull_thenIllegalArgument() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, EntityTags.PLAYER));
 
         assertThatThrownBy(() -> commandApi.publish(new TurnSprite(PLAYER_SPRITE_ID, null))).isInstanceOf(IllegalArgumentException.class);
@@ -52,7 +52,7 @@ public class TurnSpriteTest {
 
     @Test
     void givenSpriteCreated_whenTurnSpriteNone_thenIllegalArgument() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, EntityTags.PLAYER));
 
         assertThatThrownBy(() -> commandApi.publish(new TurnSprite(PLAYER_SPRITE_ID, NONE))).isInstanceOf(IllegalArgumentException.class);
@@ -60,7 +60,7 @@ public class TurnSpriteTest {
 
     @Test
     void givenSpriteCreated_whenTurnSpriteRight_thenSpriteTurned() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, EntityTags.PLAYER));
 
         commandApi.publish(new TurnSprite(PLAYER_SPRITE_ID, RIGHT));
@@ -74,7 +74,7 @@ public class TurnSpriteTest {
 
     @Test
     void givenSpriteCreated_whenTurnSpriteLeft_thenSpriteTurned() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, EntityTags.PLAYER));
 
         commandApi.publish(new TurnSprite(PLAYER_SPRITE_ID, LEFT));

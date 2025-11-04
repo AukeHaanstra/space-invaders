@@ -38,7 +38,8 @@ public class StopPlayerTest {
 
     @Test
     void givenPlayerCreated_whenTurnPlayer_thenPlayerTurned() {
-        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_IMAGE_PATH, PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(PLAYER_SPRITE_ID, PLAYER_ENTITY, PLAYER_IMAGE_PATH,
+                PLAYER_START_X, PLAYER_START_Y, PLAYER_SPEED, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, EntityTags.PLAYER));
 
         commandApi.publish(new StopPlayer());
