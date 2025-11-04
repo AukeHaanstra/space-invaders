@@ -1,9 +1,8 @@
-package nl.pancompany.spaceinvaders.game.stopper;
+package nl.pancompany.spaceinvaders.game.stop;
 
 import lombok.RequiredArgsConstructor;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.eventstore.StateManager;
-import nl.pancompany.eventstore.annotation.EventHandler;
 import nl.pancompany.eventstore.annotation.EventSourced;
 import nl.pancompany.eventstore.annotation.StateCreator;
 import nl.pancompany.eventstore.query.Query;
@@ -11,24 +10,11 @@ import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.events.GameStopped;
-import nl.pancompany.spaceinvaders.events.SpriteMoved;
-
-import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
-import static nl.pancompany.spaceinvaders.shared.Constants.ALIEN_HEIGHT;
-import static nl.pancompany.spaceinvaders.shared.Constants.GROUND_Y;
-import static nl.pancompany.spaceinvaders.shared.IdUtil.isAlien;
 
 @RequiredArgsConstructor
-public class GameStopper {
+public class StopGameCommandHandler {
 
     private final EventStore eventStore;
-
-    @EventHandler
-    private void react(SpriteMoved spriteMoved) {
-        if (isAlien(spriteMoved.id()) && spriteMoved.newY() + ALIEN_HEIGHT > GROUND_Y) { // If the bottom of the alien comes below the ground
-            COMMAND_EXECUTOR.accept(() -> decide(new StopGame("Invasion!")));
-        }
-    }
 
     public void decide(StopGame stopGame) {
         StateManager<GameState> stateManager = eventStore.loadState(GameState.class,

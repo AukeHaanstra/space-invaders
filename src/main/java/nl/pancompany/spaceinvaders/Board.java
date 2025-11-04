@@ -3,7 +3,7 @@ package nl.pancompany.spaceinvaders;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
-import nl.pancompany.spaceinvaders.game.stopper.StopGame;
+import nl.pancompany.spaceinvaders.game.stop.StopGame;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.shared.Constants;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;

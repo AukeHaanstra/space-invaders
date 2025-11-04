@@ -8,7 +8,7 @@ import nl.pancompany.spaceinvaders.alien.mover.AliensMover;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
-import nl.pancompany.spaceinvaders.game.stopper.GameStopper;
+import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
 import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
@@ -51,7 +51,7 @@ public class SpaceInvaders extends JFrame  {
         // Game
         CreateGameCommandHandler createGameCommandHandler = new CreateGameCommandHandler(eventStore);
         InitiateGameCycleCommandHandler initiateGameCycleCommandHandler = new InitiateGameCycleCommandHandler(eventStore);
-        GameStopper gameStopper = new GameStopper(eventStore); // TODO: Remove when only automation
+        StopGameCommandHandler stopGameCommandHandler = new StopGameCommandHandler(eventStore);
         // Player
         TurnSpriteCommandHandler turnSpriteCommandHandler = new TurnSpriteCommandHandler(eventStore);
         StopPlayerCommandHandler stopPlayerCommandHandler = new StopPlayerCommandHandler(eventStore);
@@ -65,7 +65,7 @@ public class SpaceInvaders extends JFrame  {
                 // Game
                 .createGameCommandHandler(createGameCommandHandler)
                 .initiateGameCycleCommandHandler(initiateGameCycleCommandHandler)
-                .gameStopper(gameStopper)
+                .stopGameCommandHandler(stopGameCommandHandler)
                 // Player
                 .turnSpriteCommandHandler(turnSpriteCommandHandler)
                 .stopPlayerCommandHandler(stopPlayerCommandHandler)
@@ -94,19 +94,14 @@ public class SpaceInvaders extends JFrame  {
         eventBus.registerAsynchronousEventHandler(gameQueryHandler);
 
         // Automations
-        // Game
-        // TODO: Add GameStopper (see above)
         // Player
         SpriteCreator spriteCreator = new SpriteCreator(eventStore);
         PlayerMover playerMover = new PlayerMover(eventStore);
         // Alien
-        // TODO: Automation alienMover seem to cause high cpu
         AliensMover aliensMover = new AliensMover(eventStore);
         AliensDropper aliensDropper = new AliensDropper(eventStore);
 
         // Automation event-handler registrations
-        // Game
-        eventBus.registerAsynchronousEventHandler(gameStopper);
         // Player
         eventBus.registerAsynchronousEventHandler(spriteCreator);
         eventBus.registerAsynchronousEventHandler(playerMover);

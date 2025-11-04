@@ -12,9 +12,9 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tag;
 import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Types;
-import nl.pancompany.spaceinvaders.alien.mover.MoveAliens;
 import nl.pancompany.spaceinvaders.events.*;
 import nl.pancompany.spaceinvaders.shared.Constants;
+import nl.pancompany.spaceinvaders.shared.Count;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
 import static nl.pancompany.spaceinvaders.shared.Constants.*;
@@ -32,10 +33,13 @@ import static nl.pancompany.spaceinvaders.shared.Constants.ALIEN_SPRITE_IDS;
 public class AliensDropper {
 
     private final EventStore eventStore;
+    private final Count count = Count.times(3); // Execute command every 3 frames
 
     @EventHandler
     private void react(GameCycleInitiated gameCycleInitiated) {
-        COMMAND_EXECUTOR.accept(() -> decide(new DropAliens()));
+        if (count.finished()) {
+            COMMAND_EXECUTOR.accept(() -> decide(new DropAliens()));
+        }
     }
 
     private void decide(DropAliens dropAliens) {
@@ -62,6 +66,11 @@ public class AliensDropper {
                     int newY = alienState.y + Constants.ALIEN_STEP_DOWN;
                     Direction newDirection = Direction.LEFT;
 
+                    if (newY + ALIEN_HEIGHT > GROUND_Y) { // If the bottom of the alien comes below the ground
+                        stateManager.apply(new GameStopped("Invasion!"), EntityTags.GAME);
+                        return;
+                    }
+
                     alienDrops.add(Event.of(new SpriteTurned(alienSpriteId, newDirection),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
                     alienDrops.add(Event.of(new SpriteMoved(alienSpriteId, alienState.x, newY),
@@ -76,12 +85,18 @@ public class AliensDropper {
                     int newY = alienState.y + Constants.ALIEN_STEP_DOWN;
                     Direction newDirection = Direction.RIGHT;
 
+                    if (newY + ALIEN_HEIGHT > GROUND_Y) { // If the bottom of the alien comes below the ground
+                        stateManager.apply(new GameStopped("Invasion!"), EntityTags.GAME);
+                        return;
+                    }
+
                     alienDrops.add(Event.of(new SpriteTurned(alienSpriteId, newDirection),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
                     alienDrops.add(Event.of(new SpriteMoved(alienSpriteId, alienState.x, newY),
                             Tags.and(spriteTagAlien, alienTag, EntityTags.GAME)));
                 }
             }
+
         }
 
         stateManager.apply(alienDrops);
