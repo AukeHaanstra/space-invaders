@@ -16,6 +16,7 @@ import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
+import nl.pancompany.spaceinvaders.test.TestUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,24 +119,26 @@ public class AlienMoverTest {
 
     @Test
     void givenAlienTurnedUp_whenGameCycleInitiated_thenIllegalState() {
-        SpriteId alienSpriteId = ALIEN_SPRITE_IDS.getFirst();
-        Tag alienSpriteTag = Tag.of(SPRITE_ENTITY, alienSpriteId.toString());
-        GameCreated gameCreated = new GameCreated();
-        eventStore.append(Event.of(gameCreated, GAME));
-        await().untilAsserted(() -> {
-            Query query = Query.of(alienSpriteTag, Type.of(SpriteCreated.class));
-            assertThat(eventStore.read(query)).hasSize(1);
-        });
-        SpriteTurned spriteTurned = new SpriteTurned(alienSpriteId, Direction.UP);
-        eventStore.append(Event.of(spriteTurned, alienSpriteTag));
+        TestUtil.withoutLogging( () -> {
+            SpriteId alienSpriteId = ALIEN_SPRITE_IDS.getFirst();
+            Tag alienSpriteTag = Tag.of(SPRITE_ENTITY, alienSpriteId.toString());
+            GameCreated gameCreated = new GameCreated();
+            eventStore.append(Event.of(gameCreated, GAME));
+            await().untilAsserted(() -> {
+                Query query = Query.of(alienSpriteTag, Type.of(SpriteCreated.class));
+                assertThat(eventStore.read(query)).hasSize(1);
+            });
+            SpriteTurned spriteTurned = new SpriteTurned(alienSpriteId, Direction.UP);
+            eventStore.append(Event.of(spriteTurned, alienSpriteTag));
 
-        GameCycleInitiated gameCycleInitiated = new GameCycleInitiated();
-        eventStore.append(Event.of(gameCycleInitiated, alienSpriteTag));
+            GameCycleInitiated gameCycleInitiated = new GameCycleInitiated();
+            eventStore.append(Event.of(gameCycleInitiated, alienSpriteTag));
 
-        await().untilAsserted(() -> {
-            assertThat(eventBus.hasLoggedExceptions()).isTrue();
-            assertThat(eventBus.getLoggedExceptions()).hasSize(1);
-            assertThat(eventBus.getLoggedExceptions().getFirst().exception()).isInstanceOf(IllegalStateException.class);
+            await().untilAsserted(() -> {
+                assertThat(eventBus.hasLoggedExceptions()).isTrue();
+                assertThat(eventBus.getLoggedExceptions()).hasSize(1);
+                assertThat(eventBus.getLoggedExceptions().getFirst().exception()).isInstanceOf(IllegalStateException.class);
+            });
         });
     }
 

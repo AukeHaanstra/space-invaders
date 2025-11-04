@@ -23,6 +23,7 @@ import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 @Getter
 public class SpaceInvaders extends JFrame  {
@@ -51,7 +52,7 @@ public class SpaceInvaders extends JFrame  {
         // Game
         CreateGameCommandHandler createGameCommandHandler = new CreateGameCommandHandler(eventStore);
         InitiateGameCycleCommandHandler initiateGameCycleCommandHandler = new InitiateGameCycleCommandHandler(eventStore);
-        GameStopper stopGameCommandHandler = new GameStopper(eventStore); // TODO: Remove when only automation
+        GameStopper gameStopper = new GameStopper(eventStore); // TODO: Remove when only automation
         // Player
         TurnSpriteCommandHandler turnSpriteCommandHandler = new TurnSpriteCommandHandler(eventStore);
         StopPlayerCommandHandler stopPlayerCommandHandler = new StopPlayerCommandHandler(eventStore);
@@ -65,7 +66,7 @@ public class SpaceInvaders extends JFrame  {
                 // Game
                 .createGameCommandHandler(createGameCommandHandler)
                 .initiateGameCycleCommandHandler(initiateGameCycleCommandHandler)
-                .gameStopper(stopGameCommandHandler)
+                .gameStopper(gameStopper)
                 // Player
                 .turnSpriteCommandHandler(turnSpriteCommandHandler)
                 .stopPlayerCommandHandler(stopPlayerCommandHandler)
@@ -95,14 +96,14 @@ public class SpaceInvaders extends JFrame  {
 
         // Automations
         // Game
-        GameStopper gameStopper = new GameStopper(eventStore);
+        // TODO: Add GameStopper (see above)
         // Player
         SpriteCreator spriteCreator = new SpriteCreator(eventStore);
         PlayerMover playerMover = new PlayerMover(eventStore);
         // Alien
         // TODO: Automation alienMover seem to cause high cpu
         AlienMover alienMover = new AlienMover(eventStore);
-//        AlienDropper alienDropper = new AlienDropper(eventStore);
+        AlienDropper alienDropper = new AlienDropper(eventStore);
 
         // Automation event-handler registrations
         // Game
@@ -112,7 +113,7 @@ public class SpaceInvaders extends JFrame  {
         eventBus.registerAsynchronousEventHandler(playerMover);
         // Alien
         eventBus.registerAsynchronousEventHandler(alienMover);
-//        eventBus.registerAsynchronousEventHandler(alienDropper);
+        eventBus.registerAsynchronousEventHandler(alienDropper);
     }
 
     private void initUI() { // 3
