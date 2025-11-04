@@ -6,6 +6,7 @@ import nl.pancompany.eventstore.data.Event;
 import nl.pancompany.eventstore.data.SequencedEvent;
 import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.eventstore.query.Tag;
+import nl.pancompany.eventstore.query.Tags;
 import nl.pancompany.eventstore.query.Type;
 import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
@@ -31,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
-public class AlienMoverTest {
+public class AliensMoverTest {
 
     EventStore eventStore;
     CommandApi commandApi;
@@ -47,6 +48,7 @@ public class AlienMoverTest {
     @Test
     void givenAlienRIP_whenGameCycleInitiated_thenNotAlienMoved() throws InterruptedException {
         SpriteId alienSpriteId = ALIEN_SPRITE_IDS.getFirst();
+        Tag alienTag = Tag.of(ALIEN_ENTITY);
         Tag alienSpriteTag = Tag.of(SPRITE_ENTITY, alienSpriteId.toString());
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, GAME));
@@ -55,7 +57,7 @@ public class AlienMoverTest {
             assertThat(eventStore.read(query)).hasSize(1);
         });
         SpriteRestsInPeace spriteRestsInPeace = new SpriteRestsInPeace(alienSpriteId);
-        eventStore.append(Event.of(spriteRestsInPeace, alienSpriteTag));
+        eventStore.append(Event.of(spriteRestsInPeace, Tags.and(alienSpriteTag, alienTag)));
 
         GameCycleInitiated gameCycleInitiated = new GameCycleInitiated();
         eventStore.append(Event.of(gameCycleInitiated, GAME));
@@ -94,6 +96,7 @@ public class AlienMoverTest {
     @Test
     void givenGameCreatedAndSpriteTurned_whenGameCycleInitiated_thenAlienMovedRight() {
         SpriteId alienSpriteId = ALIEN_SPRITE_IDS.getFirst();
+        Tag alienTag = Tag.of(ALIEN_ENTITY);
         Tag alienSpriteTag = Tag.of(SPRITE_ENTITY, alienSpriteId.toString());
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, GAME));
@@ -102,10 +105,10 @@ public class AlienMoverTest {
             assertThat(eventStore.read(query)).hasSize(1);
         });
         SpriteTurned spriteTurned = new SpriteTurned(alienSpriteId, Direction.RIGHT);
-        eventStore.append(Event.of(spriteTurned, alienSpriteTag));
+        eventStore.append(Event.of(spriteTurned, Tags.and(alienSpriteTag, alienTag)));
 
         GameCycleInitiated gameCycleInitiated = new GameCycleInitiated();
-        eventStore.append(Event.of(gameCycleInitiated, alienSpriteTag));
+        eventStore.append(Event.of(gameCycleInitiated, Tags.and(alienSpriteTag, alienTag)));
 
         await().untilAsserted(() -> {
             Query query = Query.of(alienSpriteTag, Type.of(SpriteMoved.class));
@@ -121,6 +124,7 @@ public class AlienMoverTest {
     void givenAlienTurnedUp_whenGameCycleInitiated_thenIllegalState() {
         TestUtil.withoutLogging( () -> {
             SpriteId alienSpriteId = ALIEN_SPRITE_IDS.getFirst();
+            Tag alienTag = Tag.of(ALIEN_ENTITY);
             Tag alienSpriteTag = Tag.of(SPRITE_ENTITY, alienSpriteId.toString());
             GameCreated gameCreated = new GameCreated();
             eventStore.append(Event.of(gameCreated, GAME));
@@ -129,10 +133,10 @@ public class AlienMoverTest {
                 assertThat(eventStore.read(query)).hasSize(1);
             });
             SpriteTurned spriteTurned = new SpriteTurned(alienSpriteId, Direction.UP);
-            eventStore.append(Event.of(spriteTurned, alienSpriteTag));
+            eventStore.append(Event.of(spriteTurned, Tags.and(alienSpriteTag, alienTag)));
 
             GameCycleInitiated gameCycleInitiated = new GameCycleInitiated();
-            eventStore.append(Event.of(gameCycleInitiated, alienSpriteTag));
+            eventStore.append(Event.of(gameCycleInitiated, Tags.and(alienSpriteTag, alienTag)));
 
             await().untilAsserted(() -> {
                 assertThat(eventBus.hasLoggedExceptions()).isTrue();

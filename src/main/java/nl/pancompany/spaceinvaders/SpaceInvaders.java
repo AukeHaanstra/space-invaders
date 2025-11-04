@@ -4,7 +4,7 @@ import lombok.Getter;
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.spaceinvaders.alien.dropper.AlienDropper;
-import nl.pancompany.spaceinvaders.alien.mover.AlienMover;
+import nl.pancompany.spaceinvaders.alien.mover.AliensMover;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
@@ -23,7 +23,6 @@ import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 @Getter
 public class SpaceInvaders extends JFrame  {
@@ -102,7 +101,7 @@ public class SpaceInvaders extends JFrame  {
         PlayerMover playerMover = new PlayerMover(eventStore);
         // Alien
         // TODO: Automation alienMover seem to cause high cpu
-        AlienMover alienMover = new AlienMover(eventStore);
+        AliensMover aliensMover = new AliensMover(eventStore);
         AlienDropper alienDropper = new AlienDropper(eventStore);
 
         // Automation event-handler registrations
@@ -112,7 +111,7 @@ public class SpaceInvaders extends JFrame  {
         eventBus.registerAsynchronousEventHandler(spriteCreator);
         eventBus.registerAsynchronousEventHandler(playerMover);
         // Alien
-        eventBus.registerAsynchronousEventHandler(alienMover);
+        eventBus.registerAsynchronousEventHandler(aliensMover);
         eventBus.registerAsynchronousEventHandler(alienDropper);
     }
 
