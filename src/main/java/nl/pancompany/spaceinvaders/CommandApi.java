@@ -71,7 +71,7 @@ public class CommandApi {
 
     private final EventBus eventBus;
 
-    private boolean replay = false;
+    private boolean replay;
 
     public void publish(Object command) {
 
