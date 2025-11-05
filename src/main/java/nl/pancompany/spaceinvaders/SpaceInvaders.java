@@ -137,7 +137,7 @@ public class SpaceInvaders extends JFrame  {
     }
 
     private void initUI() { // 3
-        setTitle("Space Invaders");
+        setTitle("Space Invaders - Event Sourced");
         setLayout(new BorderLayout());
         Board board = new Board(commandApi, queryApi);
         setContentPane(board); // 4
