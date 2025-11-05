@@ -5,6 +5,6 @@ import java.util.Optional;
 public class GameQueryHandler {
 
     public Optional<GameReadModel> get(GetGame getGame) {
-        return null;
+        return Optional.empty();
     }
 }
