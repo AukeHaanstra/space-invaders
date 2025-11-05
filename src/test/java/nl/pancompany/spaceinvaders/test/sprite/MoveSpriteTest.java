@@ -64,7 +64,7 @@ public class MoveSpriteTest {
     }
 
     @Test
-    void givenSpriteCreatedAndDestroyed_whenMoveSprite_thenSpriteMoved() throws InterruptedException {
+    void givenSpriteCreatedAndDestroyed_whenMoveSprite_thenSpriteNotMoved() throws InterruptedException {
         SpriteId spriteId = SpriteId.random();
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
         SpriteCreated spriteCreated = new SpriteCreated(spriteId, "Entity", "path", 0, 0, 0, Direction.NONE);
