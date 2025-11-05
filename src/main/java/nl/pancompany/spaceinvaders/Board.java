@@ -1,5 +1,6 @@
 package nl.pancompany.spaceinvaders;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.pancompany.spaceinvaders.alien.getcount.GetAlienDownCount;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.get.GameReadModel;
@@ -29,6 +30,7 @@ import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
 import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
 
+@Slf4j
 public class Board extends JPanel {
 
     private final Dimension dimensions = new Dimension(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
@@ -54,11 +56,6 @@ public class Board extends JPanel {
     }
 
     private class TAdapter extends KeyAdapter {
-
-        private final static int REPLAY_FRAMES = 30;
-        private int replayPosition = 0;
-        private int lastEventPosition = 0;
-        private int step = 0;
 
         @Override
         public void keyReleased(KeyEvent e) {
@@ -122,6 +119,12 @@ public class Board extends JPanel {
             }
         }
 
+        private final static int REPLAY_FRAMES = 30;
+        private int replayPosition = 0;
+        private int lastEventPosition = 0;
+        private int step = 0;
+        private boolean inReplay;
+
         private void replayKeyPressed(KeyEvent e) {
 
             int key = e.getKeyCode();
@@ -132,26 +135,33 @@ public class Board extends JPanel {
                 step = lastEventPosition / REPLAY_FRAMES;
                 replayPosition = lastEventPosition;
                 repaint();
+                inReplay = true;
             }
 
             if (key == KeyEvent.VK_OPEN_BRACKET) {
-                replayPosition -= step;
-                if (replayPosition < 50) { // sequence position 50: first gamecycle initiated
-                    replayPosition = 50;
+                if (inReplay) {
+                    replayPosition -= step;
+                    if (replayPosition < 50) { // sequence position 50: first gamecycle initiated
+                        replayPosition = 50;
+                    }
+                    commandApi.replay(replayPosition);
+                    log.info("Replaying to position: {} of {}", replayPosition, lastEventPosition);
+                    sleep(300);
+                    repaint();
                 }
-                commandApi.replay(replayPosition);
-                sleep(300);
-                repaint();
             }
 
             if (key == KeyEvent.VK_CLOSE_BRACKET) {
-                replayPosition += step;
-                if (replayPosition > lastEventPosition) {
-                    replayPosition = lastEventPosition;
+                if (inReplay) {
+                    replayPosition += step;
+                    if (replayPosition > lastEventPosition) {
+                        replayPosition = lastEventPosition;
+                    }
+                    commandApi.replay(replayPosition);
+                    log.info("Replaying to position: {} of {}", replayPosition, lastEventPosition);
+                    sleep(300);
+                    repaint();
                 }
-                commandApi.replay(replayPosition);
-                sleep(300);
-                repaint();
             }
         }
 
