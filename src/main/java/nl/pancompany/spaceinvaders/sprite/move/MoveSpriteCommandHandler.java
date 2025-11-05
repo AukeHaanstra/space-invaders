@@ -24,42 +24,7 @@ public class MoveSpriteCommandHandler {
     private final EventStore eventStore;
 
     public void decide(MoveSprite moveSprite) {
-        Tag spriteTag = Tag.of(SPRITE_ENTITY, moveSprite.spriteId().toString());
-        StateManager<SpriteState> stateManager = eventStore.loadState(SpriteState.class,
-                Query.of(spriteTag, Types.or(SpriteCreated.class, SpriteMoved.class, SpriteDestroyed.class)));
-        SpriteState spriteState = stateManager.getState().orElseThrow(() -> new IllegalStateException("Sprite cannot move before being created."));
 
-        // Almost no game rules here, commands are sent from higher level policies (in player and alien mover automations)
-        if (spriteState.visible) { // i.e. not destroyed
-            stateManager.apply(new SpriteMoved(moveSprite.spriteId(), moveSprite.newX(), moveSprite.newY()),
-                    Tags.and(spriteTag, Tag.of(spriteState.entityName), EntityTags.GAME));
-        }
     }
 
-    private static class SpriteState {
-
-        int x;
-        int y;
-        boolean visible;
-        String entityName;
-
-        @StateCreator
-        SpriteState(SpriteCreated spriteCreated) {
-            x = spriteCreated.startX();
-            y = spriteCreated.startY();
-            visible = true;
-            entityName = spriteCreated.entityName();
-        }
-
-        @EventSourced
-        void evolve(SpriteDestroyed spriteDestroyed) {
-            visible = false;
-        }
-
-        @EventSourced
-        void evolve(SpriteMoved spriteMoved) { // Just to validate that we can evolve from application of new state!
-            x = spriteMoved.newX();
-            y = spriteMoved.newY();
-        }
-    }
 }
