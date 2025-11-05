@@ -7,6 +7,7 @@ import nl.pancompany.eventstore.query.Query;
 import nl.pancompany.spaceinvaders.QueryApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.GameCreated;
+import nl.pancompany.spaceinvaders.events.GameResumed;
 import nl.pancompany.spaceinvaders.events.GameStopped;
 import nl.pancompany.spaceinvaders.game.get.GameReadModel;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
@@ -24,7 +25,6 @@ public class GetGameTest {
     EventStore eventStore;
     QueryApi queryApi;
     EventBus eventBus;
-    Query gameQuery = Query.taggedWith(GAME).andHavingType(GameCreated.class, GameStopped.class);
 
     @BeforeEach
     void setUp() {
@@ -39,30 +39,73 @@ public class GetGameTest {
     }
 
     @Test
-    void givenGameCreated_thenReadModelFound() {
+    void givenNoGameCreated_whenGameCreated_thenReadModelFound() {
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, GAME));
-        await().untilAsserted(() -> assertThat(eventStore.read(gameQuery)).hasSize(1));
 
-        Optional<GameReadModel> readModel = queryApi.query(new GetGame());
-        assertThat(readModel).isPresent();
-        assertThat(readModel.get().inGame()).isTrue();
+        await().untilAsserted(() -> {
+            Optional<GameReadModel> readModel = queryApi.query(new GetGame());
+            assertThat(readModel).isPresent();
+            assertThat(readModel.get().inGame()).isTrue();
+            assertThat(readModel.get().replay()).isFalse();
+            assertThat(readModel.get().message()).isEmpty();
+        });
     }
 
     @Test
     void givenGameCreated_whenGameStopped_thenInGameIsUpdated() {
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, GAME));
-        await().untilAsserted(() -> assertThat(eventStore.read(gameQuery)).hasSize(1));
 
         GameStopped gameStopped = new GameStopped("Game Over!");
         eventStore.append(Event.of(gameStopped, GAME));
 
-        await().untilAsserted(() -> assertThat(eventStore.read(gameQuery)).hasSize(2));
-        Optional<GameReadModel> readModel = queryApi.query(new GetGame());
-        assertThat(readModel).isPresent();
-        assertThat(readModel.get().inGame()).isFalse();
-        assertThat(readModel.get().message().get()).isEqualTo("Game Over!");
+        await().untilAsserted(() -> {
+            Optional<GameReadModel> readModel = queryApi.query(new GetGame());
+            assertThat(readModel).isPresent();
+            assertThat(readModel.get().inGame()).isFalse();
+            assertThat(readModel.get().replay()).isFalse();
+            assertThat(readModel.get().message().get()).isEqualTo("Game Over!");
+        });
+    }
+
+    @Test
+    void givenGameCreated_whenReplay_thenInGameFalseReplayTrue() {
+        GameCreated gameCreated = new GameCreated();
+        eventStore.append(Event.of(gameCreated, GAME));
+
+        eventBus.replay();
+
+        await().untilAsserted(() -> {
+            Optional<GameReadModel> readModel = queryApi.query(new GetGame());
+            assertThat(readModel).isPresent();
+            assertThat(readModel.get().inGame()).isFalse();
+            assertThat(readModel.get().replay()).isTrue();
+            assertThat(readModel.get().message()).isEmpty();
+        });
+    }
+
+    @Test
+    void givenReplayed_whenGameResumed_thenInGameTrueReplayFalse() {
+        eventBus.replay();
+        await().untilAsserted(() -> {
+            Optional<GameReadModel> readModel = queryApi.query(new GetGame());
+            assertThat(readModel).isPresent();
+            assertThat(readModel.get().inGame()).isFalse();
+            assertThat(readModel.get().replay()).isTrue();
+            assertThat(readModel.get().message()).isEmpty();
+        });
+
+        GameResumed gameResumed = new GameResumed();
+        eventStore.append(Event.of(gameResumed, GAME));
+
+        await().untilAsserted(() -> {
+            Optional<GameReadModel> readModel = queryApi.query(new GetGame());
+            assertThat(readModel).isPresent();
+            assertThat(readModel.get().inGame()).isTrue();
+            assertThat(readModel.get().replay()).isFalse();
+            assertThat(readModel.get().message()).isEmpty();
+        });
     }
 
 }

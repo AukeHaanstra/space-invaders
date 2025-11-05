@@ -1,4 +1,4 @@
-package nl.pancompany.spaceinvaders.test.sprite;
+package nl.pancompany.spaceinvaders.test.laserbeam;
 
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
@@ -11,10 +11,9 @@ import nl.pancompany.spaceinvaders.CommandApi;
 import nl.pancompany.spaceinvaders.SpaceInvaders;
 import nl.pancompany.spaceinvaders.events.SpriteCreated;
 import nl.pancompany.spaceinvaders.events.SpriteDestroyed;
-import nl.pancompany.spaceinvaders.events.SpriteMoved;
 import nl.pancompany.spaceinvaders.shared.Direction;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
-import nl.pancompany.spaceinvaders.sprite.move.MoveSprite;
+import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,10 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
-/**
- * This slice is actually no longer used by the UI, but remains here for demonstration purposes.
- */
-public class MoveSpriteTest {
+public class CreateLaserBeamTest {
 
     EventStore eventStore;
     CommandApi commandApi;
@@ -42,43 +38,27 @@ public class MoveSpriteTest {
     }
 
     @Test
-    void given__whenMoveSprite_thenIllegalState() {
-        assertThatThrownBy(() -> commandApi.publish(new MoveSprite(SpriteId.random(), 4, 2))).isInstanceOf(IllegalStateException.class);
+    void given__whenCreateLaserBeam_thenLaserBeamCreated() {
+        assertThatThrownBy(() -> commandApi.publish(new DestroySprite(SpriteId.random())))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
-    void givenSpriteCreated_whenMoveSprite_thenSpriteMoved() {
+    void givenSpriteCreated_whenRestInPeaceSprite_thenSpriteRestsInPeace() {
         SpriteId spriteId = SpriteId.random();
         Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
-        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "Entity", "path", 0, 0, 0, Direction.NONE);
+        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "Entity", "path", 0, 0, 1, Direction.NONE);
         eventStore.append(Event.of(spriteCreated, spriteTag));
 
-        commandApi.publish(new MoveSprite(spriteId, 4, 2));
+        commandApi.publish(new DestroySprite(spriteId));
 
-        Query query = Query.of(spriteTag, Type.of(SpriteMoved.class));
+        Query query = Query.of(spriteTag, Type.of(SpriteDestroyed.class));
         await().untilAsserted(() -> assertThat(eventStore.read(query)).hasSize(1));
         List<SequencedEvent> events = eventStore.read(query);
-        assertThat(events.getFirst().payload(SpriteMoved.class)).isEqualTo(new SpriteMoved(spriteId, 4, 2));
+        assertThat(events.getFirst().payload(SpriteDestroyed.class)).isEqualTo(
+                new SpriteDestroyed(spriteId));
         assertThat(events.getFirst().tags()).contains(Tag.of("Entity"));
         assertThat(eventBus.hasLoggedExceptions()).isFalse();
-    }
-
-    @Test
-    void givenSpriteCreatedAndDestroyed_whenMoveSprite_thenSpriteMoved() throws InterruptedException {
-        SpriteId spriteId = SpriteId.random();
-        Tag spriteTag = Tag.of(SPRITE_ENTITY, spriteId.toString());
-        SpriteCreated spriteCreated = new SpriteCreated(spriteId, "Entity", "path", 0, 0, 0, Direction.NONE);
-        SpriteDestroyed spriteDestroyed = new SpriteDestroyed(spriteId);
-        eventStore.append(
-                Event.of(spriteCreated, spriteTag),
-                Event.of(spriteDestroyed, spriteTag)
-        );
-
-        commandApi.publish(new MoveSprite(spriteId, 4, 2));
-
-        Query query = Query.of(spriteTag, Type.of(SpriteMoved.class));
-        Thread.sleep(500);
-        assertThat(eventStore.read(query)).hasSize(0);
     }
 
 }

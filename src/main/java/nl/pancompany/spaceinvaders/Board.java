@@ -12,9 +12,7 @@ import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeam;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.shared.Constants;
 import nl.pancompany.spaceinvaders.shared.Direction;
-import nl.pancompany.spaceinvaders.sprite.creator.CreateSprite;
 import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
-import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteByEntityName;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
@@ -30,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.awt.event.KeyEvent.VK_BACK_SPACE;
-import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
 import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
 import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
@@ -91,8 +88,8 @@ public class Board extends JPanel {
 
             SpriteReadModel player = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
                     .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
-            int x = player.x();
-            int y = player.y();
+            int laserX = player.x() + PLAYER_WIDTH / 2;
+            int laserY = player.y();
 
             int key = e.getKeyCode();
 
@@ -104,7 +101,7 @@ public class Board extends JPanel {
                     Optional<SpriteReadModel> laser = queryApi.query(new GetSpriteById(LASER_SPRITE_ID));
 
                     if (laser.isEmpty() || !laser.get().visible()) { // create a new laser beam when space pressed and previous beam is not visible anymore
-                        commandApi.publish(new CreateLaserBeam(LASER_SPRITE_ID, LASER_ENTITY, LASER_IMAGE_PATH, x, y, LASER_SPEED, Direction.UP));
+                        commandApi.publish(new CreateLaserBeam(LASER_SPRITE_ID, LASER_ENTITY, LASER_IMAGE_PATH, laserX, laserY, LASER_SPEED, Direction.UP));
                     }
                 }
             }
