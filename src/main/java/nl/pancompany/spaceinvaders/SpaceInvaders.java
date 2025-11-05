@@ -4,7 +4,7 @@ import lombok.Getter;
 import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.EventStore;
 import nl.pancompany.spaceinvaders.alien.dropper.AliensDropper;
-import nl.pancompany.spaceinvaders.alien.getcount.AlienDownCountQueryHandler;
+import nl.pancompany.spaceinvaders.game.stopper.GameStopper;
 import nl.pancompany.spaceinvaders.alien.mover.AliensMover;
 import nl.pancompany.spaceinvaders.bomb.dropper.BombsDropper;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
@@ -12,18 +12,19 @@ import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
 import nl.pancompany.spaceinvaders.game.resume.ResumeGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
+import nl.pancompany.spaceinvaders.laserbeam.cheat.ExterminateAliensCommandHandler;
+import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeamCommandHandler;
 import nl.pancompany.spaceinvaders.laserbeam.shooter.LaserBeamShooter;
 import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
-import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeamCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.creator.SpriteCreator;
+import nl.pancompany.spaceinvaders.sprite.destroy.DestroySpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosionCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteProjector;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteQueryHandler;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteRepository;
 import nl.pancompany.spaceinvaders.sprite.move.MoveSpriteCommandHandler;
-import nl.pancompany.spaceinvaders.sprite.destroy.DestroySpriteCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSpriteCommandHandler;
 
 import javax.swing.*;
@@ -66,8 +67,9 @@ public class SpaceInvaders extends JFrame  {
         TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler = new TriggerSpriteExplosionCommandHandler(eventStore);
         DestroySpriteCommandHandler destroySpriteCommandHandler = new DestroySpriteCommandHandler(eventStore);
         MoveSpriteCommandHandler moveSpriteCommandHandler = new MoveSpriteCommandHandler(eventStore);
-        // Shot
+        // Laser
         CreateLaserBeamCommandHandler createLaserBeamCommandHandler = new CreateLaserBeamCommandHandler(eventStore);
+        ExterminateAliensCommandHandler exterminateAliensCommandHandler = new ExterminateAliensCommandHandler(eventStore);
 
         commandApi = CommandApi.builder()
                 .eventBus(eventBus)
@@ -86,7 +88,8 @@ public class SpaceInvaders extends JFrame  {
                 .moveSpriteCommandHandler(moveSpriteCommandHandler) // TODO: Check whether used!
                 // Laser
                 .createLaserBeamCommandHandler(createLaserBeamCommandHandler)
-                // Shot
+                .exterminateAliensCommandHandler(exterminateAliensCommandHandler)
+                // Laser
                 .build();
 
         // Query handlers, projectors and repositories
@@ -96,20 +99,16 @@ public class SpaceInvaders extends JFrame  {
         SpriteRepository spriteRepository = new SpriteRepository();
         SpriteProjector spriteProjector = new SpriteProjector(spriteRepository);
         SpriteQueryHandler spriteQueryHandler = new SpriteQueryHandler(spriteRepository);
-        // Alien
-        AlienDownCountQueryHandler alienDownCountQueryHandler = new AlienDownCountQueryHandler();
         queryApi = QueryApi.builder()
                 .eventStore(eventStore)
                 // Sprite
                 .spriteQueryHandler(spriteQueryHandler)
                 .gameQueryHandler(gameQueryHandler)
-                .alienDownCountQueryHandler(alienDownCountQueryHandler)
                 .build();
 
         // Query event-handler registrations
         eventBus.registerAsynchronousEventHandler(spriteProjector);
         eventBus.registerAsynchronousEventHandler(gameQueryHandler);
-        eventBus.registerAsynchronousEventHandler(alienDownCountQueryHandler);
 
         // Automations
         // Player
@@ -118,6 +117,7 @@ public class SpaceInvaders extends JFrame  {
         // Alien
         AliensMover aliensMover = new AliensMover(eventStore);
         AliensDropper aliensDropper = new AliensDropper(eventStore);
+        GameStopper gameStopper = new GameStopper(eventStore);
         // Bomb
         BombsDropper bombsDropper = new BombsDropper(eventStore);
         // Laser
@@ -130,6 +130,7 @@ public class SpaceInvaders extends JFrame  {
         // Alien
         eventBus.registerAsynchronousEventHandler(aliensMover);
         eventBus.registerAsynchronousEventHandler(aliensDropper);
+        eventBus.registerAsynchronousEventHandler(gameStopper);
         // Bomb
         eventBus.registerAsynchronousEventHandler(bombsDropper);
         // Laser

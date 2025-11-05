@@ -3,8 +3,6 @@ package nl.pancompany.spaceinvaders;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import nl.pancompany.eventstore.EventStore;
-import nl.pancompany.spaceinvaders.alien.getcount.AlienDownCountQueryHandler;
-import nl.pancompany.spaceinvaders.alien.getcount.GetAlienDownCount;
 import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
 import nl.pancompany.spaceinvaders.game.get.GameReadModel;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
@@ -24,7 +22,6 @@ public class QueryApi {
 
     private final SpriteQueryHandler spriteQueryHandler;
     private final GameQueryHandler gameQueryHandler;
-    private final AlienDownCountQueryHandler alienDownCountQueryHandler;
     private final EventStore eventStore;
 
     public Optional<SpriteReadModel> query(GetSpriteById getSpriteById) {
@@ -37,10 +34,6 @@ public class QueryApi {
 
     public Optional<GameReadModel> query(GetGame getGame) {
         return gameQueryHandler.get(getGame);
-    }
-
-    public int query(GetAlienDownCount getAlienDownCount) {
-        return alienDownCountQueryHandler.get(getAlienDownCount);
     }
 
     public int getLastEventPosition() {

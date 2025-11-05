@@ -17,6 +17,8 @@ import nl.pancompany.spaceinvaders.game.resume.ResumeGame;
 import nl.pancompany.spaceinvaders.game.resume.ResumeGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.stop.StopGame;
 import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
+import nl.pancompany.spaceinvaders.laserbeam.cheat.ExterminateAliens;
+import nl.pancompany.spaceinvaders.laserbeam.cheat.ExterminateAliensCommandHandler;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
 import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeam;
@@ -63,8 +65,9 @@ public class CommandApi {
     private final TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler;
     private final DestroySpriteCommandHandler destroySpriteCommandHandler;
     private final MoveSpriteCommandHandler moveSpriteCommandHandler;
-    // Shot
+    // Laser
     private final CreateLaserBeamCommandHandler createLaserBeamCommandHandler;
+    private final ExterminateAliensCommandHandler exterminateAliensCommandHandler;
 
     private final EventBus eventBus;
 
@@ -92,8 +95,9 @@ public class CommandApi {
             case TriggerSpriteExplosion triggerSpriteExplosion -> COMMAND_EXECUTOR.accept(() -> triggerSpriteExplosionCommandHandler.decide(triggerSpriteExplosion));
             case DestroySprite destroySprite -> COMMAND_EXECUTOR.accept(() -> destroySpriteCommandHandler.decide(destroySprite));
             case MoveSprite moveSprite -> COMMAND_EXECUTOR.accept(() -> moveSpriteCommandHandler.decide(moveSprite));
-            // Shot
+            // Laser
             case CreateLaserBeam createLaserBeam -> COMMAND_EXECUTOR.accept(() -> createLaserBeamCommandHandler.decide(createLaserBeam));
+            case ExterminateAliens exterminateAliens -> COMMAND_EXECUTOR.accept(() -> exterminateAliensCommandHandler.decide(exterminateAliens));
 
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }

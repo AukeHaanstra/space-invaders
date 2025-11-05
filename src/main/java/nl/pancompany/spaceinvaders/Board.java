@@ -1,18 +1,20 @@
 package nl.pancompany.spaceinvaders;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.pancompany.spaceinvaders.alien.getcount.GetAlienDownCount;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.get.GameReadModel;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.resume.ResumeGame;
 import nl.pancompany.spaceinvaders.game.stop.StopGame;
+import nl.pancompany.spaceinvaders.laserbeam.cheat.ExterminateAliens;
 import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeam;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.shared.Constants;
 import nl.pancompany.spaceinvaders.shared.Direction;
+import nl.pancompany.spaceinvaders.sprite.creator.CreateSprite;
 import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
+import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteByEntityName;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
@@ -27,6 +29,8 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Optional;
 
+import static java.awt.event.KeyEvent.VK_BACK_SPACE;
+import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;
 import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
 import static nl.pancompany.spaceinvaders.shared.Direction.RIGHT;
@@ -103,6 +107,12 @@ public class Board extends JPanel {
                         commandApi.publish(new CreateLaserBeam(LASER_SPRITE_ID, LASER_ENTITY, LASER_IMAGE_PATH, x, y, LASER_SPEED, Direction.UP));
                     }
                 }
+            }
+
+            // Cheat
+
+            if (key == VK_BACK_SPACE) {
+                commandApi.publish(new ExterminateAliens());
             }
         }
 
@@ -206,7 +216,6 @@ public class Board extends JPanel {
             if (!inGame) {
                 timer.stop(); // only stop time when gameover is a fact
             }
-            update(); // 9 update domain entities according to business (game) rules -> state changes, can be split per entity, on each cycle event; business rules in update()
             repaint(); // 10 results in paintComponent() being called -> automation: react to above state changes in @EventHandling UI components in each slice
         }
     }
@@ -216,14 +225,6 @@ public class Board extends JPanel {
         super.paintComponent(g);
 
         doDrawing(g); // 12 draws entities, finishes some multi-step state transitions (e.g., dying - becoming invisible)
-    }
-
-    private void update() {
-        // might have gone into an automation too, this just shows the use of the command API
-        int deaths = queryApi.query(new GetAlienDownCount());
-        if (deaths == Constants.NUMBER_OF_ALIENS_TO_DESTROY) {
-            commandApi.publish(new StopGame("Game won!"));
-        }
     }
 
     private void doDrawing(Graphics g) {
