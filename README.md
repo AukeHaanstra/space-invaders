@@ -23,7 +23,7 @@ then run a Maven build of space-invaders. Run the game by starting the SpaceInva
 To play, use the left and right **arrow keys** to move, and use **space** to shoot a laser beam.
 
 To enter time travel mode, press **\<enter\>**, then use square brackets, **\[** and **\]**, to travel backward and forward through time.
-Press <enter> again to continue the game where you left off.
+Press **\<enter\>** again to continue the game where you left off.
 
 ![Space Invaders Event Sourced Edition With Time Travel - Screen Capture](SpaceInvadersEventSourcedTT.gif)
 
