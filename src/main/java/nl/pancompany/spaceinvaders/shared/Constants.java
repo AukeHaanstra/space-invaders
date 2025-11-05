@@ -9,8 +9,9 @@ public interface Constants {
 
     // Set this high to allow more processing time for events, at the cost of a lower framerate
     // MULTIPLIER = 1 was the original setting.
-    // MULTIPLIER = 7 works fine with eventsourcing on a fast machine.
+    // MULTIPLIER = 7 (119 ms = 8Hz) works fine with eventsourcing on a fast machine.
     int MULTIPLIER = 7;
+    String REPLAY_MESSAGE = "Replay...";
 
     // Ids
     String GAME_ID = "1";

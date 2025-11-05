@@ -68,6 +68,7 @@ public class SpaceInvaders extends JFrame  {
         CreateLaserBeamCommandHandler createLaserBeamCommandHandler = new CreateLaserBeamCommandHandler(eventStore);
 
         commandApi = CommandApi.builder()
+                .eventBus(eventBus)
                 // Game
                 .createGameCommandHandler(createGameCommandHandler)
                 .initiateGameCycleCommandHandler(initiateGameCycleCommandHandler)
@@ -95,6 +96,7 @@ public class SpaceInvaders extends JFrame  {
         // Alien
         AlienDownCountQueryHandler alienDownCountQueryHandler = new AlienDownCountQueryHandler();
         queryApi = QueryApi.builder()
+                .eventStore(eventStore)
                 // Sprite
                 .spriteQueryHandler(spriteQueryHandler)
                 .gameQueryHandler(gameQueryHandler)

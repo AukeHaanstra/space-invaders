@@ -2,6 +2,7 @@ package nl.pancompany.spaceinvaders;
 
 import nl.pancompany.spaceinvaders.alien.getcount.GetAlienDownCount;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
+import nl.pancompany.spaceinvaders.game.get.GameReadModel;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.stop.StopGame;
@@ -54,6 +55,11 @@ public class Board extends JPanel {
 
     private class TAdapter extends KeyAdapter {
 
+        private final static int REPLAY_FRAMES = 30;
+        private int replayPosition = 0;
+        private int lastEventPosition = 0;
+        private int step = 0;
+
         @Override
         public void keyReleased(KeyEvent e) {
 
@@ -77,6 +83,7 @@ public class Board extends JPanel {
 
         @Override
         public void keyPressed(KeyEvent e) {
+            replayKeyPressed(e);
 
             // delegate left & right keystrokes to player entity
             directionKeyPressed(e); // translator
@@ -112,6 +119,47 @@ public class Board extends JPanel {
 
             if (key == KeyEvent.VK_RIGHT) {
                 commandApi.publish(new TurnSprite(PLAYER_SPRITE_ID, RIGHT));
+            }
+        }
+
+        private void replayKeyPressed(KeyEvent e) {
+
+            int key = e.getKeyCode();
+
+            if (key == KeyEvent.VK_ENTER) {
+                commandApi.publish(new StopGame(REPLAY_MESSAGE));
+                lastEventPosition = queryApi.getLastEventPosition();
+                step = lastEventPosition / REPLAY_FRAMES;
+                replayPosition = lastEventPosition;
+                repaint();
+            }
+
+            if (key == KeyEvent.VK_OPEN_BRACKET) {
+                replayPosition -= step;
+                if (replayPosition < 50) { // sequence position 50: first gamecycle initiated
+                    replayPosition = 50;
+                }
+                commandApi.replay(replayPosition);
+                sleep(300);
+                repaint();
+            }
+
+            if (key == KeyEvent.VK_CLOSE_BRACKET) {
+                replayPosition += step;
+                if (replayPosition > lastEventPosition) {
+                    replayPosition = lastEventPosition;
+                }
+                commandApi.replay(replayPosition);
+                sleep(300);
+                repaint();
+            }
+        }
+
+        private static void sleep(int millis) {
+            try {
+                Thread.sleep(millis);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -157,8 +205,8 @@ public class Board extends JPanel {
 //        g.drawRect(1, 1, Commons.BOARD_WIDTH-1, Commons.BOARD_HEIGHT-1);
         g.setColor(Color.green);
 
-        boolean inGame = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found.")).inGame();
-        if (inGame) { // check whether player is still alive or game over
+        GameReadModel game = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found."));
+        if (game.inGame() || game.replay()) { // check whether player is still alive or game over, or replay
 
             g.drawLine(0, Constants.GROUND_Y,
                     Constants.BOARD_WIDTH, Constants.GROUND_Y);

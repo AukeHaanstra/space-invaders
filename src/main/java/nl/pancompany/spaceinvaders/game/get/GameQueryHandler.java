@@ -14,17 +14,17 @@ public class GameQueryHandler {
 
     @ResetHandler
     void reset() {
-        gameReadModel = null;
+        gameReadModel = new GameReadModel(false, true, Optional.empty());
     }
 
     @EventHandler // projector
     private void update(GameCreated gameCreated) {
-        gameReadModel = new GameReadModel(true, Optional.empty());
+        gameReadModel = new GameReadModel(true, false, Optional.empty());
     }
 
     @EventHandler
     private void update(GameStopped gameCreated) {
-        gameReadModel = new GameReadModel(false, Optional.of(gameCreated.message()));
+        gameReadModel = new GameReadModel(false, false, Optional.of(gameCreated.message()));
     }
 
     public Optional<GameReadModel> get(GetGame getGame) { // query handler

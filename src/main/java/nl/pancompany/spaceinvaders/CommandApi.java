@@ -6,7 +6,9 @@ import dev.failsafe.RetryPolicy;
 import dev.failsafe.function.CheckedRunnable;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import nl.pancompany.eventstore.EventBus;
 import nl.pancompany.eventstore.StateManager.StateManagerOptimisticLockingException;
+import nl.pancompany.eventstore.data.SequencePosition;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
@@ -61,7 +63,16 @@ public class CommandApi {
     // Shot
     private final CreateLaserBeamCommandHandler createLaserBeamCommandHandler;
 
+    private final EventBus eventBus;
+
+    private boolean replay = false;
+
     public void publish(Object command) {
+
+        if (replay) {
+            return; // No command handling when replay has started
+        }
+
         switch (command) {
             case null -> throw new IllegalArgumentException("Null Command");
 
@@ -82,6 +93,14 @@ public class CommandApi {
 
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }
+    }
+
+    /**
+     * @param endPosition exclusive, start from 0
+     */
+    public void replay(int endPosition) {
+        replay = true;
+        eventBus.replay(SequencePosition.of(endPosition));
     }
 
 }
