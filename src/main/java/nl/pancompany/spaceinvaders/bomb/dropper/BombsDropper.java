@@ -10,15 +10,12 @@ import nl.pancompany.eventstore.annotation.EventSourced;
 import nl.pancompany.eventstore.data.Event;
 import nl.pancompany.eventstore.query.*;
 import nl.pancompany.spaceinvaders.events.*;
-import nl.pancompany.spaceinvaders.shared.*;
+import nl.pancompany.spaceinvaders.shared.Constants;
+import nl.pancompany.spaceinvaders.shared.Count;
+import nl.pancompany.spaceinvaders.shared.Direction;
+import nl.pancompany.spaceinvaders.shared.EntityTags;
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
-import nl.pancompany.spaceinvaders.sprite.Alien;
-import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
-import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
-import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
-import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
 
-import javax.swing.*;
 import java.util.*;
 
 import static nl.pancompany.spaceinvaders.CommandApi.COMMAND_EXECUTOR;

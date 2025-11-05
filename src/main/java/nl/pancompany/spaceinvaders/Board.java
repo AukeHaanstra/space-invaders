@@ -5,17 +5,15 @@ import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.stop.StopGame;
+import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeam;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.shared.Constants;
 import nl.pancompany.spaceinvaders.shared.Direction;
-import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeam;
+import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteByEntityName;
-import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
-import nl.pancompany.spaceinvaders.sprite.Alien;
-import nl.pancompany.spaceinvaders.sprite.Shot;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
-import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
+import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +21,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,11 +33,6 @@ public class Board extends JPanel {
     private final Dimension dimensions = new Dimension(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
     private final CommandApi commandApi;
     private final QueryApi queryApi;
-//    private List<Alien> aliens;
-//    private Shot shot; // single shot from the player
-
-//    private final String explImg = "/images/explosion.png";
-
     private Timer timer;
 
     public Board(CommandApi commandApi, QueryApi queryApi) {
@@ -54,28 +46,10 @@ public class Board extends JPanel {
         setBackground(Color.black);
 
         commandApi.publish(new CreateGame());
-        gameInit(); // 6 initialize domain entities (sprites) as Board fields -> on BoardReady event
 
         addKeyListener(new TAdapter()); // 7 start listening to keystrokes: modify entities accordingly -> translation
         timer = new Timer(Constants.DELAY, new GameCycle()); // 8 start scheduled update-repaint gamecycles (9-12: update entities & repaint UI) -> can also emit events
         timer.start();
-    }
-
-    private void gameInit() {
-
-//        aliens = new ArrayList<>();
-//
-//        for (int i = 0; i < 4; i++) {
-//            for (int j = 0; j < 6; j++) {
-//
-//                var alien = new Alien(Constants.ALIEN_START_X + 18 * j,
-//                        Constants.ALIEN_START_Y + 18 * i);
-//                aliens.add(alien);
-//            }
-//        }
-//
-////        player = new Player();
-//        shot = new Shot();
     }
 
     private class TAdapter extends KeyAdapter {
@@ -157,7 +131,6 @@ public class Board extends JPanel {
             }
             update(); // 9 update domain entities according to business (game) rules -> state changes, can be split per entity, on each cycle event; business rules in update()
             repaint(); // 10 results in paintComponent() being called -> automation: react to above state changes in @EventHandling UI components in each slice
-            // emit Commands for new desired state changes
         }
     }
 
@@ -169,146 +142,11 @@ public class Board extends JPanel {
     }
 
     private void update() {
-
         // might have gone into an automation too, this just shows the use of the command API
         int deaths = queryApi.query(new GetAlienDownCount());
         if (deaths == Constants.NUMBER_OF_ALIENS_TO_DESTROY) {
             commandApi.publish(new StopGame("Game won!"));
         }
-
-//        // shot
-//        if (shot.isVisible()) {
-//
-//            int shotX = shot.getX();
-//            int shotY = shot.getY();
-//
-//            for (Alien alien : aliens) {
-//
-//                int alienX = alien.getX();
-//                int alienY = alien.getY();
-//
-//                if (alien.isVisible() && shot.isVisible()) {
-//                    if (shotX >= (alienX)
-//                            && shotX <= (alienX + Constants.ALIEN_WIDTH)
-//                            && shotY >= (alienY)
-//                            && shotY <= (alienY + Constants.ALIEN_HEIGHT)) {
-//
-//                        var ii = new ImageIcon(getClass().getResource(explImg)); // explosion image
-//                        alien.setImage(ii.getImage());
-//                        alien.setDying(true); // allows the explosion image set above to be shown for one gamecycle
-//                        deaths++;
-//                        shot.die();
-//                    }
-//                }
-//            }
-//
-//            int y = shot.getY();
-//            y -= 4;
-//
-//            if (y < 0) {
-//                shot.die();
-//            } else {
-//                shot.setY(y);
-//            }
-//        }
-
-        // aliens
-
-//        for (Alien alien : aliens) {
-//
-//            int x = alien.getX();
-//
-//            if (x >= Constants.BOARD_WIDTH - Constants.ALIEN_BORDER_RIGHT && direction != -1) {
-//
-//                direction = -1;
-//
-//                Iterator<Alien> i1 = aliens.iterator();
-//
-//                while (i1.hasNext()) {
-//
-//                    Alien a2 = i1.next();
-//                    a2.setY(a2.getY() + Constants.ALIEN_STEP_DOWN);
-//                }
-//            }
-//
-//            if (x <= Constants.ALIEN_BORDER_LEFT && direction != 1) {
-//
-//                direction = 1;
-//
-//                Iterator<Alien> i2 = aliens.iterator();
-//
-//                while (i2.hasNext()) {
-//
-//                    Alien a = i2.next();
-//                    a.setY(a.getY() + Constants.ALIEN_STEP_DOWN);
-//                }
-//            }
-//        }
-//
-//        Iterator<Alien> it = aliens.iterator();
-//
-//        while (it.hasNext()) {
-//
-//            Alien alien = it.next();
-//
-//            if (alien.isVisible()) {
-//
-//                int y = alien.getY();
-//
-//                if (y > Constants.GROUND_Y - Constants.ALIEN_HEIGHT) {
-//                    commandApi.publish(new StopGame("Invasion!"));
-//                }
-//
-//                alien.act(direction);  // alien moves by |<direction>| = 1 pixel per gamecycle; player moves by 2 pixels per gamecycle
-//            }
-//        }
-
-//        // bombs
-//        var generator = new Random();
-//
-//        for (Alien alien : aliens) {
-//
-//            int shot = generator.nextInt(15);
-//            Alien.Bomb bomb = alien.getBomb();
-//
-//            if (shot == Constants.CHANCE && alien.isVisible() && bomb.isDestroyed()) {
-//
-//                bomb.setDestroyed(false);
-//                bomb.setX(alien.getX());
-//                bomb.setY(alien.getY());
-//            }
-//
-//            int bombX = bomb.getX();
-//            int bombY = bomb.getY();
-//            SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
-//                    .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
-//            int playerX = playerReadModel.x();
-//            int playerY = playerReadModel.y();
-//
-//            if (playerReadModel.visible() && !bomb.isDestroyed()) {
-//
-//                if (bombX >= (playerX)
-//                        && bombX <= (playerX + Constants.PLAYER_WIDTH)
-//                        && bombY >= (playerY)
-//                        && bombY <= (playerY + Constants.PLAYER_HEIGHT)) {
-//
-//                    var ii = new ImageIcon(getClass().getResource(explImg));
-//                    commandApi.publish(new TriggerSpriteExplosion(PLAYER_SPRITE_ID));
-//                    commandApi.publish(new ChangeSpriteImage(PLAYER_SPRITE_ID, explImg)); // make simple automation to trigger ChangeSpriteImage upon SpriteExplosionTriggered
-//                    bomb.setDestroyed(true);
-//                }
-//            }
-//
-//            if (!bomb.isDestroyed()) {
-//
-//                bomb.setY(bomb.getY() + 1);
-//
-//                if (bomb.getY() >= Constants.GROUND_Y - Constants.BOMB_HEIGHT) {
-//
-//                    bomb.setDestroyed(true);
-//                }
-//            }
-//        }
     }
 
     private void doDrawing(Graphics g) {
