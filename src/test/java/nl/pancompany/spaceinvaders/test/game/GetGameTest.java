@@ -53,7 +53,7 @@ public class GetGameTest {
     }
 
     @Test
-    void givenGameCreated_whenGameStopped_thenInGameIsUpdated() {
+    void givenGameCreated_whenGameStopped_thenInGameFalseReplayFalse() {
         GameCreated gameCreated = new GameCreated();
         eventStore.append(Event.of(gameCreated, GAME));
 
