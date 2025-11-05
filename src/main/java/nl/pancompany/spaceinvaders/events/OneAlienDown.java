@@ -2,6 +2,5 @@ package nl.pancompany.spaceinvaders.events;
 
 import nl.pancompany.spaceinvaders.shared.ids.SpriteId;
 
-// synonym: visible = false
-public record SpriteDestroyed(SpriteId id) {
+public record OneAlienDown(SpriteId id) {
 }

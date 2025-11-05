@@ -1,17 +1,18 @@
 package nl.pancompany.spaceinvaders;
 
+import nl.pancompany.spaceinvaders.alien.getcount.GetAlienDownCount;
 import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
 import nl.pancompany.spaceinvaders.game.stop.StopGame;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.shared.Constants;
+import nl.pancompany.spaceinvaders.shared.Direction;
+import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeam;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteByEntityName;
 import nl.pancompany.spaceinvaders.sprite.turn.TurnSprite;
 import nl.pancompany.spaceinvaders.sprite.Alien;
 import nl.pancompany.spaceinvaders.sprite.Shot;
-import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
-import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
 import nl.pancompany.spaceinvaders.sprite.get.GetSpriteById;
 import nl.pancompany.spaceinvaders.sprite.get.SpriteReadModel;
 import nl.pancompany.spaceinvaders.sprite.destroy.DestroySprite;
@@ -24,7 +25,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
 
 import static nl.pancompany.spaceinvaders.shared.Constants.*;
 import static nl.pancompany.spaceinvaders.shared.Direction.LEFT;
@@ -35,13 +36,10 @@ public class Board extends JPanel {
     private final Dimension dimensions = new Dimension(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT);
     private final CommandApi commandApi;
     private final QueryApi queryApi;
-    private List<Alien> aliens;
-    private Shot shot; // single shot from the player
-    
-    private int direction = -1;
-    private int deaths = 0;
+//    private List<Alien> aliens;
+//    private Shot shot; // single shot from the player
 
-    private final String explImg = "/images/explosion.png";
+//    private final String explImg = "/images/explosion.png";
 
     private Timer timer;
 
@@ -65,19 +63,19 @@ public class Board extends JPanel {
 
     private void gameInit() {
 
-        aliens = new ArrayList<>();
-
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 6; j++) {
-
-                var alien = new Alien(Constants.ALIEN_START_X + 18 * j,
-                        Constants.ALIEN_START_Y + 18 * i);
-                aliens.add(alien);
-            }
-        }
-
-//        player = new Player();
-        shot = new Shot();
+//        aliens = new ArrayList<>();
+//
+//        for (int i = 0; i < 4; i++) {
+//            for (int j = 0; j < 6; j++) {
+//
+//                var alien = new Alien(Constants.ALIEN_START_X + 18 * j,
+//                        Constants.ALIEN_START_Y + 18 * i);
+//                aliens.add(alien);
+//            }
+//        }
+//
+////        player = new Player();
+//        shot = new Shot();
     }
 
     private class TAdapter extends KeyAdapter {
@@ -109,21 +107,22 @@ public class Board extends JPanel {
             // delegate left & right keystrokes to player entity
             directionKeyPressed(e); // translator
 
-            SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
+            SpriteReadModel player = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
                     .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
-            int x = playerReadModel.x();
-            int y = playerReadModel.y();
+            int x = player.x();
+            int y = player.y();
 
             int key = e.getKeyCode();
 
             if (key == KeyEvent.VK_SPACE) {
 
-            boolean inGame = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found.")).inGame();
+                boolean inGame = queryApi.query(new GetGame()).orElseThrow(() -> new IllegalStateException("Game not found.")).inGame();
+
                 if (inGame) {
+                    Optional<SpriteReadModel> laser = queryApi.query(new GetSpriteById(LASER_SPRITE_ID));
 
-                    if (!shot.isVisible()) { // create a new shot when space pressed and previous shot is not visible anymore
-
-                        shot = new Shot(x, y);
+                    if (laser.isEmpty() || !laser.get().visible()) { // create a new laser beam when space pressed and previous beam is not visible anymore
+                        commandApi.publish(new CreateLaserBeam(LASER_SPRITE_ID, LASER_ENTITY, LASER_IMAGE_PATH, x, y, LASER_SPEED, Direction.UP ));
                     }
                 }
             }
@@ -170,46 +169,48 @@ public class Board extends JPanel {
     }
 
     private void update() {
-        if (deaths == Constants.NUMBER_OF_ALIENS_TO_DESTROY) {
 
+        // might have gone into an automation too, this just shows the use of the command API
+        int deaths = queryApi.query(new GetAlienDownCount());
+        if (deaths == Constants.NUMBER_OF_ALIENS_TO_DESTROY) {
             commandApi.publish(new StopGame("Game won!"));
         }
 
-        // shot
-        if (shot.isVisible()) {
-
-            int shotX = shot.getX();
-            int shotY = shot.getY();
-
-            for (Alien alien : aliens) {
-
-                int alienX = alien.getX();
-                int alienY = alien.getY();
-
-                if (alien.isVisible() && shot.isVisible()) {
-                    if (shotX >= (alienX)
-                            && shotX <= (alienX + Constants.ALIEN_WIDTH)
-                            && shotY >= (alienY)
-                            && shotY <= (alienY + Constants.ALIEN_HEIGHT)) {
-
-                        var ii = new ImageIcon(getClass().getResource(explImg)); // explosion image
-                        alien.setImage(ii.getImage());
-                        alien.setDying(true); // allows the explosion image set above to be shown for one gamecycle
-                        deaths++;
-                        shot.die();
-                    }
-                }
-            }
-
-            int y = shot.getY();
-            y -= 4;
-
-            if (y < 0) {
-                shot.die();
-            } else {
-                shot.setY(y);
-            }
-        }
+//        // shot
+//        if (shot.isVisible()) {
+//
+//            int shotX = shot.getX();
+//            int shotY = shot.getY();
+//
+//            for (Alien alien : aliens) {
+//
+//                int alienX = alien.getX();
+//                int alienY = alien.getY();
+//
+//                if (alien.isVisible() && shot.isVisible()) {
+//                    if (shotX >= (alienX)
+//                            && shotX <= (alienX + Constants.ALIEN_WIDTH)
+//                            && shotY >= (alienY)
+//                            && shotY <= (alienY + Constants.ALIEN_HEIGHT)) {
+//
+//                        var ii = new ImageIcon(getClass().getResource(explImg)); // explosion image
+//                        alien.setImage(ii.getImage());
+//                        alien.setDying(true); // allows the explosion image set above to be shown for one gamecycle
+//                        deaths++;
+//                        shot.die();
+//                    }
+//                }
+//            }
+//
+//            int y = shot.getY();
+//            y -= 4;
+//
+//            if (y < 0) {
+//                shot.die();
+//            } else {
+//                shot.setY(y);
+//            }
+//        }
 
         // aliens
 
@@ -356,26 +357,28 @@ public class Board extends JPanel {
     }
 
     private void drawPlayer(Graphics g) {
-        SpriteReadModel playerReadModel = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
+        SpriteReadModel player = queryApi.query(new GetSpriteById(PLAYER_SPRITE_ID))
                 .orElseThrow(() -> new IllegalStateException("Player Sprite not found."));
-        if (playerReadModel.visible()) { // if RIP, in previous gamecycle, player will now become invisible
+        if (player.visible()) { // if RIP, in previous gamecycle, player will now become invisible
             // if explosionTriggered, first display set explosion image
-            Image playerImage = new ImageIcon(getClass().getResource(playerReadModel.imagePath())).getImage();
-            g.drawImage(playerImage, playerReadModel.x(), playerReadModel.y(), this);
+            Image playerImage = new ImageIcon(getClass().getResource(player.imagePath())).getImage();
+            g.drawImage(playerImage, player.x(), player.y(), this);
         }
 
-        if (playerReadModel.explosionTriggered()) {
+        if (player.explosionTriggered()) {
             commandApi.publish(new DestroySprite(PLAYER_SPRITE_ID)); // Since gamecycle is almost over (update() already ran), player will become invisible (and game will stop) in the next gamecycle
             commandApi.publish(new StopGame("Game Over"));
         }
     }
 
     private void drawShot(Graphics g) {
+        queryApi.query(new GetSpriteById(LASER_SPRITE_ID)).ifPresent(laser -> {
+            if (laser.visible()) {
+                Image laserImage = new ImageIcon(getClass().getResource(laser.imagePath())).getImage();
+                g.drawImage(laserImage, laser.x(), laser.y(), this);
+            }
+        });
 
-        if (shot.isVisible()) {
-
-            g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
-        }
     }
 
     private void drawBombing(Graphics g) {

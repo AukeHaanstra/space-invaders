@@ -53,7 +53,7 @@ public class AliensDropper {
         for (AlienState alienState : aliensState.aliens.values()) {
 
             if (!alienState.visible) { // i.e. destroyed
-                return;
+                continue;
             }
 
             if (alienState.x + Constants.ALIEN_BORDER_RIGHT >= Constants.BOARD_WIDTH && alienState.direction != Direction.LEFT) {

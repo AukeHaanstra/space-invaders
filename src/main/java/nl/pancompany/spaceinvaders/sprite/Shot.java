@@ -14,7 +14,7 @@ public class Shot extends Sprite {
 
     private void initShot(int x, int y) {
 
-        var shotImg = "/images/shot.png";
+        var shotImg = "/images/laser.png";
         var ii = new ImageIcon(getClass().getResource(shotImg));
         setImage(ii.getImage());
 

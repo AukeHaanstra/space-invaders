@@ -103,7 +103,7 @@ public class BombsDropper {
 
             if (bomb.visible) {
 
-                int newY = bomb.getY() + 1;
+                int newY = bomb.getY() + bomb.getSpeed();
                 eventsToPublish.add(Event.of(new SpriteMoved(bomb.spriteId, bomb.x, newY),
                         Tags.and(spriteTagBomb, bombTag, EntityTags.GAME)));
 

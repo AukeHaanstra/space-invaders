@@ -10,7 +10,7 @@ public interface Constants {
     // Ids
     String GAME_ID = "1";
     SpriteId PLAYER_SPRITE_ID = SpriteId.of("1");
-    SpriteId SHOT_SPRITE_ID = SpriteId.of("2");
+    SpriteId LASER_SPRITE_ID = SpriteId.of("2");
     List<SpriteId> ALIEN_SPRITE_IDS = IntStream.range(3, 27) // 24 aliens
             .mapToObj(String::valueOf)
             .map(SpriteId::of)
@@ -26,11 +26,12 @@ public interface Constants {
     String PLAYER_ENTITY = "Player";
     String ALIEN_ENTITY = "Alien";
     String BOMB_ENTITY = "Bomb";
-    String SHOT_ENTITY = "Shot";
+    String LASER_ENTITY = "Laser";
 
     // Board
     int BOARD_WIDTH = 358;
     int BOARD_HEIGHT = 350;
+    int GROUND_Y = 290;
 
     // Alien
     int ALIEN_BORDER_RIGHT = 17; // 12 px alien + 5 px border
@@ -42,11 +43,16 @@ public interface Constants {
     int ALIEN_SPEED = 1;
     String ALIEN_IMAGE_PATH = "/images/alien.png";
     int ALIEN_STEP_DOWN = 15;
+    String ALIEN_EXPLOSION_IMAGE_PATH = "/images/explosion.png";
 
     // Bomb
     String BOMB_IMAGE_PATH = "/images/bomb.png";
     String BOMB_EXPLOSION_IMAGE_PATH = "/images/explosion.png";
     int BOMB_SPEED = 1;
+    int BOMB_HEIGHT = 5;
+    // TODO: Easily win game (no bombs)
+//    int CHANCE = 15;
+    int CHANCE = 5;
 
     // Player
     int PLAYER_BORDER = 5;
@@ -60,16 +66,12 @@ public interface Constants {
     int PLAYER_STOP_X_LEFT = PLAYER_BORDER;
     int PLAYER_STOP_X_RIGHT = BOARD_WIDTH - (PLAYER_WIDTH + PLAYER_BORDER);
 
+    // Laser
+    String LASER_IMAGE_PATH = "/images/laser.png";
+    int LASER_SPEED = 4;
 
-    // Miscellaneous
-    int GROUND_Y = 290;
-    int BOMB_HEIGHT = 5;
-
-
+    // Game
     int NUMBER_OF_ALIENS_TO_DESTROY = 24;
-    // TODO: Easily win game (no bombs)
-//    int CHANCE = 15;
-    int CHANCE = 5;
     int DELAY = 17;// 60 Hz refresh rate -> 17 ms between each gamecycle
 
 }

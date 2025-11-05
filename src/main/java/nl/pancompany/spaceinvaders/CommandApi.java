@@ -15,6 +15,8 @@ import nl.pancompany.spaceinvaders.game.stop.StopGame;
 import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayerCommandHandler;
+import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeam;
+import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeamCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImage;
 import nl.pancompany.spaceinvaders.sprite.changeimage.ChangeSpriteImageCommandHandler;
 import nl.pancompany.spaceinvaders.sprite.explode.TriggerSpriteExplosion;
@@ -56,10 +58,13 @@ public class CommandApi {
     private final TriggerSpriteExplosionCommandHandler triggerSpriteExplosionCommandHandler;
     private final DestroySpriteCommandHandler destroySpriteCommandHandler;
     private final MoveSpriteCommandHandler moveSpriteCommandHandler;
+    // Shot
+    private final CreateLaserBeamCommandHandler createLaserBeamCommandHandler;
 
     public void publish(Object command) {
         switch (command) {
             case null -> throw new IllegalArgumentException("Null Command");
+
             // Game
             case CreateGame createGame -> COMMAND_EXECUTOR.accept(() -> createGameCommandHandler.decide(createGame));
             case InitiateGameCycle initiateGameCycle -> COMMAND_EXECUTOR.accept(() -> initiateGameCycleCommandHandler.decide(initiateGameCycle));
@@ -72,6 +77,8 @@ public class CommandApi {
             case TriggerSpriteExplosion triggerSpriteExplosion -> COMMAND_EXECUTOR.accept(() -> triggerSpriteExplosionCommandHandler.decide(triggerSpriteExplosion));
             case DestroySprite destroySprite -> COMMAND_EXECUTOR.accept(() -> destroySpriteCommandHandler.decide(destroySprite));
             case MoveSprite moveSprite -> COMMAND_EXECUTOR.accept(() -> moveSpriteCommandHandler.decide(moveSprite));
+            // Shot
+            case CreateLaserBeam createLaserBeam -> COMMAND_EXECUTOR.accept(() -> createLaserBeamCommandHandler.decide(createLaserBeam));
 
             default -> throw new IllegalArgumentException("Unexpected Command: " + command);
         }

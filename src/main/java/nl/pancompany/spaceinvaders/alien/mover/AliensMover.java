@@ -45,7 +45,7 @@ public class AliensMover {
         for (AlienState alienState : aliensState.aliens.values()) {
 
             if (!alienState.visible) { // i.e. destroyed
-                return;
+                continue;
             }
 
             int dx = switch (alienState.direction) {

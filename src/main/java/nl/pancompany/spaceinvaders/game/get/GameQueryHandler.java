@@ -1,16 +1,23 @@
 package nl.pancompany.spaceinvaders.game.get;
 
 import nl.pancompany.eventstore.annotation.EventHandler;
+import nl.pancompany.eventstore.annotation.ResetHandler;
 import nl.pancompany.spaceinvaders.events.GameCreated;
 import nl.pancompany.spaceinvaders.events.GameStopped;
 
 import java.util.Optional;
 
+// Actually query handler, projector and repository in one.
 public class GameQueryHandler {
 
-    private GameReadModel gameReadModel;
+    private GameReadModel gameReadModel; // repo
 
-    @EventHandler
+    @ResetHandler
+    void reset() {
+        gameReadModel = null;
+    }
+
+    @EventHandler // projector
     private void update(GameCreated gameCreated) {
         gameReadModel = new GameReadModel(true, Optional.empty());
     }
@@ -20,7 +27,7 @@ public class GameQueryHandler {
         gameReadModel = new GameReadModel(false, Optional.of(gameCreated.message()));
     }
 
-    public Optional<GameReadModel> get() {
+    public Optional<GameReadModel> get(GetGame getGame) { // query handler
         return Optional.ofNullable(gameReadModel);
     }
 }
