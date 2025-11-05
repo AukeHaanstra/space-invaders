@@ -10,6 +10,7 @@ import nl.pancompany.spaceinvaders.bomb.dropper.BombsDropper;
 import nl.pancompany.spaceinvaders.game.create.CreateGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.get.GameQueryHandler;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycleCommandHandler;
+import nl.pancompany.spaceinvaders.game.resume.ResumeGameCommandHandler;
 import nl.pancompany.spaceinvaders.game.stop.StopGameCommandHandler;
 import nl.pancompany.spaceinvaders.laserbeam.shooter.LaserBeamShooter;
 import nl.pancompany.spaceinvaders.player.mover.PlayerMover;
@@ -56,6 +57,7 @@ public class SpaceInvaders extends JFrame  {
         CreateGameCommandHandler createGameCommandHandler = new CreateGameCommandHandler(eventStore);
         InitiateGameCycleCommandHandler initiateGameCycleCommandHandler = new InitiateGameCycleCommandHandler(eventStore);
         StopGameCommandHandler stopGameCommandHandler = new StopGameCommandHandler(eventStore);
+        ResumeGameCommandHandler resumeGameCommandHandler = new ResumeGameCommandHandler(eventStore);
         // Player
         TurnSpriteCommandHandler turnSpriteCommandHandler = new TurnSpriteCommandHandler(eventStore);
         StopPlayerCommandHandler stopPlayerCommandHandler = new StopPlayerCommandHandler(eventStore);
@@ -73,6 +75,7 @@ public class SpaceInvaders extends JFrame  {
                 .createGameCommandHandler(createGameCommandHandler)
                 .initiateGameCycleCommandHandler(initiateGameCycleCommandHandler)
                 .stopGameCommandHandler(stopGameCommandHandler)
+                .resumeGameCommandHandler(resumeGameCommandHandler)
                 // Player
                 .turnSpriteCommandHandler(turnSpriteCommandHandler)
                 .stopPlayerCommandHandler(stopPlayerCommandHandler)

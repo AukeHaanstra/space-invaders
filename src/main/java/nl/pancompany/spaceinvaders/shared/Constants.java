@@ -11,7 +11,7 @@ public interface Constants {
     // MULTIPLIER = 1 was the original setting.
     // MULTIPLIER = 7 (119 ms = 8Hz) works fine with eventsourcing on a fast machine.
     int MULTIPLIER = 7;
-    String REPLAY_MESSAGE = "Replay...";
+    String REPLAY_MESSAGE = "Entering Time Travel Mode";
 
     // Ids
     String GAME_ID = "1";

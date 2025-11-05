@@ -6,6 +6,7 @@ import nl.pancompany.spaceinvaders.game.create.CreateGame;
 import nl.pancompany.spaceinvaders.game.get.GameReadModel;
 import nl.pancompany.spaceinvaders.game.get.GetGame;
 import nl.pancompany.spaceinvaders.game.initiatecycle.InitiateGameCycle;
+import nl.pancompany.spaceinvaders.game.resume.ResumeGame;
 import nl.pancompany.spaceinvaders.game.stop.StopGame;
 import nl.pancompany.spaceinvaders.laserbeam.create.CreateLaserBeam;
 import nl.pancompany.spaceinvaders.player.stop.StopPlayer;
@@ -51,6 +52,7 @@ public class Board extends JPanel {
         commandApi.publish(new CreateGame());
 
         addKeyListener(new TAdapter()); // 7 start listening to keystrokes: modify entities accordingly -> translation
+        addKeyListener(new ReplayManager());
         timer = new Timer(Constants.DELAY, new GameCycle()); // 8 start scheduled update-repaint gamecycles (9-12: update entities & repaint UI) -> can also emit events
         timer.start();
     }
@@ -80,8 +82,6 @@ public class Board extends JPanel {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            replayKeyPressed(e);
-
             // delegate left & right keystrokes to player entity
             directionKeyPressed(e); // translator
 
@@ -100,7 +100,7 @@ public class Board extends JPanel {
                     Optional<SpriteReadModel> laser = queryApi.query(new GetSpriteById(LASER_SPRITE_ID));
 
                     if (laser.isEmpty() || !laser.get().visible()) { // create a new laser beam when space pressed and previous beam is not visible anymore
-                        commandApi.publish(new CreateLaserBeam(LASER_SPRITE_ID, LASER_ENTITY, LASER_IMAGE_PATH, x, y, LASER_SPEED, Direction.UP ));
+                        commandApi.publish(new CreateLaserBeam(LASER_SPRITE_ID, LASER_ENTITY, LASER_IMAGE_PATH, x, y, LASER_SPEED, Direction.UP));
                     }
                 }
             }
@@ -119,23 +119,42 @@ public class Board extends JPanel {
             }
         }
 
+    }
+
+    private class ReplayManager extends KeyAdapter {
+
         private final static int REPLAY_FRAMES = 30;
         private int replayPosition = 0;
         private int lastEventPosition = 0;
         private int step = 0;
         private boolean inReplay;
 
+        @Override
+        public void keyPressed(KeyEvent e) {
+            replayKeyPressed(e);
+        }
+
         private void replayKeyPressed(KeyEvent e) {
 
             int key = e.getKeyCode();
 
             if (key == KeyEvent.VK_ENTER) {
-                commandApi.publish(new StopGame(REPLAY_MESSAGE));
-                lastEventPosition = queryApi.getLastEventPosition();
-                step = lastEventPosition / REPLAY_FRAMES;
-                replayPosition = lastEventPosition;
-                repaint();
-                inReplay = true;
+                if (inReplay) {
+                    replayPosition = 0;
+                    lastEventPosition = 0;
+                    step = 0;
+                    commandApi.resume();
+                    commandApi.publish(new ResumeGame());
+                    inReplay = false;
+                    timer.start();
+                } else {
+                    commandApi.publish(new StopGame(REPLAY_MESSAGE));
+                    lastEventPosition = queryApi.getLastEventPosition();
+                    step = lastEventPosition / REPLAY_FRAMES;
+                    replayPosition = lastEventPosition;
+                    repaint();
+                    inReplay = true;
+                }
             }
 
             if (key == KeyEvent.VK_OPEN_BRACKET) {
