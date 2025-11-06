@@ -13,6 +13,8 @@ In this Java clone we have 24 invaders. These aliens heavily shell the ground. W
 he can shoot another one only when it hits an alien or the top of the Board. The player shoots with the Space key.
 Aliens launch randomly their bombs. Each alien shoots a bomb only after the previous one hits the bottom.
 
+You can find the Event Model of the game on [Miro](https://miro.com/app/board/uXjVJ35UO0A=/?share_link_id=778961876841)
+
 ## Running the game
 
 Before running the game, first run a Maven build of the [in-memory event store](https://github.com/AukeHaanstra/eventstore),
